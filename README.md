@@ -26,7 +26,7 @@ Für weiterführende Informationen lohnt sich ein Blick in das Pro Git Handbuch:
 
 # Welche Inhalte sind vorgegeben und wofür sind diese gedacht?
 
-Es wurden mehrere **Ordner** sowie **.gitignore** Dateien vorgegeben. Letztere dienen dazu Ihr Repository nicht mit "unnötigen" Dateien zu befüllen, welche es erschweren würden Ihr Projekt während der Abgabegespräche in die Entwicklungsumgebungen der Lektoren zu importieren (temporäre Dateien, etc.). Ändern Sie diese Dateien daher nicht bzw. nur sehr behutsam. 
+Es wurden mehrere **Ordner** sowie **.gitignore** Dateien vorgegeben. Letztere dienen dazu Ihr Repository nicht mit "unnötigen" Dateien zu befüllen, welche es erschweren würden Ihr Projekt während der Bewertung in die Entwicklungsumgebungen der Lektoren zu importieren (temporäre Dateien, etc.). Ändern Sie diese Dateien daher nicht bzw. nur sehr behutsam. 
 
 Die vorgegebenen Ordner sind wie folgt zu verwenden:
 * **Dokumentation** - Nützen Sie diesen Ordner, um Ihre _Dokumentation abzulegen_ bzw. abzugeben. Dies ist für *Teilaufgabe 1* relevant da Sie so Ihre Ausarbeitung (das zu erstellende PDF) hier hinterlegen können, um dieses abzugeben. Eine Vorlage für die Ausarbeitung von Teilaufgabe 1 finden Sie in Moodle. Zusätzlich können Sie in diesem Ordner auch SVGs (ein Vektorgrafikformat) ablegen (für Klassen- und Sequenzdiagramme). Achten Sie darauf, dass die abgegebenen Inhalte lesbar sind. 
