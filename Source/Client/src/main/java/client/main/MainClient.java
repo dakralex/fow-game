@@ -19,18 +19,16 @@ public class MainClient {
 	private static final String LAST_NAME = "Kral";
 	private static final String UACCOUNT = "krald88";
 
-	public static void main(String[] args) {
-		// parse these parameters in compliance to the automatic client evaluation
-		String serverBaseUrl = args[1];
-		String gameId = args[2];
-
-		WebClient baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
+	private static WebClient createWebClient(String serverBaseUrl) {
+		return WebClient.builder()
+				.baseUrl(serverBaseUrl + "/games")
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE)
 				.build();
+	}
 
-		PlayerRegistration playerReg = new PlayerRegistration(FIRST_NAME, LAST_NAME, UACCOUNT);
-		Mono<ResponseEnvelope> webAccess = baseWebClient
+	private static UniquePlayerIdentifier registerPlayer(WebClient webClient, String gameId, PlayerRegistration playerReg) {
+		Mono<ResponseEnvelope> webAccess = webClient
 				.method(HttpMethod.POST)
 				.uri("/" + gameId + "/players")
 				.body(BodyInserters.fromValue(playerReg))
@@ -38,12 +36,25 @@ public class MainClient {
 
 		ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
 
+		// TODO: Introduce better error handling
 		if (resultReg.getState() == ERequestState.Error) {
 			System.err.println("Client error, errormessage: " + resultReg.getExceptionMessage());
+			return null;
 		} else {
-			UniquePlayerIdentifier uniqueID = resultReg.getData().get();
-			System.out.println("My Player ID: " + uniqueID.getUniquePlayerID());
+			return resultReg.getData().get();
 		}
+	}
+
+	public static void main(String[] args) {
+		// parse these parameters in compliance to the automatic client evaluation
+		String serverBaseUrl = args[1];
+		String gameId = args[2];
+
+		WebClient webClient = createWebClient(serverBaseUrl);
+		PlayerRegistration playerReg = new PlayerRegistration(FIRST_NAME, LAST_NAME, UACCOUNT);
+		UniquePlayerIdentifier uniqueID = registerPlayer(webClient, gameId, playerReg);
+
+		System.out.println("My Player ID: " + uniqueID.getUniquePlayerID());
 	}
 
 	public static void exampleForGetRequests() throws Exception {
