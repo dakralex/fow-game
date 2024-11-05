@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import messagesbase.ResponseEnvelope;
 import messagesbase.messagesfromclient.ERequestState;
@@ -40,15 +41,17 @@ public class GameServerClient {
 
     /**
      * Makes a blocking HTTP POST request to the given server's API endpoint {@code relativeUri} by
-     * sending the given input data {@code data} in the request's body.
+     * sending the given input data {@code data} in the request's body and returns the server's
+     * response on success. This method will throw a {@code GameServerClientException}, if the
+     * server did not respond or responded with an error status code.
      *
      * @param relativeUri relative API endpoint URI
      * @param data        the data to send to the API endpoint
      * @param <R>         the expected type of the API endpoint's response
      * @param <T>         the type of the data sent to the API endpoint
-     * @return returned data
+     * @return response envelope from the server
      */
-    public <R, T> R post(String relativeUri, T data) {
+    public <R, T> ResponseEnvelope<R> post(String relativeUri, T data) {
         var requestBody = BodyInserters.fromValue(data);
 
         Mono<ResponseEnvelope> request = webClient
@@ -60,12 +63,22 @@ public class GameServerClient {
                 .onStatus(HttpStatusCode::is5xxServerError, this::handleServerError)
                 .bodyToMono(ResponseEnvelope.class);
 
-        ResponseEnvelope<R> response = Objects.requireNonNull(request.block(), "Client error: Request must not be empty.");
+        ResponseEnvelope<R> response =
+                Objects.requireNonNull(request.block(),
+                                       "Client error: Response must not be empty.");
 
         if (response.getState() == ERequestState.Error) {
-            throw new GameServerClientException(String.format("Client error: %s", response.getExceptionMessage()));
+            String message = String.format("Client error: %s", response.getExceptionMessage());
+
+            throw new GameServerClientException(message);
         }
 
-        return response.getData().orElseThrow(() -> new GameServerClientException("Client error: Response data was empty."));
+        return response;
+    }
+
+    public <R, T> Optional<R> postAndGetData(String relativeUri, T data) {
+        ResponseEnvelope<R> response = post(relativeUri, data);
+
+        return response.getData();
     }
 }
