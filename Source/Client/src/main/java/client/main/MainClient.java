@@ -3,13 +3,13 @@ package client.main;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import messagesbase.UniquePlayerIdentifier;
-import messagesbase.messagesfromclient.PlayerRegistration;
+import client.network.GameServerClient;
 import messagesbase.ResponseEnvelope;
+import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.ERequestState;
+import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import reactor.core.publisher.Mono;
 
@@ -19,40 +19,20 @@ public class MainClient {
 	private static final String LAST_NAME = "Kral";
 	private static final String UACCOUNT = "krald88";
 
-	private static WebClient createWebClient(String serverBaseUrl) {
-		return WebClient.builder()
-				.baseUrl(serverBaseUrl + "/games")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
-				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE)
-				.build();
-	}
+    private static UniquePlayerIdentifier registerPlayer(GameServerClient serverClient, String gameId, PlayerRegistration playerReg) {
+        String path = String.format("/%s/players", gameId);
 
-	private static UniquePlayerIdentifier registerPlayer(WebClient webClient, String gameId, PlayerRegistration playerReg) {
-		Mono<ResponseEnvelope> webAccess = webClient
-				.method(HttpMethod.POST)
-				.uri("/" + gameId + "/players")
-				.body(BodyInserters.fromValue(playerReg))
-				.retrieve().bodyToMono(ResponseEnvelope.class);
-
-		ResponseEnvelope<UniquePlayerIdentifier> resultReg = webAccess.block();
-
-		// TODO: Introduce better error handling
-		if (resultReg.getState() == ERequestState.Error) {
-			System.err.println("Client error, errormessage: " + resultReg.getExceptionMessage());
-			return null;
-		} else {
-			return resultReg.getData().get();
-		}
-	}
+        return serverClient.post(path, playerReg);
+    }
 
 	public static void main(String[] args) {
 		// parse these parameters in compliance to the automatic client evaluation
 		String serverBaseUrl = args[1];
 		String gameId = args[2];
 
-		WebClient webClient = createWebClient(serverBaseUrl);
+		GameServerClient serverClient = new GameServerClient(serverBaseUrl);
 		PlayerRegistration playerReg = new PlayerRegistration(FIRST_NAME, LAST_NAME, UACCOUNT);
-		UniquePlayerIdentifier uniqueID = registerPlayer(webClient, gameId, playerReg);
+		UniquePlayerIdentifier uniqueID = registerPlayer(serverClient, gameId, playerReg);
 
 		System.out.println("My Player ID: " + uniqueID.getUniquePlayerID());
 	}
