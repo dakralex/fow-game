@@ -1,0 +1,16 @@
+# TODO: Force add these before the deadline
+
+# Ignore Gradle build files
+.gradle
+**/bin/
+**/build/
+gradle-app.setting
+
+# Ignore Eclipse project files
+.project
+.classpath
+
+# Do not ignore gradle wrapper settings
+!src/**/build/
+!gradle-wrapper.jar
+!gradle-wrapper.properties
