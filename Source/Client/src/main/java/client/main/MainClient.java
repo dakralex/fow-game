@@ -15,6 +15,10 @@ import reactor.core.publisher.Mono;
 
 public class MainClient {
 
+	private static final String FIRST_NAME = "Daniel";
+	private static final String LAST_NAME = "Kral";
+	private static final String UACCOUNT = "krald88";
+
 	public static void main(String[] args) {
 		// parse these parameters in compliance to the automatic client evaluation
 		String serverBaseUrl = args[1];
@@ -25,10 +29,7 @@ public class MainClient {
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE)
 				.build();
 
-		PlayerRegistration playerReg = new PlayerRegistration(
-				"YourFirstName",
-				"YourLastName",
-				"Your_Real_UniView_UAccount_Username");
+		PlayerRegistration playerReg = new PlayerRegistration(FIRST_NAME, LAST_NAME, UACCOUNT);
 		Mono<ResponseEnvelope> webAccess = baseWebClient
 				.method(HttpMethod.POST)
 				.uri("/" + gameId + "/players")
@@ -61,8 +62,7 @@ public class MainClient {
 
 		if (requestResult.getState() == ERequestState.Error) {
 			System.err.println("Client error, errormessage: " + requestResult.getExceptionMessage());
-		}
-		else {
+		} else {
 			GameState currentServerGameState = requestResult.getData().get();
 		}
 	}
