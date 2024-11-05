@@ -5,11 +5,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import client.network.GameClientIdentifier;
+import client.network.GameClientRegistrar;
+import client.network.GameClientToken;
 import client.network.GameServerClient;
+import client.player.PlayerDetails;
 import messagesbase.ResponseEnvelope;
-import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.ERequestState;
-import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import reactor.core.publisher.Mono;
 
@@ -19,22 +21,19 @@ public class MainClient {
 	private static final String LAST_NAME = "Kral";
 	private static final String UACCOUNT = "krald88";
 
-    private static UniquePlayerIdentifier registerPlayer(GameServerClient serverClient, String gameId, PlayerRegistration playerReg) {
-        String path = String.format("/%s/players", gameId);
-
-        return serverClient.post(path, playerReg);
-    }
-
 	public static void main(String[] args) {
 		// parse these parameters in compliance to the automatic client evaluation
 		String serverBaseUrl = args[1];
 		String gameId = args[2];
 
 		GameServerClient serverClient = new GameServerClient(serverBaseUrl);
-		PlayerRegistration playerReg = new PlayerRegistration(FIRST_NAME, LAST_NAME, UACCOUNT);
-		UniquePlayerIdentifier uniqueID = registerPlayer(serverClient, gameId, playerReg);
 
-		System.out.println("My Player ID: " + uniqueID.getUniquePlayerID());
+		PlayerDetails playerDetails = new PlayerDetails(FIRST_NAME, LAST_NAME, UACCOUNT);
+		GameClientIdentifier identifier = new GameClientIdentifier(gameId, playerDetails);
+		GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
+		GameClientToken token = registrar.registerPlayer();
+
+		System.out.println("My Player ID: " + token.playerId());
 	}
 
 	public static void exampleForGetRequests() throws Exception {
