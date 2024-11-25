@@ -1,6 +1,7 @@
 package client.map;
 
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
+import messagesbase.messagesfromserver.FullMapNode;
 
 public class GameMapNode {
 
@@ -16,6 +17,23 @@ public class GameMapNode {
         this.treasureState = TreasureState.UNKNOWN_OR_NONE_PRESENT;
     }
 
+    public GameMapNode(Position position, TerrainType terrainType, FortState fortState,
+                       TreasureState treasureState) {
+        this.position = position;
+        this.terrainType = terrainType;
+        this.fortState = fortState;
+        this.treasureState = treasureState;
+    }
+
+    public static GameMapNode fromFullMapNode(FullMapNode fullMapNode) {
+        Position position = new Position(fullMapNode.getX(), fullMapNode.getY());
+        TerrainType terrainType = TerrainType.fromETerrain(fullMapNode.getTerrain());
+        FortState fortState = FortState.fromEFortState(fullMapNode.getFortState());
+        TreasureState treasureState = TreasureState.fromETreasureState(fullMapNode.getTreasureState());
+
+        return new GameMapNode(position, terrainType, fortState, treasureState);
+    }
+
     public PlayerHalfMapNode intoPlayerHalfMapNode() {
         return new PlayerHalfMapNode(position.x(),
                                      position.y(),
@@ -25,10 +43,6 @@ public class GameMapNode {
 
     public void placeFort() {
         fortState = FortState.PLAYER_FORT_PRESENT;
-    }
-
-    public void placeTreasure() {
-        treasureState = TreasureState.PLAYER_TREASURE_PRESENT;
     }
 
     public Position getPosition() {

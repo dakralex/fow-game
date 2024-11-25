@@ -7,6 +7,14 @@ public enum TerrainType {
     MOUNTAIN,
     WATER;
 
+    public static TerrainType fromETerrain(ETerrain terrain) {
+        return switch (terrain) {
+            case Grass -> GRASS;
+            case Mountain -> MOUNTAIN;
+            case Water -> WATER;
+        };
+    }
+
     public ETerrain intoETerrain() {
         return switch (this) {
             case GRASS -> ETerrain.Grass;
