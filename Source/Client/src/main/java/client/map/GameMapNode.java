@@ -17,11 +17,9 @@ public class GameMapNode {
     }
 
     public PlayerHalfMapNode intoPlayerHalfMapNode() {
-        boolean isFortPresent = fortState == FortState.PLAYER_FORT_PRESENT;
-
         return new PlayerHalfMapNode(position.x(),
                                      position.y(),
-                                     isFortPresent,
+                                     hasPlayerFort(),
                                      terrainType.intoETerrain());
     }
 
@@ -41,8 +39,12 @@ public class GameMapNode {
         return terrainType;
     }
 
-    public boolean hasFort() {
+    public boolean hasPlayerFort() {
         return fortState == FortState.PLAYER_FORT_PRESENT;
+    }
+
+    public boolean hasOpponentFort() {
+        return fortState == FortState.ENEMY_FORT_PRESENT;
     }
 
     public boolean hasTreasure() {
