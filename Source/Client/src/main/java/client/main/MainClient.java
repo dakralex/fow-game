@@ -1,19 +1,14 @@
 package client.main;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-
+import client.generation.MapGenerator;
+import client.map.GameMap;
 import client.network.GameClientIdentifier;
 import client.network.GameClientRegistrar;
 import client.network.GameClientToken;
+import client.network.GameMapSender;
 import client.network.GameServerClient;
+import client.network.GameStateUpdater;
 import client.player.PlayerDetails;
-import messagesbase.ResponseEnvelope;
-import messagesbase.messagesfromclient.ERequestState;
-import messagesbase.messagesfromserver.GameState;
-import reactor.core.publisher.Mono;
 
 public class MainClient {
 
@@ -33,27 +28,28 @@ public class MainClient {
 		GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
 		GameClientToken token = registrar.registerPlayer();
 
+        GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
+        GameClientState clientState = stateUpdater.pollGameState();
+
+        while (!clientState.hasBothPlayers() || !clientState.shouldClientAct()) {
+            System.out.println("Waiting...");
+
+            clientState = stateUpdater.pollGameState();
+
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+
+        // TODO: Implement an actual map generation algorithm, this will fail without that
+        GameMapSender mapSender = new GameMapSender(serverClient, token);
+        MapGenerator mapGenerator = new MapGenerator();
+        GameMap gameMap = mapGenerator.generateMap();
+        mapSender.sendMap(gameMap);
+
 		System.out.println("My Player ID: " + token.playerId());
-	}
-
-	public static void exampleForGetRequests() throws Exception {
-		String baseUrl = "UseValueFromARGS_1 FROM main";
-		String gameId = "UseValueFromARGS_2 FROM main";
-		String playerId = "From the client registration";
-
-		WebClient baseWebClient = WebClient.builder().baseUrl(baseUrl + "/games")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
-				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
-
-		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
-				.uri("/" + gameId + "/states/" + playerId).retrieve().bodyToMono(ResponseEnvelope.class);
-
-		ResponseEnvelope<GameState> requestResult = webAccess.block();
-
-		if (requestResult.getState() == ERequestState.Error) {
-			System.err.println("Client error, errormessage: " + requestResult.getExceptionMessage());
-		} else {
-			GameState currentServerGameState = requestResult.getData().get();
-		}
 	}
 }

@@ -35,4 +35,8 @@ public class Player {
 
         return new Player(playerId, details, state, position, hasTreasure);
     }
+
+    public boolean shouldPlayerAct() {
+        return state == PlayerGameState.MUST_ACT;
+    }
 }

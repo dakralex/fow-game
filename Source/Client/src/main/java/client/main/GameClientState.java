@@ -57,4 +57,12 @@ public class GameClientState {
 
         return new GameClientState(gameId, stateId, map, player, opponent);
     }
+
+    public boolean hasBothPlayers() {
+        return opponent.isPresent();
+    }
+
+    public boolean shouldClientAct() {
+        return player.shouldPlayerAct();
+    }
 }
