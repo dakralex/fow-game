@@ -76,8 +76,46 @@ public class GameServerClient {
         return response;
     }
 
+    /**
+     * Makes a blocking HTTP GET request to the given server's API endpoint {@code relativeUri} and
+     * returns  the server's response on success. This method will throw a
+     * {@code GameServerClientException}, if the server did not respond or responded with an error
+     * status code.
+     *
+     * @param relativeUri relative API endpoint URI
+     * @param <R>         the expected type of the API endpoint's response
+     * @return response envelope from the server
+     */
+    public <R> ResponseEnvelope<R> get(String relativeUri) {
+        Mono<ResponseEnvelope> request = webClient
+                .method(HttpMethod.GET)
+                .uri(relativeUri)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, this::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, this::handleServerError)
+                .bodyToMono(ResponseEnvelope.class);
+
+        ResponseEnvelope<R> response =
+                Objects.requireNonNull(request.block(),
+                                       "Client error: Response must not be empty.");
+
+        if (response.getState() == ERequestState.Error) {
+            String message = String.format("Client error: %s", response.getExceptionMessage());
+
+            throw new GameServerClientException(message);
+        }
+
+        return response;
+    }
+
     public <R, T> Optional<R> postAndGetData(String relativeUri, T data) {
         ResponseEnvelope<R> response = post(relativeUri, data);
+
+        return response.getData();
+    }
+
+    public <R> Optional<R> getAndGetData(String relativeUri) {
+        ResponseEnvelope<R> response = get(relativeUri);
 
         return response.getData();
     }
