@@ -1,24 +1,30 @@
 package client.map;
 
+import java.util.Objects;
+
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
 import messagesbase.messagesfromserver.FullMapNode;
 
-public class GameMapNode {
+public class GameMapNode implements Comparable<GameMapNode> {
 
     private final Position position;
     private final TerrainType terrainType;
-    private FortState fortState;
-    private TreasureState treasureState;
+    private FortState fortState = FortState.NO_FORT_PRESENT;
+    private TreasureState treasureState = TreasureState.UNKNOWN_OR_NONE_PRESENT;
 
     public GameMapNode(Position position, TerrainType terrainType) {
         this.position = position;
         this.terrainType = terrainType;
-        this.fortState = FortState.NO_FORT_PRESENT;
-        this.treasureState = TreasureState.UNKNOWN_OR_NONE_PRESENT;
     }
 
-    public GameMapNode(Position position, TerrainType terrainType, FortState fortState,
-                       TreasureState treasureState) {
+    public GameMapNode(Position position, TerrainType terrainType, FortState fortState) {
+        this.position = position;
+        this.terrainType = terrainType;
+        this.fortState = fortState;
+    }
+
+    private GameMapNode(Position position, TerrainType terrainType, FortState fortState,
+                        TreasureState treasureState) {
         this.position = position;
         this.terrainType = terrainType;
         this.fortState = fortState;

@@ -12,6 +12,10 @@ public record Position(int x, int y) implements Comparable<Position> {
         return new Position(fullMapNode.getX(), fullMapNode.getY());
     }
 
+    public Position stepInDirection(MapDirection direction) {
+        return new Position(this.x + direction.getX(), this.y + direction.getY());
+    }
+
     @Override
     public int compareTo(Position other) {
         if (this.y == other.y) {
