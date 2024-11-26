@@ -64,4 +64,30 @@ public class GameMapNode {
     public boolean hasTreasure() {
         return treasureState == TreasureState.PLAYER_TREASURE_PRESENT;
     }
+
+    @Override
+    public String toString() {
+        if (hasPlayerFort()) {
+            return "F";
+        }
+
+        return terrainType.toString();
+    }
+
+    @Override
+    public int compareTo(GameMapNode other) {
+        return this.position.compareTo(other.position);
+    }
+
+    @Override
+    public final boolean equals(Object other) {
+        if (!(other instanceof GameMapNode otherMapNode)) return false;
+
+        return Objects.equals(position, otherMapNode.position);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(position);
+    }
 }

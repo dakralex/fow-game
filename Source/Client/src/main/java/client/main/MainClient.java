@@ -48,6 +48,9 @@ public class MainClient {
         GameMapSender mapSender = new GameMapSender(serverClient, token);
         MapGenerator mapGenerator = new MapGenerator();
         GameMap gameMap = mapGenerator.generateMap();
+
+        System.out.println(gameMap);
+
         mapSender.sendMap(gameMap);
 
 		System.out.println("My Player ID: " + token.playerId());

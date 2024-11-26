@@ -1,6 +1,8 @@
 package client.map;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import messagesbase.messagesfromclient.PlayerHalfMap;
@@ -57,5 +59,30 @@ public class GameMap {
                 .collect(Collectors.toSet());
 
         return new PlayerHalfMap(playerId, halfMapNodes);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder("  | 0 1 2 3 4 5 6 7 8 9\n");
+
+        Map<Position, GameMapNode> viewNodes = nodes.stream()
+                .collect(Collectors.toUnmodifiableMap(GameMapNode::getPosition, Function.identity()));
+
+        for (int y = 0; y < 5; ++y) {
+            stringBuilder.append(String.format("%s | ", y));
+            for (int x = 0; x < 10; ++x) {
+                Position currentPosition = new Position(x, y);
+
+                if (!viewNodes.containsKey(currentPosition)) {
+                    stringBuilder.append("a ");
+                } else {
+                    GameMapNode currentMapNode = viewNodes.get(currentPosition);
+                    stringBuilder.append(String.format("%s ", currentMapNode));
+                }
+            }
+            stringBuilder.append("\n");
+        }
+
+        return stringBuilder.toString();
     }
 }

@@ -22,4 +22,13 @@ public enum TerrainType {
             case WATER -> ETerrain.Water;
         };
     }
+
+    @Override
+    public String toString() {
+        return switch (this) {
+            case GRASS -> "G";
+            case MOUNTAIN -> "M";
+            case WATER -> "W";
+        };
+    }
 }
