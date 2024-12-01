@@ -59,6 +59,10 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return terrainType;
     }
 
+    public boolean isAccessible() {
+        return terrainType == TerrainType.GRASS || terrainType == TerrainType.MOUNTAIN;
+    }
+
     public boolean hasPlayerFort() {
         return fortState == FortState.PLAYER_FORT_PRESENT;
     }

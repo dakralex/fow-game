@@ -9,6 +9,7 @@ import client.network.GameMapSender;
 import client.network.GameServerClient;
 import client.network.GameStateUpdater;
 import client.player.PlayerDetails;
+import client.validation.HalfMapValidator;
 
 public class MainClient {
 
@@ -47,7 +48,8 @@ public class MainClient {
         // TODO: Implement an actual map generation algorithm, this will fail without that
         GameMapSender mapSender = new GameMapSender(serverClient, token);
         MapGenerator mapGenerator = new MapGenerator();
-        GameMap gameMap = mapGenerator.generateMap();
+        HalfMapValidator mapValidator = new HalfMapValidator();
+        GameMap gameMap = mapGenerator.generateUntilValid(mapValidator);
 
         System.out.println(gameMap);
 

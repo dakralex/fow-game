@@ -8,6 +8,7 @@ import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
+import client.validation.HalfMapValidator;
 
 public class MapGenerator {
 
@@ -42,5 +43,15 @@ public class MapGenerator {
         mapNodes.putAll(fortGenerator.generateFortStructure(fortPosition, fortEntranceDirection));
 
         return new GameMap(mapNodes.values());
+    }
+
+    public GameMap generateUntilValid(HalfMapValidator validator) {
+        GameMap map = generateMap();
+
+        while (!validator.validate(map)) {
+            map = generateMap();
+        }
+
+        return map;
     }
 }
