@@ -22,10 +22,20 @@ public class MainClient {
     private static final String LAST_NAME = "Kral";
     private static final String UACCOUNT = "krald88";
 
+    private static GameMap generateGameMap() {
+        MapGenerator mapGenerator = new MapGenerator();
+        HalfMapValidator mapValidator = new HalfMapValidator();
+
+        return mapGenerator.generateUntilValid(mapValidator);
+    }
+
     public static void main(String[] args) {
         // parse these parameters in compliance to the automatic client evaluation
         String serverBaseUrl = args[1];
         String gameId = args[2];
+
+        GameMap gameMap = generateGameMap();
+        logger.info("Client generated the following player's half map\n{}", gameMap);
 
         GameServerClient serverClient = new GameServerClient(serverBaseUrl);
 
@@ -52,14 +62,7 @@ public class MainClient {
             }
         }
 
-        // TODO: Implement an actual map generation algorithm, this will fail without that
         GameMapSender mapSender = new GameMapSender(serverClient, token);
-        MapGenerator mapGenerator = new MapGenerator();
-        HalfMapValidator mapValidator = new HalfMapValidator();
-        GameMap gameMap = mapGenerator.generateUntilValid(mapValidator);
-
-        logger.info("Client generated the following player's half map\n{}", gameMap);
-
         mapSender.sendMap(gameMap);
     }
 }
