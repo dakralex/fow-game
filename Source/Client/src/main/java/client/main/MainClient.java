@@ -29,6 +29,14 @@ public class MainClient {
         return mapGenerator.generateUntilValid(mapValidator);
     }
 
+    private static GameClientToken registerPlayer(GameServerClient serverClient, String gameId) {
+        PlayerDetails playerDetails = new PlayerDetails(FIRST_NAME, LAST_NAME, UACCOUNT);
+        GameClientIdentifier identifier = new GameClientIdentifier(gameId, playerDetails);
+        GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
+
+        return registrar.registerPlayer();
+    }
+
     public static void main(String[] args) {
         // parse these parameters in compliance to the automatic client evaluation
         String serverBaseUrl = args[1];
@@ -39,11 +47,7 @@ public class MainClient {
 
         GameServerClient serverClient = new GameServerClient(serverBaseUrl);
 
-        PlayerDetails playerDetails = new PlayerDetails(FIRST_NAME, LAST_NAME, UACCOUNT);
-        GameClientIdentifier identifier = new GameClientIdentifier(gameId, playerDetails);
-        GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
-        GameClientToken token = registrar.registerPlayer();
-
+        GameClientToken token = registerPlayer(serverClient, gameId);
         logger.info("Client acquired Player ID {}", token.playerId());
 
         GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
