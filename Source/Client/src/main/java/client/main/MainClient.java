@@ -1,5 +1,8 @@
 package client.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import client.generation.MapGenerator;
 import client.map.GameMap;
 import client.network.GameClientIdentifier;
@@ -12,6 +15,8 @@ import client.player.PlayerDetails;
 import client.validation.HalfMapValidator;
 
 public class MainClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
 
     private static final String FIRST_NAME = "Daniel";
     private static final String LAST_NAME = "Kral";
@@ -29,11 +34,13 @@ public class MainClient {
         GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
         GameClientToken token = registrar.registerPlayer();
 
+        logger.info("Client acquired Player ID {}", token.playerId());
+
         GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
         GameClientState clientState = stateUpdater.pollGameState();
 
         while (!clientState.hasBothPlayers() || !clientState.shouldClientAct()) {
-            System.out.println("Waiting...");
+            logger.info("Wait for another client to join...");
 
             clientState = stateUpdater.pollGameState();
 
@@ -51,10 +58,8 @@ public class MainClient {
         HalfMapValidator mapValidator = new HalfMapValidator();
         GameMap gameMap = mapGenerator.generateUntilValid(mapValidator);
 
-        System.out.println(gameMap);
+        logger.info("Client generated the following player's half map\n{}", gameMap);
 
         mapSender.sendMap(gameMap);
-
-        System.out.println("My Player ID: " + token.playerId());
     }
 }
