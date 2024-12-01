@@ -55,10 +55,31 @@ public class HalfMapValidator {
         return accessibleMapNodeCount >= BORDER_ACCESSIBLE_MIN_AMOUNT;
     }
 
+    private boolean validateFortPlacement(GameMap map) {
+        List<GameMapNode> fortNodes = map.getMapNodes().stream()
+                .filter(GameMapNode::hasPlayerFort)
+                .toList();
+
+        if (fortNodes.size() != 1) {
+            return false;
+        }
+
+        GameMapNode fortMapNode = fortNodes.getFirst();
+
+        return !fortMapNode.hasOpponentFort()
+                && fortMapNode.getTerrainType() == TerrainType.GRASS;
+    }
+
+    private boolean validateTreasurePlacement(GameMap map) {
+        return map.getMapNodes().stream().noneMatch(GameMapNode::hasTreasure);
+    }
+
     public boolean validate(GameMap map) {
         return validateSize(map)
                 && validatePositions(map)
                 && validateTerrainDistribution(map)
-                && validateBorderAccessibility(map);
+                && validateBorderAccessibility(map)
+                && validateFortPlacement(map)
+                && validateTreasurePlacement(map);
     }
 }
