@@ -1,12 +1,15 @@
 package client.map;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
@@ -69,6 +72,23 @@ public class GameMap {
 
     public int getSize() {
         return nodes.size();
+    }
+
+    private GameMapNode getNodeAt(Position position) {
+        return nodes.get(position);
+    }
+
+    private Stream<GameMapNode> getNeighborsStream(Position position) {
+        return Arrays.stream(MapDirection.values())
+                .map(position::stepInDirection)
+                .map(this::getNodeAt)
+                .filter(Objects::nonNull);
+    }
+
+    public Set<GameMapNode> getReachableNeighbors(Position position) {
+        return getNeighborsStream(position)
+                .filter(GameMapNode::isAccessible)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public PlayerHalfMap intoPlayerHalfMap(String playerId) {

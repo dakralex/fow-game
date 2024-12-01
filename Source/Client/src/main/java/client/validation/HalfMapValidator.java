@@ -1,10 +1,14 @@
 package client.validation;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
+import client.map.Position;
 import client.map.PositionArea;
 import client.map.TerrainType;
 
@@ -74,12 +78,40 @@ public class HalfMapValidator {
         return map.getMapNodes().stream().noneMatch(GameMapNode::hasTreasure);
     }
 
+    private void floodFillMap(GameMap map, Position position, Set<Position> visitedNodes) {
+        visitedNodes.add(position);
+
+        map.getReachableNeighbors(position).stream()
+                .filter(mapNode -> !visitedNodes.contains(mapNode.getPosition()))
+                .forEach(mapNode -> floodFillMap(map, mapNode.getPosition(), visitedNodes));
+    }
+
+    private boolean validateTerrainReachability(GameMap map) {
+        Position fortPosition = map.getMapNodes().stream()
+                .filter(GameMapNode::hasPlayerFort)
+                .map(GameMapNode::getPosition)
+                .findFirst()
+                .orElse(Position.originPosition);
+
+        Set<Position> accessiblePositions = map.getMapNodes().stream()
+                .filter(GameMapNode::isAccessible)
+                .map(GameMapNode::getPosition)
+                .collect(Collectors.toSet());
+
+        Set<Position> visitedNodes = HashSet.newHashSet(accessiblePositions.size());
+
+        floodFillMap(map, fortPosition, visitedNodes);
+
+        return visitedNodes.containsAll(accessiblePositions);
+    }
+
     public boolean validate(GameMap map) {
         return validateSize(map)
                 && validatePositions(map)
                 && validateTerrainDistribution(map)
                 && validateBorderAccessibility(map)
                 && validateFortPlacement(map)
-                && validateTreasurePlacement(map);
+                && validateTreasurePlacement(map)
+                && validateTerrainReachability(map);
     }
 }
