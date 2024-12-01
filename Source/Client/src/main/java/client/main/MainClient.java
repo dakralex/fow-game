@@ -13,21 +13,21 @@ import client.validation.HalfMapValidator;
 
 public class MainClient {
 
-	private static final String FIRST_NAME = "Daniel";
-	private static final String LAST_NAME = "Kral";
-	private static final String UACCOUNT = "krald88";
+    private static final String FIRST_NAME = "Daniel";
+    private static final String LAST_NAME = "Kral";
+    private static final String UACCOUNT = "krald88";
 
-	public static void main(String[] args) {
-		// parse these parameters in compliance to the automatic client evaluation
-		String serverBaseUrl = args[1];
-		String gameId = args[2];
+    public static void main(String[] args) {
+        // parse these parameters in compliance to the automatic client evaluation
+        String serverBaseUrl = args[1];
+        String gameId = args[2];
 
-		GameServerClient serverClient = new GameServerClient(serverBaseUrl);
+        GameServerClient serverClient = new GameServerClient(serverBaseUrl);
 
-		PlayerDetails playerDetails = new PlayerDetails(FIRST_NAME, LAST_NAME, UACCOUNT);
-		GameClientIdentifier identifier = new GameClientIdentifier(gameId, playerDetails);
-		GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
-		GameClientToken token = registrar.registerPlayer();
+        PlayerDetails playerDetails = new PlayerDetails(FIRST_NAME, LAST_NAME, UACCOUNT);
+        GameClientIdentifier identifier = new GameClientIdentifier(gameId, playerDetails);
+        GameClientRegistrar registrar = new GameClientRegistrar(serverClient, identifier);
+        GameClientToken token = registrar.registerPlayer();
 
         GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
         GameClientState clientState = stateUpdater.pollGameState();
@@ -55,6 +55,6 @@ public class MainClient {
 
         mapSender.sendMap(gameMap);
 
-		System.out.println("My Player ID: " + token.playerId());
-	}
+        System.out.println("My Player ID: " + token.playerId());
+    }
 }
