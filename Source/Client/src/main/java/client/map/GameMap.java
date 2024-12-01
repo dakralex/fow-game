@@ -1,7 +1,10 @@
 package client.map;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -13,10 +16,13 @@ import messagesbase.messagesfromserver.FullMapNode;
 
 public class GameMap {
 
-    private final Collection<GameMapNode> nodes;
+    private final Map<Position, GameMapNode> nodes;
 
     public GameMap(Collection<GameMapNode> nodes) {
-        this.nodes = nodes;
+        this.nodes = HashMap.newHashMap(nodes.size());
+        this.nodes.putAll(nodes.stream()
+                                  .collect(Collectors.toMap(GameMapNode::getPosition,
+                                                            Function.identity())));
     }
 
     public static GameMap fromFullMap(FullMap fullMap) {
@@ -53,8 +59,20 @@ public class GameMap {
                 .orElse(Position.originPosition);
     }
 
+    public Set<Position> getPositions() {
+        return Collections.unmodifiableSet(nodes.keySet());
+    }
+
+    public Collection<GameMapNode> getMapNodes() {
+        return Collections.unmodifiableCollection(nodes.values());
+    }
+
+    public int getSize() {
+        return nodes.size();
+    }
+
     public PlayerHalfMap intoPlayerHalfMap(String playerId) {
-        Collection<PlayerHalfMapNode> halfMapNodes = nodes.stream()
+        Collection<PlayerHalfMapNode> halfMapNodes = nodes.values().stream()
                 .map(GameMapNode::intoPlayerHalfMapNode)
                 .collect(Collectors.toSet());
 
@@ -65,18 +83,15 @@ public class GameMap {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("  | 0 1 2 3 4 5 6 7 8 9\n");
 
-        Map<Position, GameMapNode> viewNodes = nodes.stream()
-                .collect(Collectors.toUnmodifiableMap(GameMapNode::getPosition, Function.identity()));
-
         for (int y = 0; y < 5; ++y) {
             stringBuilder.append(String.format("%s | ", y));
             for (int x = 0; x < 10; ++x) {
                 Position currentPosition = new Position(x, y);
 
-                if (!viewNodes.containsKey(currentPosition)) {
+                if (!nodes.containsKey(currentPosition)) {
                     stringBuilder.append("a ");
                 } else {
-                    GameMapNode currentMapNode = viewNodes.get(currentPosition);
+                    GameMapNode currentMapNode = nodes.get(currentPosition);
                     stringBuilder.append(String.format("%s ", currentMapNode));
                 }
             }
