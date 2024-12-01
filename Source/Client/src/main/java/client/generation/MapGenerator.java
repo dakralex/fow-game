@@ -1,5 +1,8 @@
 package client.generation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -11,6 +14,8 @@ import client.map.Position;
 import client.validation.HalfMapValidator;
 
 public class MapGenerator {
+
+    private static final Logger logger = LoggerFactory.getLogger(MapGenerator.class);
 
     private static final int X_SIZE = 10;
     private static final int Y_SIZE = 5;
@@ -46,11 +51,15 @@ public class MapGenerator {
     }
 
     public GameMap generateUntilValid(HalfMapValidator validator) {
+        int generateTries = 0;
         GameMap map = generateMap();
 
         while (!validator.validate(map)) {
             map = generateMap();
+            ++generateTries;
         }
+
+        logger.debug("It took {} tries to generate a valid GameMap instance.", generateTries);
 
         return map;
     }
