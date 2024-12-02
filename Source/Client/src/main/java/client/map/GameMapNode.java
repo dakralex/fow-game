@@ -47,10 +47,6 @@ public class GameMapNode implements Comparable<GameMapNode> {
                                      terrainType.intoETerrain());
     }
 
-    public void placeFort() {
-        fortState = FortState.PLAYER_FORT_PRESENT;
-    }
-
     public Position getPosition() {
         return position;
     }
