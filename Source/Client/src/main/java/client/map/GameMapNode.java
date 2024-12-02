@@ -47,6 +47,36 @@ public class GameMapNode implements Comparable<GameMapNode> {
                                      terrainType.intoETerrain());
     }
 
+    private void throwOnInvalidUpdatePosition(GameMapNode newGameMapNode) {
+        String errorMessage = String.format("GameMapNode at %s was updated with new one at %s.",
+                                            position,
+                                            newGameMapNode.position);
+
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    private void throwOnInvalidUpdateTerrain(GameMapNode newGameMapNode) {
+        String errorMessage = String.format("GameMapNode at %s changed terrain from %s to %s",
+                                            position,
+                                            terrainType,
+                                            newGameMapNode.terrainType);
+
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void update(GameMapNode newGameMapNode) {
+        if (!position.equals(newGameMapNode.position)) {
+            throwOnInvalidUpdatePosition(newGameMapNode);
+        }
+
+        if (!terrainType.equals(newGameMapNode.terrainType)) {
+            throwOnInvalidUpdateTerrain(newGameMapNode);
+        }
+
+        fortState = newGameMapNode.fortState;
+        treasureState = newGameMapNode.treasureState;
+    }
+
     public Position getPosition() {
         return position;
     }

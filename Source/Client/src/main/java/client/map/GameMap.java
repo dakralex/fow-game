@@ -62,6 +62,14 @@ public class GameMap {
                 .orElse(Position.originPosition);
     }
 
+    public void update(GameMap newMap) {
+        newMap.nodes.forEach((position, newMapNode) -> {
+            GameMapNode mapNode = nodes.getOrDefault(position, newMapNode);
+
+            mapNode.update(newMapNode);
+        });
+    }
+
     public Set<Position> getPositions() {
         return Collections.unmodifiableSet(nodes.keySet());
     }

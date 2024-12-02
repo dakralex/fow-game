@@ -58,6 +58,15 @@ public class GameClientState {
         return new GameClientState(gameId, stateId, map, player, opponent);
     }
 
+    public void update(GameClientState newState) {
+        // Return early, if the new state has not nothing changed
+        if (stateId.equals(newState.stateId)) {
+            return;
+        }
+
+        map.update(newState.map);
+    }
+
     public boolean hasBothPlayers() {
         return opponent.isPresent();
     }
