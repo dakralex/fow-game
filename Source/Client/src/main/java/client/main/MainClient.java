@@ -56,7 +56,7 @@ public class MainClient {
         while (!clientState.hasBothPlayers() || !clientState.shouldClientAct()) {
             logger.info("Wait for another client to join...");
 
-            clientState = stateUpdater.pollGameState();
+            clientState.update(stateUpdater.pollGameState());
 
             try {
                 Thread.sleep(400);
