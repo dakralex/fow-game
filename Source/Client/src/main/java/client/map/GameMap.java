@@ -1,5 +1,8 @@
 package client.map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,9 @@ import messagesbase.messagesfromserver.FullMap;
 import messagesbase.messagesfromserver.FullMapNode;
 
 public class GameMap {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(GameMap.class);
 
     private final Map<Position, GameMapNode> nodes;
 
@@ -64,6 +70,10 @@ public class GameMap {
 
     public void update(GameMap newMap) {
         newMap.nodes.forEach((position, newMapNode) -> {
+            if (!nodes.containsKey(position)) {
+                logger.debug("Update adds a new GameMapNode at {}", position);
+            }
+
             GameMapNode mapNode = nodes.getOrDefault(position, newMapNode);
 
             mapNode.update(newMapNode);
