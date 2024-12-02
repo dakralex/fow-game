@@ -15,7 +15,7 @@ public class GameClientState {
     private final String stateId;
     private final GameMap map;
     private final Player player;
-    private final Optional<Player> opponent;
+    private Optional<Player> opponent;
 
     public GameClientState(String gameId, String stateId, GameMap map,
                            Player player, Optional<Player> opponent) {
@@ -58,6 +58,14 @@ public class GameClientState {
         return new GameClientState(gameId, stateId, map, player, opponent);
     }
 
+    private void updateOpponent(Player newOpponent) {
+        if (opponent.isEmpty()) {
+            opponent = Optional.of(newOpponent);
+        } else {
+            opponent.get().update(newOpponent);
+        }
+    }
+
     public void update(GameClientState newState) {
         // Return early, if the new state has not nothing changed
         if (stateId.equals(newState.stateId)) {
@@ -65,6 +73,8 @@ public class GameClientState {
         }
 
         map.update(newState.map);
+        player.update(newState.player);
+        newState.opponent.ifPresent(this::updateOpponent);
     }
 
     public boolean hasBothPlayers() {

@@ -36,6 +36,24 @@ public class Player {
         return new Player(playerId, details, state, position, hasTreasure);
     }
 
+    private void throwOnInvalidUpdateId(Player newPlayer) {
+        String errorMessage = String.format("Player with id %s was updated with new one with id %s",
+                                            playerId,
+                                            newPlayer.playerId);
+
+        throw new IllegalArgumentException(errorMessage);
+    }
+
+    public void update(Player newPlayer) {
+        if (!playerId.equals(newPlayer.playerId)) {
+            throwOnInvalidUpdateId(newPlayer);
+        }
+
+        state = newPlayer.state;
+        position = newPlayer.position;
+        hasTreasure = newPlayer.hasTreasure;
+    }
+
     public boolean shouldPlayerAct() {
         return state == PlayerGameState.MUST_ACT;
     }
