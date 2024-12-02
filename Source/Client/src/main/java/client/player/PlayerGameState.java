@@ -8,7 +8,7 @@ public enum PlayerGameState {
     MUST_WAIT,
     WON;
 
-    public static PlayerGameState fromEYPlayerGameState(EPlayerGameState playerGameState) {
+    public static PlayerGameState fromEPlayerGameState(EPlayerGameState playerGameState) {
         return switch (playerGameState) {
             case Lost -> LOST;
             case MustAct -> MUST_ACT;

@@ -30,7 +30,7 @@ public class Player {
     public static Player fromPlayerState(PlayerState playerState, Position position) {
         String playerId = playerState.getUniquePlayerID();
         PlayerDetails details = PlayerDetails.fromPlayerState(playerState);
-        PlayerGameState state = PlayerGameState.fromEYPlayerGameState(playerState.getState());
+        PlayerGameState state = PlayerGameState.fromEPlayerGameState(playerState.getState());
         boolean hasTreasure = playerState.hasCollectedTreasure();
 
         return new Player(playerId, details, state, position, hasTreasure);
