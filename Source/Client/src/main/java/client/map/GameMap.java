@@ -20,7 +20,6 @@ import messagesbase.messagesfromserver.FullMap;
 
 public class GameMap {
 
-
     private static final Logger logger = LoggerFactory.getLogger(GameMap.class);
 
     private final Map<Position, GameMapNode> nodes;
@@ -38,6 +37,14 @@ public class GameMap {
                 .collect(Collectors.toSet());
 
         return new GameMap(fullMapNodes);
+    }
+
+    public PlayerHalfMap intoPlayerHalfMap(String playerId) {
+        Collection<PlayerHalfMapNode> halfMapNodes = nodes.values().stream()
+                .map(GameMapNode::intoPlayerHalfMapNode)
+                .collect(Collectors.toSet());
+
+        return new PlayerHalfMap(playerId, halfMapNodes);
     }
 
     public void update(GameMap newMap) {
@@ -79,14 +86,6 @@ public class GameMap {
         return getNeighborsStream(position)
                 .filter(GameMapNode::isAccessible)
                 .collect(Collectors.toUnmodifiableSet());
-    }
-
-    public PlayerHalfMap intoPlayerHalfMap(String playerId) {
-        Collection<PlayerHalfMapNode> halfMapNodes = nodes.values().stream()
-                .map(GameMapNode::intoPlayerHalfMapNode)
-                .collect(Collectors.toSet());
-
-        return new PlayerHalfMap(playerId, halfMapNodes);
     }
 
     @Override
