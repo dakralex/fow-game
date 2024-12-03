@@ -9,12 +9,12 @@ public enum MapDirection {
     SOUTH(0, 1),
     WEST(-1, 0);
 
-    private final int x;
-    private final int y;
+    private final int dx;
+    private final int dy;
 
-    MapDirection(int x, int y) {
-        this.x = x;
-        this.y = y;
+    MapDirection(int dx, int y) {
+        this.dx = dx;
+        this.dy = y;
     }
 
     public static MapDirection randomDirection(Random random) {
@@ -25,7 +25,7 @@ public enum MapDirection {
 
     public static MapDirection fromDifferentials(int dx, int dy) {
         return Arrays.stream(values())
-                .filter(direction -> direction.x == dx && direction.y == dy)
+                .filter(direction -> direction.dx == dx && direction.dy == dy)
                 .findFirst()
                 .orElseThrow(() -> {
                     String errorMessage = String.format("No direction found for (%d, %d)", dx, dy);
@@ -52,11 +52,11 @@ public enum MapDirection {
         };
     }
 
-    public int getX() {
-        return x;
+    public int getOffsetX() {
+        return dx;
     }
 
-    public int getY() {
-        return y;
+    public int getOffsetY() {
+        return dy;
     }
 }

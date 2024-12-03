@@ -13,7 +13,7 @@ public record Position(int x, int y) implements Comparable<Position> {
     }
 
     public Position stepInDirection(MapDirection direction) {
-        return new Position(this.x + direction.getX(), this.y + direction.getY());
+        return new Position(this.x + direction.getOffsetX(), this.y + direction.getOffsetY());
     }
 
     public MapDirection getDirection(Position other) {
