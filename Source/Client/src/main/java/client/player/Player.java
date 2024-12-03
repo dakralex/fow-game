@@ -1,9 +1,14 @@
 package client.player;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import client.map.Position;
 import messagesbase.messagesfromserver.PlayerState;
 
 public class Player {
+
+    private static final Logger logger = LoggerFactory.getLogger(Player.class);
 
     private final String playerId;
     private final PlayerDetails details;
@@ -44,17 +49,42 @@ public class Player {
         throw new IllegalArgumentException(errorMessage);
     }
 
+    private void logUpdateChanges(Player newPlayer) {
+        Position newPosition = newPlayer.position;
+
+        if (!position.equals(newPosition)) {
+            logger.info("Player {} has moved from {} to {}", getHandle(), position, newPosition);
+        }
+
+        if (hasTreasure != newPlayer.hasTreasure) {
+            logger.info("Player {} has found their treasure", getHandle());
+        }
+    }
+
     public void update(Player newPlayer) {
         if (!playerId.equals(newPlayer.playerId)) {
             throwOnInvalidUpdateId(newPlayer);
         }
+
+        logUpdateChanges(newPlayer);
 
         state = newPlayer.state;
         position = newPlayer.position;
         hasTreasure = newPlayer.hasTreasure;
     }
 
+    private String getHandle() {
+        int idHandleLength = Math.min(5, playerId.length());
+
+        return String.format("%s~%s", details.uaccount(), playerId.subSequence(0, idHandleLength));
+    }
+
     public boolean shouldPlayerAct() {
         return state == PlayerGameState.MUST_ACT;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s [%s]", details, playerId);
     }
 }

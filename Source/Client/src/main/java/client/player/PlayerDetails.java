@@ -22,4 +22,9 @@ public record PlayerDetails(String firstName, String lastName, String uaccount) 
     public PlayerRegistration intoPlayerRegistration() {
         return new PlayerRegistration(this.firstName, this.lastName, this.uaccount);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s (%s)", firstName, lastName, uaccount);
+    }
 }
