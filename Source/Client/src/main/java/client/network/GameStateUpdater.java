@@ -3,6 +3,8 @@ package client.network;
 import java.util.Optional;
 
 import client.main.GameClientState;
+import client.map.MapDirection;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromserver.GameState;
 
 public class GameStateUpdater {
@@ -29,5 +31,14 @@ public class GameStateUpdater {
         GameState gameState = response.orElseThrow(GameStateUpdater::throwOnEmptyStateResponse);
 
         return GameClientState.fromGameState(gameState, gameId, playerId);
+    }
+
+    public void sendMapMove(MapDirection direction) {
+        String gameId = token.gameId();
+        String playerId = token.playerId();
+        String apiUrl = String.format("/%s/moves", gameId);
+
+        PlayerMove playerMove = PlayerMove.of(playerId, direction.intoEMove());
+        serverClient.post(apiUrl, playerMove);
     }
 }

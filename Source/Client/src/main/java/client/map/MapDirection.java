@@ -3,6 +3,8 @@ package client.map;
 import java.util.Arrays;
 import java.util.Random;
 
+import messagesbase.messagesfromclient.EMove;
+
 public enum MapDirection {
     EAST(1, 0),
     NORTH(0, -1),
@@ -32,6 +34,15 @@ public enum MapDirection {
 
                     return new IllegalArgumentException(errorMessage);
                 });
+    }
+
+    public EMove intoEMove() {
+        return switch (this) {
+            case EAST -> EMove.Right;
+            case NORTH -> EMove.Up;
+            case SOUTH -> EMove.Down;
+            case WEST -> EMove.Left;
+        };
     }
 
     public MapDirection getOpposite() {
