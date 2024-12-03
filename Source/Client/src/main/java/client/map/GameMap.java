@@ -57,8 +57,6 @@ public class GameMap {
                 mapNode.update(newMapNode);
             } else {
                 nodes.put(position, newMapNode);
-
-                logger.debug("Update adds a new GameMapNode at {}", position);
             }
         });
     }
