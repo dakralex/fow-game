@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
 import messagesbase.messagesfromserver.FullMapNode;
+import client.util.ANSIColor;
 
 public class GameMapNode implements Comparable<GameMapNode> {
 
@@ -104,7 +105,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
     @Override
     public String toString() {
         if (hasPlayerFort()) {
-            return "F";
+            return ANSIColor.format("F", ANSIColor.BRIGHT_BLACK, ANSIColor.BRIGHT_RED);
         }
 
         return terrainType.toString();

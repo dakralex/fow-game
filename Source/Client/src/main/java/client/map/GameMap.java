@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
 import messagesbase.messagesfromserver.FullMap;
+import client.util.ANSIColor;
 
 public class GameMap {
 
@@ -91,11 +92,11 @@ public class GameMap {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("   |");
+        StringBuilder stringBuilder = new StringBuilder("   | ");
 
         PositionArea area = getArea();
         IntStream.range(0, area.width())
-                .forEach(index -> stringBuilder.append(String.format(" %d", index % 10)));
+                .forEach(index -> stringBuilder.append(String.format("%d", index % 10)));
 
         stringBuilder.append("\n");
 
@@ -105,10 +106,12 @@ public class GameMap {
                 Position currentPosition = new Position(x, y);
 
                 if (!nodes.containsKey(currentPosition)) {
-                    stringBuilder.append("a ");
+                    stringBuilder.append(ANSIColor.format("a",
+                                                          ANSIColor.BRIGHT_BLACK,
+                                                          ANSIColor.BRIGHT_BLACK));
                 } else {
                     GameMapNode currentMapNode = nodes.get(currentPosition);
-                    stringBuilder.append(String.format("%s ", currentMapNode));
+                    stringBuilder.append(String.format("%s", currentMapNode));
                 }
             }
             stringBuilder.append("\n");

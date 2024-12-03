@@ -1,6 +1,7 @@
 package client.map;
 
 import messagesbase.messagesfromclient.ETerrain;
+import client.util.ANSIColor;
 
 public enum TerrainType {
     GRASS,
@@ -26,9 +27,9 @@ public enum TerrainType {
     @Override
     public String toString() {
         return switch (this) {
-            case GRASS -> "G";
-            case MOUNTAIN -> "M";
-            case WATER -> "W";
+            case GRASS -> ANSIColor.format("G", ANSIColor.BRIGHT_BLACK, ANSIColor.GREEN);
+            case MOUNTAIN -> ANSIColor.format("M", ANSIColor.WHITE, ANSIColor.BRIGHT_BLACK);
+            case WATER -> ANSIColor.format("W", ANSIColor.BRIGHT_BLACK, ANSIColor.BLUE);
         };
     }
 }
