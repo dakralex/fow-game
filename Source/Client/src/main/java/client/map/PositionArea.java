@@ -8,7 +8,7 @@ public record PositionArea(int x, int y, int width, int height) {
         return posX >= x && posX < (x + width) && posY >= y && posY < (y + height);
     }
 
-    public boolean isOnBorder(Position position) {
+    private boolean isOnBorder(Position position) {
         int posX = position.x();
         int posY = position.y();
 
