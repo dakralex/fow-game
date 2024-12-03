@@ -29,7 +29,7 @@ public class GameClientState {
         this.opponent = opponent;
     }
 
-    public static PlayerState pickOwnPlayer(Set<PlayerState> players, String playerId) {
+    private static PlayerState pickOwnPlayer(Set<PlayerState> players, String playerId) {
         return players.stream()
                 .filter(playerState -> playerState.getUniquePlayerID().equals(playerId))
                 .findFirst()
@@ -37,7 +37,7 @@ public class GameClientState {
                         "Failed to get player information: Player not found."));
     }
 
-    public static Optional<PlayerState> pickOtherPlayer(Set<PlayerState> players,
+    private static Optional<PlayerState> pickOtherPlayer(Set<PlayerState> players,
                                                         PlayerState player) {
         return players.stream()
                 .filter(playerState -> !playerState.equals(player))
