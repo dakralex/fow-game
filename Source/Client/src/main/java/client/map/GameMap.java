@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import messagesbase.messagesfromclient.PlayerHalfMap;
@@ -90,11 +91,17 @@ public class GameMap {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder("  | 0 1 2 3 4 5 6 7 8 9\n");
+        StringBuilder stringBuilder = new StringBuilder("   |");
 
-        for (int y = 0; y < 5; ++y) {
-            stringBuilder.append(String.format("%s | ", y));
-            for (int x = 0; x < 10; ++x) {
+        PositionArea area = getArea();
+        IntStream.range(0, area.width())
+                .forEach(index -> stringBuilder.append(String.format(" %d", index % 10)));
+
+        stringBuilder.append("\n");
+
+        for (int y = 0; y < area.height(); ++y) {
+            stringBuilder.append(String.format("%2d | ", y));
+            for (int x = 0; x < area.width(); ++x) {
                 Position currentPosition = new Position(x, y);
 
                 if (!nodes.containsKey(currentPosition)) {
