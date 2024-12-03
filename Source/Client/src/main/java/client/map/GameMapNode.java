@@ -105,7 +105,15 @@ public class GameMapNode implements Comparable<GameMapNode> {
     @Override
     public String toString() {
         if (hasPlayerFort()) {
+            return ANSIColor.format("F", ANSIColor.BRIGHT_BLACK, ANSIColor.RED);
+        }
+
+        if (hasOpponentFort()) {
             return ANSIColor.format("F", ANSIColor.BRIGHT_BLACK, ANSIColor.BRIGHT_RED);
+        }
+
+        if (hasTreasure()) {
+            return ANSIColor.format("T", ANSIColor.BRIGHT_BLACK, ANSIColor.BRIGHT_MAGENTA);
         }
 
         return terrainType.toString();
