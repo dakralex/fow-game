@@ -4,9 +4,17 @@ import messagesbase.messagesfromclient.ETerrain;
 import client.util.ANSIColor;
 
 public enum TerrainType {
-    GRASS,
-    MOUNTAIN,
-    WATER;
+    GRASS(1, 1),
+    MOUNTAIN(2, 2),
+    WATER(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+    private final int enterCost;
+    private final int leaveCost;
+
+    TerrainType(int enterCost, int leaveCost) {
+        this.enterCost = enterCost;
+        this.leaveCost = leaveCost;
+    }
 
     public static TerrainType fromETerrain(ETerrain terrain) {
         return switch (terrain) {
@@ -22,6 +30,14 @@ public enum TerrainType {
             case MOUNTAIN -> ETerrain.Mountain;
             case WATER -> ETerrain.Water;
         };
+    }
+
+    public int getEnterCost() {
+        return enterCost;
+    }
+
+    public int getLeaveCost() {
+        return leaveCost;
     }
 
     @Override

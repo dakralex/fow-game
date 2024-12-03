@@ -73,7 +73,7 @@ public class GameMap {
         return nodes.size();
     }
 
-    private GameMapNode getNodeAt(Position position) {
+    public GameMapNode getNodeAt(Position position) {
         return nodes.get(position);
     }
 

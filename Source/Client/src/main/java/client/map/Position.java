@@ -16,6 +16,10 @@ public record Position(int x, int y) implements Comparable<Position> {
         return new Position(this.x + direction.getX(), this.y + direction.getY());
     }
 
+    public MapDirection getDirection(Position other) {
+        return MapDirection.fromDifferentials(other.x - x, other.y - y);
+    }
+
     @Override
     public int compareTo(Position other) {
         if (this.y == other.y) {

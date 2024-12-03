@@ -1,5 +1,6 @@
 package client.map;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public enum MapDirection {
@@ -20,6 +21,17 @@ public enum MapDirection {
         int randomValue = random.nextInt(0, values().length - 1);
 
         return values()[randomValue];
+    }
+
+    public static MapDirection fromDifferentials(int dx, int dy) {
+        return Arrays.stream(values())
+                .filter(direction -> direction.x == dx && direction.y == dy)
+                .findFirst()
+                .orElseThrow(() -> {
+                    String errorMessage = String.format("No direction found for (%d, %d)", dx, dy);
+
+                    return new IllegalArgumentException(errorMessage);
+                });
     }
 
     public MapDirection getOpposite() {
