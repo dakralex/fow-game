@@ -6,6 +6,9 @@ import java.util.Set;
 import client.map.GameMap;
 import client.map.Position;
 import client.player.Player;
+import messagesbase.messagesfromserver.EPlayerPositionState;
+import messagesbase.messagesfromserver.FullMap;
+import messagesbase.messagesfromserver.FullMapNode;
 import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
 
@@ -41,16 +44,42 @@ public class GameClientState {
                 .findFirst();
     }
 
+    private static boolean isPlayerOnFullMapNode(FullMapNode fullMapNode) {
+        return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
+                fullMapNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition;
+    }
+
+    private static Position getPlayerPosition(FullMap fullMap) {
+        return fullMap.getMapNodes().stream()
+                .filter(GameClientState::isPlayerOnFullMapNode)
+                .findFirst()
+                .map(Position::fromFullMapNode)
+                .orElse(Position.originPosition);
+    }
+
+    private static boolean isOpponentOnFullMapNode(FullMapNode fullMapNode) {
+        return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
+                fullMapNode.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition;
+    }
+
+    private static Position getOpponentPosition(FullMap fullMap) {
+        return fullMap.getMapNodes().stream()
+                .filter(GameClientState::isOpponentOnFullMapNode)
+                .findFirst()
+                .map(Position::fromFullMapNode)
+                .orElse(Position.originPosition);
+    }
+
     public static GameClientState fromGameState(GameState gameState, String gameId,
                                                 String playerId) {
         String stateId = gameState.getGameStateId();
         GameMap map = GameMap.fromFullMap(gameState.getMap());
 
-        Position playerPosition = GameMap.getPlayerPosition(gameState.getMap());
+        Position playerPosition = getPlayerPosition(gameState.getMap());
         PlayerState playerState = pickOwnPlayer(gameState.getPlayers(), playerId);
         Player player = Player.fromPlayerState(playerState, playerPosition);
 
-        Position opponentPosition = GameMap.getOpponentPosition(gameState.getMap());
+        Position opponentPosition = getOpponentPosition(gameState.getMap());
         Optional<PlayerState> opponentState = pickOtherPlayer(gameState.getPlayers(), playerState);
         Optional<Player> opponent = opponentState
                 .map(state -> Player.fromPlayerState(state, opponentPosition));

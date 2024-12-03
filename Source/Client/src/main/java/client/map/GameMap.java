@@ -16,9 +16,7 @@ import java.util.stream.Stream;
 
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
-import messagesbase.messagesfromserver.EPlayerPositionState;
 import messagesbase.messagesfromserver.FullMap;
-import messagesbase.messagesfromserver.FullMapNode;
 
 public class GameMap {
 
@@ -40,32 +38,6 @@ public class GameMap {
                 .collect(Collectors.toSet());
 
         return new GameMap(fullMapNodes);
-    }
-
-    private static boolean isPlayerOnFullMapNode(FullMapNode fullMapNode) {
-        return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
-                fullMapNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition;
-    }
-
-    public static Position getPlayerPosition(FullMap fullMap) {
-        return fullMap.getMapNodes().stream()
-                .filter(GameMap::isPlayerOnFullMapNode)
-                .findFirst()
-                .map(Position::fromFullMapNode)
-                .orElse(Position.originPosition);
-    }
-
-    private static boolean isOpponentOnFullMapNode(FullMapNode fullMapNode) {
-        return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
-                fullMapNode.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition;
-    }
-
-    public static Position getOpponentPosition(FullMap fullMap) {
-        return fullMap.getMapNodes().stream()
-                .filter(GameMap::isOpponentOnFullMapNode)
-                .findFirst()
-                .map(Position::fromFullMapNode)
-                .orElse(Position.originPosition);
     }
 
     public void update(GameMap newMap) {
