@@ -51,13 +51,15 @@ public class GameMap {
 
     public void update(GameMap newMap) {
         newMap.nodes.forEach((position, newMapNode) -> {
-            if (!nodes.containsKey(position)) {
+            if (nodes.containsKey(position)) {
+                GameMapNode mapNode = nodes.get(position);
+
+                mapNode.update(newMapNode);
+            } else {
+                nodes.put(position, newMapNode);
+
                 logger.debug("Update adds a new GameMapNode at {}", position);
             }
-
-            GameMapNode mapNode = nodes.getOrDefault(position, newMapNode);
-
-            mapNode.update(newMapNode);
         });
     }
 
