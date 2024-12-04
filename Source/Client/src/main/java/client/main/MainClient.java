@@ -22,6 +22,8 @@ public class MainClient {
     private static final String LAST_NAME = "Kral";
     private static final String UACCOUNT = "krald88";
 
+    private static final int SERVER_WAIT_TIME_MS = 400;
+
     private static GameMap generateGameMap() {
         MapGenerator mapGenerator = new MapGenerator();
         HalfMapValidator mapValidator = new HalfMapValidator();
@@ -37,6 +39,15 @@ public class MainClient {
         return registrar.registerPlayer();
     }
 
+    private static void suspendForServer(String reason) {
+        try {
+            Thread.sleep(SERVER_WAIT_TIME_MS);
+        } catch (InterruptedException e) {
+            logger.warn("Unexpected interrupt while {}", reason, e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
     private static GameClientState sendMap(GameServerClient serverClient, GameClientToken token,
                                            GameStateUpdater stateUpdater, GameMap gameMap) {
         GameClientState clientState = stateUpdater.pollGameState();
@@ -46,12 +57,7 @@ public class MainClient {
 
             clientState.update(stateUpdater.pollGameState());
 
-            try {
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                logger.warn("Unexpected interrupt while waiting on other client to join", e);
-                Thread.currentThread().interrupt();
-            }
+            suspendForServer("waiting on other client to join");
         }
 
         GameMapSender mapSender = new GameMapSender(serverClient, token);
@@ -64,12 +70,7 @@ public class MainClient {
 
             clientState.update(stateUpdater.pollGameState());
 
-            try {
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                logger.warn("Unexpected interrupt while waiting on the full map", e);
-                Thread.currentThread().interrupt();
-            }
+            suspendForServer("waiting on the full map");
         }
 
         return clientState;
