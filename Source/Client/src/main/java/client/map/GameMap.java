@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,15 +73,16 @@ public class GameMap {
         return nodes.size();
     }
 
-    public GameMapNode getNodeAt(Position position) {
-        return nodes.get(position);
+    public Optional<GameMapNode> getNodeAt(Position position) {
+        return Optional.ofNullable(nodes.get(position));
     }
 
     private Stream<GameMapNode> getNeighborsStream(Position position) {
         return Arrays.stream(MapDirection.values())
                 .map(position::stepInDirection)
                 .map(this::getNodeAt)
-                .filter(Objects::nonNull);
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     public Set<GameMapNode> getReachableNeighbors(Position position) {

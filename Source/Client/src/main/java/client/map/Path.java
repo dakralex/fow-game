@@ -3,6 +3,7 @@ package client.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -16,7 +17,11 @@ public class Path {
     }
 
     private static List<GameMapNode> mapVerticesToNodes(GameMap map, List<Position> vertices) {
-        return vertices.stream().map(map::getNodeAt).toList();
+        return vertices.stream()
+                .map(map::getNodeAt)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     private static IntFunction<Step> getNodesToEdgesMapper(List<GameMapNode> nodeVertices) {
