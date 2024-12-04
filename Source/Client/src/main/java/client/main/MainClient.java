@@ -57,6 +57,21 @@ public class MainClient {
         GameMapSender mapSender = new GameMapSender(serverClient, token);
         mapSender.sendMap(gameMap);
 
+        clientState.update(stateUpdater.pollGameState());
+
+        while (!clientState.hasFullMap()) {
+            logger.info("Wait for other client to send their half map...");
+
+            clientState.update(stateUpdater.pollGameState());
+
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                logger.warn("Unexpected interrupt while waiting on the full map", e);
+                Thread.currentThread().interrupt();
+            }
+        }
+
         return clientState;
     }
 
