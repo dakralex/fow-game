@@ -3,6 +3,8 @@ package client.main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Predicate;
+
 import client.generation.MapGenerator;
 import client.map.GameMap;
 import client.network.GameClientIdentifier;
@@ -48,30 +50,31 @@ public class MainClient {
         }
     }
 
+    private static void waitOn(String reason, Predicate<GameClientState> condition,
+                               GameStateUpdater stateUpdater, GameClientState clientState) {
+        while (!condition.test(clientState)) {
+            logger.info("{}...", reason);
+
+            clientState.update(stateUpdater.pollGameState());
+
+            suspendForServer(reason.toLowerCase());
+        }
+    }
+
     private static GameClientState sendMap(GameServerClient serverClient, GameClientToken token,
                                            GameStateUpdater stateUpdater, GameMap gameMap) {
         GameClientState clientState = stateUpdater.pollGameState();
 
-        while (!clientState.hasBothPlayers() || !clientState.shouldClientAct()) {
-            logger.info("Wait for another client to join...");
-
-            clientState.update(stateUpdater.pollGameState());
-
-            suspendForServer("waiting on other client to join");
-        }
+        waitOn("Wait for another client to join",
+               state -> state.hasBothPlayers() && state.shouldClientAct(),
+               stateUpdater, clientState);
 
         GameMapSender mapSender = new GameMapSender(serverClient, token);
         mapSender.sendMap(gameMap);
 
         clientState.update(stateUpdater.pollGameState());
 
-        while (!clientState.hasFullMap()) {
-            logger.info("Wait for other client to send their half map...");
-
-            clientState.update(stateUpdater.pollGameState());
-
-            suspendForServer("waiting on the full map");
-        }
+        waitOn("Wait for the full map", GameClientState::hasFullMap, stateUpdater, clientState);
 
         return clientState;
     }
