@@ -1,5 +1,8 @@
 package client.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +16,8 @@ import messagesbase.messagesfromserver.GameState;
 import messagesbase.messagesfromserver.PlayerState;
 
 public class GameClientState {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameClientState.class);
 
     private final String gameId;
     private final String stateId;
@@ -90,6 +95,8 @@ public class GameClientState {
     private void updateOpponent(Player newOpponent) {
         if (opponent.isEmpty()) {
             opponent = Optional.of(newOpponent);
+
+            logger.info("Player {} joined the game", newOpponent);
         } else {
             opponent.get().update(newOpponent);
         }
