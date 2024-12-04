@@ -61,8 +61,8 @@ public class MainClient {
             try {
                 Thread.sleep(400);
             } catch (InterruptedException e) {
+                logger.warn("Unexpected interrupt while waiting on other client to join", e);
                 Thread.currentThread().interrupt();
-                return;
             }
         }
 
