@@ -37,20 +37,8 @@ public class MainClient {
         return registrar.registerPlayer();
     }
 
-    public static void main(String[] args) {
-        // parse these parameters in compliance to the automatic client evaluation
-        String serverBaseUrl = args[1];
-        String gameId = args[2];
-
-        GameMap gameMap = generateGameMap();
-        logger.info("Client generated the following player's half map\n{}", gameMap);
-
-        GameServerClient serverClient = new GameServerClient(serverBaseUrl);
-
-        GameClientToken token = registerPlayer(serverClient, gameId);
-        logger.info("Client acquired Player ID {}", token.playerId());
-
-        GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
+    private static GameClientState sendMap(GameServerClient serverClient, GameClientToken token,
+                                           GameStateUpdater stateUpdater, GameMap gameMap) {
         GameClientState clientState = stateUpdater.pollGameState();
 
         while (!clientState.hasBothPlayers() || !clientState.shouldClientAct()) {
@@ -68,5 +56,24 @@ public class MainClient {
 
         GameMapSender mapSender = new GameMapSender(serverClient, token);
         mapSender.sendMap(gameMap);
+
+        return clientState;
+    }
+
+    public static void main(String[] args) {
+        // parse these parameters in compliance to the automatic client evaluation
+        String serverBaseUrl = args[1];
+        String gameId = args[2];
+
+        GameMap gameMap = generateGameMap();
+        logger.info("Client generated the following player's half map\n{}", gameMap);
+
+        GameServerClient serverClient = new GameServerClient(serverBaseUrl);
+
+        GameClientToken token = registerPlayer(serverClient, gameId);
+        logger.info("Client acquired Player ID {}", token.playerId());
+
+        GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
+        sendMap(serverClient, token, stateUpdater, gameMap);
     }
 }
