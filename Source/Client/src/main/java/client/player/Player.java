@@ -4,11 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import client.map.Position;
+import client.util.ANSIColor;
 import messagesbase.messagesfromserver.PlayerState;
 
 public class Player {
 
     private static final Logger logger = LoggerFactory.getLogger(Player.class);
+
+    private static final String TREASURE_STRING =
+            ANSIColor.format("treasure", ANSIColor.BLACK, ANSIColor.BRIGHT_YELLOW);
 
     private final String playerId;
     private final PlayerDetails details;
@@ -57,7 +61,7 @@ public class Player {
         }
 
         if (hasTreasure != newPlayer.hasTreasure) {
-            logger.info("Player {} has found their treasure", getHandle());
+            logger.info("Player {} has collected their {}", getHandle(), TREASURE_STRING);
         }
     }
 
