@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -22,15 +23,16 @@ import client.util.ANSIColor;
 
 public class GameMap {
 
+    public static final Collector<GameMapNode, ?, Map<Position, GameMapNode>> mapCollector =
+            Collectors.toMap(GameMapNode::getPosition, Function.identity());
+
     private static final Logger logger = LoggerFactory.getLogger(GameMap.class);
 
     private final Map<Position, GameMapNode> nodes;
 
     public GameMap(Collection<GameMapNode> nodes) {
         this.nodes = HashMap.newHashMap(nodes.size());
-        this.nodes.putAll(nodes.stream()
-                                  .collect(Collectors.toMap(GameMapNode::getPosition,
-                                                            Function.identity())));
+        this.nodes.putAll(nodes.stream().collect(mapCollector));
     }
 
     public static GameMap fromFullMap(FullMap fullMap) {

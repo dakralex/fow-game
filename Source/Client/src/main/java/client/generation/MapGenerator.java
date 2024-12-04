@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -90,7 +89,7 @@ public class MapGenerator {
 
         Map<Position, GameMapNode> randomMapNodes = positionQueue.stream()
                 .map(position -> new GameMapNode(position, terrainTypeQueue.removeLast()))
-                .collect(Collectors.toMap(GameMapNode::getPosition, Function.identity()));
+                .collect(GameMap.mapCollector);
 
         mapNodes.putAll(randomMapNodes);
 
