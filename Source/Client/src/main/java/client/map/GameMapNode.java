@@ -65,7 +65,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
         throw new IllegalArgumentException(errorMessage);
     }
 
-    public void update(GameMapNode newGameMapNode) {
+    public void update(GameMapNode newGameMapNode, boolean isNodeInSight) {
         if (!position.equals(newGameMapNode.position)) {
             throwOnInvalidUpdatePosition(newGameMapNode);
         }
@@ -76,6 +76,17 @@ public class GameMapNode implements Comparable<GameMapNode> {
 
         fortState = newGameMapNode.fortState;
         treasureState = newGameMapNode.treasureState;
+    }
+
+    public void resetVisibility() {
+        // TODO: Find a better way to initially set all map nodes to unknown
+        if (fortState == FortState.NO_FORT_PRESENT) {
+            fortState = FortState.UNKNOWN;
+        }
+
+        if (treasureState == TreasureState.NO_TREASURE_PRESENT) {
+            treasureState = TreasureState.UNKNOWN;
+        }
     }
 
     public Position getPosition() {

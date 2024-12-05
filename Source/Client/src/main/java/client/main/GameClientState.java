@@ -108,9 +108,9 @@ public class GameClientState {
             return;
         }
 
-        map.update(newState.map);
         player.update(newState.player);
         newState.opponent.ifPresent(this::updateOpponent);
+        map.update(newState.map, player.getPosition());
     }
 
     public boolean hasBothPlayers() {

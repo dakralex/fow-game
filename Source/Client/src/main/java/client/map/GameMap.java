@@ -51,13 +51,18 @@ public class GameMap {
         return new PlayerHalfMap(playerId, halfMapNodes);
     }
 
-    public void update(GameMap newMap) {
+    public void update(GameMap newMap, Position viewpointPosition) {
+        Collection<Position> visiblePositions = getPositionsInSight(viewpointPosition);
+
         newMap.nodes.forEach((position, newMapNode) -> {
             if (nodes.containsKey(position)) {
                 GameMapNode mapNode = nodes.get(position);
+                boolean isNodeInSight = visiblePositions.contains(position);
 
-                mapNode.update(newMapNode);
+                mapNode.update(newMapNode, isNodeInSight);
             } else {
+                // TODO: Find a better way to initially set all map nodes to unknown
+                newMapNode.resetVisibility();
                 nodes.put(position, newMapNode);
             }
         });
@@ -65,6 +70,25 @@ public class GameMap {
 
     public Set<Position> getPositions() {
         return Collections.unmodifiableSet(nodes.keySet());
+    }
+
+    private Collection<Position> getPositions(Predicate<Position> predicate) {
+        return getPositions().stream().filter(predicate).toList();
+    }
+
+    private Collection<Position> getPositionsInSight(Position cameraPosition) {
+        int cameraViewRadius = getNodeAt(cameraPosition)
+                .map(GameMapNode::getTerrainType)
+                .map(TerrainType::getViewRadius)
+                .orElse(-1);
+
+        Collection<Position> visiblePositions = getPositions(position -> {
+            int distance = cameraPosition.chebyshevDistanceTo(position);
+
+            return distance <= cameraViewRadius;
+        });
+
+        return new ArrayList<>(visiblePositions);
     }
 
     public Collection<GameMapNode> getMapNodes() {

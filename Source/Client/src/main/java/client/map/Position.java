@@ -20,6 +20,10 @@ public record Position(int x, int y) implements Comparable<Position> {
         return MapDirection.fromDifferentials(other.x - x, other.y - y);
     }
 
+    public int chebyshevDistanceTo(Position other) {
+        return Math.max(Math.abs(x - other.x), Math.abs(y - other.y));
+    }
+
     @Override
     public int compareTo(Position other) {
         if (this.y == other.y) {
