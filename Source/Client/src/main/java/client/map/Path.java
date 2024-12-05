@@ -56,4 +56,9 @@ public class Path {
 
         return new ArrayList<>(steps.stream().mapMulti(Path::expandStepsToDirections).toList());
     }
+
+    @Override
+    public String toString() {
+        return vertices.toString();
+    }
 }
