@@ -15,4 +15,14 @@ public enum FortState {
             case EnemyFortPresent -> ENEMY_FORT_PRESENT;
         };
     }
+
+    @Override
+    public String toString() {
+        return switch (this) {
+            case UNKNOWN -> "?";
+            case NO_FORT_PRESENT -> "_";
+            case PLAYER_FORT_PRESENT -> "P";
+            case ENEMY_FORT_PRESENT -> "E";
+        };
+    }
 }
