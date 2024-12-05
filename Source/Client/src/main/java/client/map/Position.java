@@ -24,6 +24,10 @@ public record Position(int x, int y) implements Comparable<Position> {
         return Math.max(Math.abs(x - other.x), Math.abs(y - other.y));
     }
 
+    public int taxicabDistanceTo(Position other) {
+        return Math.abs(x - other.x) + Math.abs(y - other.y);
+    }
+
     @Override
     public int compareTo(Position other) {
         if (this.y == other.y) {

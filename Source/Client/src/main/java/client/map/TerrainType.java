@@ -18,6 +18,10 @@ public enum TerrainType {
         this.viewRadius = viewRadius;
     }
 
+    public static int computeTravelCost(TerrainType from, TerrainType to) {
+        return from.leaveCost + to.enterCost;
+    }
+
     public static TerrainType fromETerrain(ETerrain terrain) {
         return switch (terrain) {
             case Grass -> GRASS;

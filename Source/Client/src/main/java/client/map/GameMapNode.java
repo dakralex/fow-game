@@ -125,6 +125,10 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return terrainType == TerrainType.GRASS || terrainType == TerrainType.MOUNTAIN;
     }
 
+    public boolean isUnvisited() {
+        return fortState == FortState.UNKNOWN;
+    }
+
     public boolean hasPlayerFort() {
         return fortState == FortState.PLAYER_FORT_PRESENT;
     }
