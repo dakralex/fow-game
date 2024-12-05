@@ -11,7 +11,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
     private final Position position;
     private final TerrainType terrainType;
     private FortState fortState = FortState.NO_FORT_PRESENT;
-    private TreasureState treasureState = TreasureState.UNKNOWN_OR_NONE_PRESENT;
+    private TreasureState treasureState = TreasureState.UNKNOWN;
 
     public GameMapNode(Position position, TerrainType terrainType) {
         this.position = position;
@@ -65,6 +65,18 @@ public class GameMapNode implements Comparable<GameMapNode> {
         throw new IllegalArgumentException(errorMessage);
     }
 
+    private void updateTreasureState(TreasureState newTreasureState, boolean isNodeInSight) {
+        // Once the treasure state is known, it will be the same
+        if (treasureState != TreasureState.UNKNOWN) {
+            return;
+        }
+
+        // We can only trust treasure state changes, when the node is in sight
+        if (isNodeInSight && treasureState != newTreasureState) {
+            treasureState = newTreasureState;
+        }
+    }
+
     public void update(GameMapNode newGameMapNode, boolean isNodeInSight) {
         if (!position.equals(newGameMapNode.position)) {
             throwOnInvalidUpdatePosition(newGameMapNode);
@@ -75,7 +87,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
         }
 
         fortState = newGameMapNode.fortState;
-        treasureState = newGameMapNode.treasureState;
+        updateTreasureState(newGameMapNode.treasureState, isNodeInSight);
     }
 
     public void resetVisibility() {
