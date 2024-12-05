@@ -83,8 +83,24 @@ public class Player {
         return String.format("%s~%s", details.uaccount(), playerId.subSequence(0, idHandleLength));
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
     public boolean shouldPlayerAct() {
         return state == PlayerGameState.MUST_ACT;
+    }
+
+    public boolean hasWon() {
+        return state == PlayerGameState.WON;
+    }
+
+    public boolean hasLost() {
+        return state == PlayerGameState.LOST;
+    }
+
+    public boolean hasTreasure() {
+        return hasTreasure;
     }
 
     @Override

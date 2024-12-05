@@ -125,6 +125,10 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return terrainType == TerrainType.GRASS || terrainType == TerrainType.MOUNTAIN;
     }
 
+    public boolean isLootable() {
+        return terrainType == TerrainType.GRASS;
+    }
+
     public boolean isUnvisited() {
         return fortState == FortState.UNKNOWN;
     }

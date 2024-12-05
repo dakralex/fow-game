@@ -3,10 +3,12 @@ package client.main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
 import client.map.GameMap;
+import client.map.GameMapNode;
 import client.map.Position;
 import client.player.Player;
 import messagesbase.messagesfromserver.EPlayerPositionState;
@@ -113,11 +115,49 @@ public class GameClientState {
         map.update(newState.map, player.getPosition());
     }
 
+    public GameMap getMap() {
+        return map;
+    }
+
+    public Collection<GameMapNode> getMapNodes() {
+        return map.getMapNodes();
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public boolean hasFullMap() {
+        return map.isFullMap();
+    }
+
     public boolean hasBothPlayers() {
         return opponent.isPresent();
     }
 
     public boolean shouldClientAct() {
         return player.shouldPlayerAct();
+    }
+
+    public boolean hasFoundTreasure() {
+        return hasCollectedTreasure()
+                || map.getMapNodes().stream().anyMatch(GameMapNode::hasTreasure);
+    }
+
+    public boolean hasCollectedTreasure() {
+        return player.hasTreasure();
+    }
+
+    public boolean hasFoundOpponentFort() {
+        return hasClientWon()
+                || map.getMapNodes().stream().anyMatch(GameMapNode::hasOpponentFort);
+    }
+
+    public boolean hasClientWon() {
+        return player.hasWon();
+    }
+
+    public boolean hasClientLost() {
+        return player.hasLost();
     }
 }

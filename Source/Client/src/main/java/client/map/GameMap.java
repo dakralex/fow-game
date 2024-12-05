@@ -29,6 +29,7 @@ public class GameMap {
             Collectors.toMap(GameMapNode::getPosition, Function.identity());
 
     private static final Logger logger = LoggerFactory.getLogger(GameMap.class);
+    private static final int MAP_FULL_SIZE = 100;
 
     private final Map<Position, GameMapNode> nodes;
 
@@ -97,8 +98,85 @@ public class GameMap {
         return Collections.unmodifiableCollection(nodes.values());
     }
 
+    private Collection<GameMapNode> getMapNodes(Predicate<GameMapNode> predicate) {
+        return getMapNodes().stream().filter(predicate).toList();
+    }
+
+    private PositionArea getArea() {
+        Position minPosition = getPositions().stream().min(Position::compareTo).orElseThrow();
+        Position maxPosition = getPositions().stream().max(Position::compareTo).orElseThrow();
+
+        return new PositionArea(minPosition, maxPosition);
+    }
+
+    private Collection<GameMapNode> getHalfMapNodes(Position position) {
+        Collection<GameMapNode> mapNodes = new ArrayList<>(getSize() / 2);
+        PositionArea mapArea = getArea();
+        Position middlePoint = mapArea.middlePoint();
+
+        Predicate<GameMapNode> predicate;
+
+        // TODO: Make this calculation easier to read, I don't have time for that now
+        // The GameMap can be either square (10 x 10) or wide (20 x 5), when both clients have
+        // sent their half maps, so we have consider either case for getting the half map
+        if (mapArea.isLandscape()) {
+            if (position.x() < middlePoint.x()) {
+                predicate = mapNode -> mapNode.getPosition().x() < middlePoint.x();
+            } else {
+                predicate = mapNode -> mapNode.getPosition().x() >= middlePoint.x();
+            }
+        } else {
+            if (position.y() < middlePoint.y()) {
+                predicate = mapNode -> mapNode.getPosition().y() < middlePoint.y();
+            } else {
+                predicate = mapNode -> mapNode.getPosition().y() >= middlePoint.y();
+            }
+        }
+
+        mapNodes.addAll(getMapNodes(predicate));
+
+        return mapNodes;
+    }
+
+    private Position getPlayerFortPosition() {
+        return getMapNodes().stream()
+                .filter(GameMapNode::hasPlayerFort)
+                .findFirst()
+                .map(GameMapNode::getPosition)
+                .orElseThrow();
+    }
+
+    public Collection<GameMapNode> getPlayerMapNodes() {
+        return getHalfMapNodes(getPlayerFortPosition());
+    }
+
+    public Collection<GameMapNode> getOpponentMapNodes() {
+        Position playerFortPosition = getPlayerFortPosition();
+
+        // TODO: Refactor/Improve this reflection calculation
+        PositionArea mapArea = getArea();
+        Position middlePoint = mapArea.middlePoint();
+        Position reflectivePosition;
+
+        if (mapArea.isLandscape()) {
+            int xMiddleDistance = middlePoint.x() - playerFortPosition.x();
+            int xReflectivePosition = playerFortPosition.x() + 2 * xMiddleDistance;
+            reflectivePosition = new Position(xReflectivePosition, playerFortPosition.y());
+        } else {
+            int yMiddleDistance = middlePoint.y() - playerFortPosition.y();
+            int yReflectivePosition = playerFortPosition.y() + 2 * yMiddleDistance;
+            reflectivePosition = new Position(playerFortPosition.x(), yReflectivePosition);
+        }
+
+        return getHalfMapNodes(reflectivePosition);
+    }
+
     public int getSize() {
         return nodes.size();
+    }
+
+    public boolean isFullMap() {
+        return getSize() == MAP_FULL_SIZE;
     }
 
     public Optional<GameMapNode> getNodeAt(Position position) {
@@ -111,6 +189,11 @@ public class GameMap {
                 .map(this::getNodeAt)
                 .filter(Optional::isPresent)
                 .map(Optional::get);
+    }
+
+    public Set<GameMapNode> getAllNeighbors(Position position) {
+        return getNeighborsStream(position)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public Set<GameMapNode> getReachableNeighbors(Position position) {
