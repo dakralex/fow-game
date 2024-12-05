@@ -12,4 +12,12 @@ public enum TreasureState {
             case MyTreasureIsPresent -> PLAYER_TREASURE_PRESENT;
         };
     }
+
+    @Override
+    public String toString() {
+        return switch (this) {
+            case UNKNOWN_OR_NONE_PRESENT -> "?";
+            case PLAYER_TREASURE_PRESENT -> "P";
+        };
+    }
 }
