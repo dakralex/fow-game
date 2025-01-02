@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public class Path {
 
-    List<Position> vertices;
+    private final List<Position> vertices;
 
     public Path(Collection<Position> vertices) {
         this.vertices = new ArrayList<>(vertices);
