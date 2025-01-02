@@ -14,7 +14,7 @@ public class GameMapTerrainDistributionValidator implements GameMapValidationRul
     private static final int WATER_MIN_AMOUNT = 7;
 
     @Override
-    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+    public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         List<TerrainType> terrains = map.getMapNodes().stream()
                 .map(GameMapNode::getTerrainType)
                 .toList();

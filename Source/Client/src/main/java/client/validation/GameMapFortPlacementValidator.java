@@ -9,7 +9,7 @@ import client.map.TerrainType;
 public class GameMapFortPlacementValidator implements GameMapValidationRule {
 
     @Override
-    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+    public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         List<GameMapNode> fortNodes = map.getMapNodes().stream()
                 .filter(GameMapNode::hasPlayerFort)
                 .toList();

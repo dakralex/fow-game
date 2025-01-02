@@ -9,7 +9,7 @@ public class GameMapPositionsValidator implements GameMapValidationRule {
     private static final int Y_SIZE = 5;
 
     @Override
-    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+    public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         PositionArea area = new PositionArea(0, 0, X_SIZE, Y_SIZE);
 
         if (!map.getPositions().stream().allMatch(area::isInside)) {

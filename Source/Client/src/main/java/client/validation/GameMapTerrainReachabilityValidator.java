@@ -19,7 +19,7 @@ public class GameMapTerrainReachabilityValidator implements GameMapValidationRul
     }
 
     @Override
-    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+    public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         Position fortPosition = map.getMapNodes().stream()
                 .filter(GameMapNode::hasPlayerFort)
                 .map(GameMapNode::getPosition)

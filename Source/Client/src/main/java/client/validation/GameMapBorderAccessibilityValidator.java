@@ -34,7 +34,7 @@ public class GameMapBorderAccessibilityValidator implements GameMapValidationRul
     }
 
     @Override
-    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+    public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         boolean allBordersAccessibleEnough = Arrays.stream(MapDirection.values())
                 .allMatch(direction -> validateEachBorderAccessibility(map, direction));
 

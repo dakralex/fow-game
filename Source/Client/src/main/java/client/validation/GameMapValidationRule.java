@@ -4,5 +4,5 @@ import client.map.GameMap;
 
 public interface GameMapValidationRule {
 
-    void validate(GameMap map, Notification<GameMapValidationRule> note);
+    void validate(GameMap map, Notification<? super GameMapValidationRule> note);
 }
