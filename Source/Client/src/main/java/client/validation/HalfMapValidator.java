@@ -10,10 +10,6 @@ import client.map.Position;
 
 public class HalfMapValidator {
 
-    private boolean validateTreasurePlacement(GameMap map) {
-        return map.getMapNodes().stream().noneMatch(GameMapNode::hasTreasure);
-    }
-
     private void floodFillMap(GameMap map, Position position, Set<Position> visitedNodes) {
         visitedNodes.add(position);
 
@@ -47,13 +43,14 @@ public class HalfMapValidator {
         GameMapTerrainDistributionValidator mapTerrainDistributionValidator = new GameMapTerrainDistributionValidator();
         GameMapBorderAccessibilityValidator mapBorderAccessibilityValidator = new GameMapBorderAccessibilityValidator();
         GameMapFortPlacementValidator mapFortPlacementValidator = new GameMapFortPlacementValidator();
+        GameMapTreasurePlacementValidator mapTreasurePlacementValidator = new GameMapTreasurePlacementValidator();
 
         return mapSizeValidator.validate(map)
                 && mapPositionsValidator.validate(map)
                 && mapTerrainDistributionValidator.validate(map)
                 && mapBorderAccessibilityValidator.validate(map)
                 && mapFortPlacementValidator.validate(map)
-                && validateTreasurePlacement(map)
+                && mapTreasurePlacementValidator.validate(map)
                 && validateTerrainReachability(map);
     }
 }
