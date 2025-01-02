@@ -86,7 +86,7 @@ public class GameServerClient {
      * @param <R>         the expected type of the API endpoint's response
      * @return response envelope from the server
      */
-    public <R> ResponseEnvelope<R> get(String relativeUri) {
+    private <R> ResponseEnvelope<R> get(String relativeUri) {
         Mono<ResponseEnvelope> request = webClient
                 .method(HttpMethod.GET)
                 .uri(relativeUri)

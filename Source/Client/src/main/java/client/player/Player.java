@@ -20,15 +20,15 @@ public class Player {
     private Position position;
     private boolean hasTreasure;
 
-    public Player(String playerId, PlayerDetails details) {
+    private Player(String playerId, PlayerDetails details) {
         this.playerId = playerId;
         this.details = details;
         this.position = new Position(0, 0);
         this.hasTreasure = false;
     }
 
-    public Player(String playerId, PlayerDetails details, PlayerGameState state,
-                  Position position, boolean hasTreasure) {
+    private Player(String playerId, PlayerDetails details, PlayerGameState state,
+                   Position position, boolean hasTreasure) {
         this.playerId = playerId;
         this.details = details;
         this.state = state;

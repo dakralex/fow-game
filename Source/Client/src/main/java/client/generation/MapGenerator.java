@@ -71,7 +71,7 @@ public class MapGenerator {
         return terrainTypeQueue;
     }
 
-    public GameMap generateMap() {
+    private GameMap generateMap() {
         Map<Position, GameMapNode> mapNodes = HashMap.newHashMap(MAP_SIZE);
 
         Position fortPosition = pickFortPosition();

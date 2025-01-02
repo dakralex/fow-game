@@ -27,7 +27,7 @@ public class AStarPathFinder implements PathFinder {
 
     private static final int DIRECTION_COUNT = MapDirection.values().length;
 
-    public final Map<Position, GameMapNode> mapNodes;
+    private final Map<Position, GameMapNode> mapNodes;
 
     public AStarPathFinder(Collection<GameMapNode> mapNodes) {
         this.mapNodes = HashMap.newHashMap(mapNodes.size());
@@ -59,7 +59,7 @@ public class AStarPathFinder implements PathFinder {
                 .map(Optional::get);
     }
 
-    public List<GameMapNode> getReachableNeighbors(Position position) {
+    private List<GameMapNode> getReachableNeighbors(Position position) {
         return getNeighborsStream(position)
                 .filter(GameMapNode::isAccessible)
                 .toList();

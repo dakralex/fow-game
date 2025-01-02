@@ -26,8 +26,8 @@ public class GameClientState {
     private final Player player;
     private Optional<Player> opponent;
 
-    public GameClientState(String gameId, String stateId, GameMap map,
-                           Player player, Optional<Player> opponent) {
+    private GameClientState(String gameId, String stateId, GameMap map,
+                            Player player, Optional<Player> opponent) {
         this.gameId = gameId;
         this.stateId = stateId;
         this.map = map;
