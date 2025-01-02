@@ -1,24 +1,23 @@
 package client.validation;
 
+import java.util.List;
+
 import client.map.GameMap;
 
 public class HalfMapValidator {
 
-    public boolean validate(GameMap map) {
-        GameMapSizeValidator mapSizeValidator = new GameMapSizeValidator();
-        GameMapPositionsValidator mapPositionsValidator = new GameMapPositionsValidator();
-        GameMapTerrainDistributionValidator mapTerrainDistributionValidator = new GameMapTerrainDistributionValidator();
-        GameMapBorderAccessibilityValidator mapBorderAccessibilityValidator = new GameMapBorderAccessibilityValidator();
-        GameMapFortPlacementValidator mapFortPlacementValidator = new GameMapFortPlacementValidator();
-        GameMapTreasurePlacementValidator mapTreasurePlacementValidator = new GameMapTreasurePlacementValidator();
-        GameMapTerrainReachabilityValidator mapTerrainReachabilityValidator = new GameMapTerrainReachabilityValidator();
+    private final List<GameMapValidationRule> validationRules = List.of(
+            new GameMapSizeValidator(),
+            new GameMapPositionsValidator(),
+            new GameMapTerrainDistributionValidator(),
+            new GameMapBorderAccessibilityValidator(),
+            new GameMapFortPlacementValidator(),
+            new GameMapTreasurePlacementValidator(),
+            new GameMapTerrainReachabilityValidator()
+    );
 
-        return mapSizeValidator.validate(map)
-                && mapPositionsValidator.validate(map)
-                && mapTerrainDistributionValidator.validate(map)
-                && mapBorderAccessibilityValidator.validate(map)
-                && mapFortPlacementValidator.validate(map)
-                && mapTreasurePlacementValidator.validate(map)
-                && mapTerrainReachabilityValidator.validate(map);
+    public boolean validate(GameMap map) {
+        return validationRules.stream()
+                .allMatch(rule -> rule.validate(map));
     }
 }
