@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -107,7 +108,7 @@ public class AStarPathFinder implements PathFinder {
 
     private Path reconstructPath(Position source, Position destination,
                                  Map<Position, Position> cameFrom) {
-        List<Position> pathNodes = new ArrayList<>(cameFrom.size() + 1);
+        SequencedCollection<Position> pathNodes = new ArrayList<>(cameFrom.size() + 1);
 
         Position currentPosition = destination;
 

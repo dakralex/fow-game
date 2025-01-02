@@ -152,7 +152,7 @@ public class MainClient {
     private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
         Comparator<Position> farthestAwayComparator = getFarthestAwayComparator(source);
         List<Position> lootableNodes = new ArrayList<>();
-        List<Position> nearbyLootableNodes = new ArrayList<>();
+        Collection<Position> nearbyLootableNodes = new ArrayList<>();
 
         do {
             nearbyLootableNodes.clear();

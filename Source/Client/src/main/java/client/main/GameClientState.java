@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -36,7 +35,7 @@ public class GameClientState {
         this.opponent = opponent;
     }
 
-    private static PlayerState pickOwnPlayer(Set<PlayerState> players, String playerId) {
+    private static PlayerState pickOwnPlayer(Collection<PlayerState> players, String playerId) {
         return players.stream()
                 .filter(playerState -> playerState.getUniquePlayerID().equals(playerId))
                 .findFirst()
@@ -44,8 +43,8 @@ public class GameClientState {
                         "Failed to get player information: Player not found."));
     }
 
-    private static Optional<PlayerState> pickOtherPlayer(Set<PlayerState> players,
-                                                        PlayerState player) {
+    private static Optional<PlayerState> pickOtherPlayer(Collection<PlayerState> players,
+                                                         PlayerState player) {
         return players.stream()
                 .filter(playerState -> !playerState.equals(player))
                 .findFirst();

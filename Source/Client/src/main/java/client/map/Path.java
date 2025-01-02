@@ -16,7 +16,7 @@ public class Path {
         this.vertices = new ArrayList<>(vertices);
     }
 
-    private static List<GameMapNode> mapVerticesToNodes(GameMap map, List<Position> vertices) {
+    private static List<GameMapNode> mapVerticesToNodes(GameMap map, Collection<Position> vertices) {
         return vertices.stream()
                 .map(map::getNodeAt)
                 .filter(Optional::isPresent)
