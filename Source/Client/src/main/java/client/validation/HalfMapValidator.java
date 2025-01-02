@@ -26,12 +26,6 @@ public class HalfMapValidator {
 
     private static final int BORDER_ACCESS_MIN_PERCENTAGE = 51;
 
-    private boolean validatePositions(GameMap map) {
-        PositionArea area = new PositionArea(0, 0, X_SIZE, Y_SIZE);
-
-        return map.getPositions().stream().allMatch(area::isInside);
-    }
-
     private boolean validateTerrainDistribution(GameMap map) {
         List<TerrainType> terrains = map.getMapNodes().stream()
                 .map(GameMapNode::getTerrainType)
@@ -116,9 +110,10 @@ public class HalfMapValidator {
 
     public boolean validate(GameMap map) {
         GameMapSizeValidator mapSizeValidator = new GameMapSizeValidator();
+        GameMapPositionsValidator mapPositionsValidator = new GameMapPositionsValidator();
 
         return mapSizeValidator.validate(map)
-                && validatePositions(map)
+                && mapPositionsValidator.validate(map)
                 && validateTerrainDistribution(map)
                 && validateBorderAccessibility(map)
                 && validateFortPlacement(map)
