@@ -13,7 +13,10 @@ public record PositionArea(int x, int y, int width, int height) {
         int posX = position.x();
         int posY = position.y();
 
-        return posX >= x && posX < (x + width) && posY >= y && posY < (y + height);
+        boolean withinXBoundary = posX >= x && posX < (x + width);
+        boolean withinYBoundary = posY >= y && posY < (y + height);
+
+        return withinXBoundary && withinYBoundary;
     }
 
     public boolean isOnEastBorder(Position position) {
