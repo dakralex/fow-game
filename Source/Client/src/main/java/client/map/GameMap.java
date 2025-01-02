@@ -217,13 +217,13 @@ public class GameMap {
             for (int x = 0; x < area.width(); ++x) {
                 Position currentPosition = new Position(x, y);
 
-                if (!nodes.containsKey(currentPosition)) {
+                if (nodes.containsKey(currentPosition)) {
+                    GameMapNode currentMapNode = nodes.get(currentPosition);
+                    stringBuilder.append(String.format("%s", currentMapNode));
+                } else {
                     stringBuilder.append(ANSIColor.format("a",
                                                           ANSIColor.BRIGHT_BLACK,
                                                           ANSIColor.BRIGHT_BLACK));
-                } else {
-                    GameMapNode currentMapNode = nodes.get(currentPosition);
-                    stringBuilder.append(String.format("%s", currentMapNode));
                 }
             }
             stringBuilder.append("\n");
