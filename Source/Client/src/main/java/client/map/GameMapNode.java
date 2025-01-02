@@ -102,12 +102,25 @@ public class GameMapNode implements Comparable<GameMapNode> {
         updateTreasureState(newGameMapNode.treasureState, isNodeInSight);
     }
 
-    public void resetVisibility() {
-        // TODO: Find a better way to initially set all map nodes to unknown
+    /**
+     * Resets the current intelligence on the GameMapNode, i.e. whether the presence of the
+     * player's or opponent's fort and the presence of the player's treasure is known, if that
+     * information is known to be unreliable.
+     * <p>
+     * This method should be called if a new server-sourced GameMapNode is added to the
+     * {@link GameMap}, as the server doesn't provide the same values for {@link FortState} and
+     * {@link TreasureState} as we do, and so we cannot rely on them initially.
+     *
+     * @see GameMapNode#updateFortState(FortState, boolean)
+     * @see GameMapNode#updateTreasureState(TreasureState, boolean)
+     */
+    public void resetIntelligence() {
+        // Do not reset if the fort state is already properly known
         if (fortState == FortState.NO_FORT_PRESENT) {
             fortState = FortState.UNKNOWN;
         }
 
+        // Do not reset if the treasure state is already properly known
         if (treasureState == TreasureState.NO_TREASURE_PRESENT) {
             treasureState = TreasureState.UNKNOWN;
         }

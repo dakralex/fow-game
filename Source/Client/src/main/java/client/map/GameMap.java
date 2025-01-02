@@ -59,13 +59,16 @@ public class GameMap {
 
         newMap.nodes.forEach((position, newMapNode) -> {
             if (nodes.containsKey(position)) {
+                // Update the GameMapNode(s) if already present...
                 GameMapNode mapNode = nodes.get(position);
                 boolean isNodeInSight = visiblePositions.contains(position);
 
                 mapNode.update(newMapNode, isNodeInSight);
             } else {
-                // TODO: Find a better way to initially set all map nodes to unknown
-                newMapNode.resetVisibility();
+                // ...but reset its intelligence if it wasn't present yet.
+                //    This is because the server provides a weaker version of intelligence states
+                //    for GameMapNodes and therefore we cannot rely on them initially.
+                newMapNode.resetIntelligence();
                 nodes.put(position, newMapNode);
             }
         });
