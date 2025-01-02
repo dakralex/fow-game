@@ -1,7 +1,6 @@
 package client.validation;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,25 +19,7 @@ public class HalfMapValidator {
     private static final int X_SIZE = 10;
     private static final int Y_SIZE = 5;
 
-    private static final int GRASS_MIN_AMOUNT = 24;
-    private static final int MOUNTAIN_MIN_AMOUNT = 5;
-    private static final int WATER_MIN_AMOUNT = 7;
-
     private static final int BORDER_ACCESS_MIN_PERCENTAGE = 51;
-
-    private boolean validateTerrainDistribution(GameMap map) {
-        List<TerrainType> terrains = map.getMapNodes().stream()
-                .map(GameMapNode::getTerrainType)
-                .toList();
-
-        int grassCount = Collections.frequency(terrains, TerrainType.GRASS);
-        int mountainCount = Collections.frequency(terrains, TerrainType.MOUNTAIN);
-        int waterCount = Collections.frequency(terrains, TerrainType.WATER);
-
-        return grassCount >= GRASS_MIN_AMOUNT
-                && mountainCount >= MOUNTAIN_MIN_AMOUNT
-                && waterCount >= WATER_MIN_AMOUNT;
-    }
 
     private boolean validateEachBorderAccessibility(GameMap map, MapDirection direction) {
         PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
@@ -111,10 +92,11 @@ public class HalfMapValidator {
     public boolean validate(GameMap map) {
         GameMapSizeValidator mapSizeValidator = new GameMapSizeValidator();
         GameMapPositionsValidator mapPositionsValidator = new GameMapPositionsValidator();
+        GameMapTerrainDistributionValidator mapTerrainDistributionValidator = new GameMapTerrainDistributionValidator();
 
         return mapSizeValidator.validate(map)
                 && mapPositionsValidator.validate(map)
-                && validateTerrainDistribution(map)
+                && mapTerrainDistributionValidator.validate(map)
                 && validateBorderAccessibility(map)
                 && validateFortPlacement(map)
                 && validateTreasurePlacement(map)
