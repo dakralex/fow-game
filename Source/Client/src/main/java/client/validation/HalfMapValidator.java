@@ -19,17 +19,12 @@ public class HalfMapValidator {
 
     private static final int X_SIZE = 10;
     private static final int Y_SIZE = 5;
-    private static final int MAP_SIZE = X_SIZE * Y_SIZE;
 
     private static final int GRASS_MIN_AMOUNT = 24;
     private static final int MOUNTAIN_MIN_AMOUNT = 5;
     private static final int WATER_MIN_AMOUNT = 7;
 
     private static final int BORDER_ACCESS_MIN_PERCENTAGE = 51;
-
-    private boolean validateSize(GameMap map) {
-        return map.getSize() == MAP_SIZE;
-    }
 
     private boolean validatePositions(GameMap map) {
         PositionArea area = new PositionArea(0, 0, X_SIZE, Y_SIZE);
@@ -120,7 +115,9 @@ public class HalfMapValidator {
     }
 
     public boolean validate(GameMap map) {
-        return validateSize(map)
+        GameMapSizeValidator mapSizeValidator = new GameMapSizeValidator();
+
+        return mapSizeValidator.validate(map)
                 && validatePositions(map)
                 && validateTerrainDistribution(map)
                 && validateBorderAccessibility(map)
