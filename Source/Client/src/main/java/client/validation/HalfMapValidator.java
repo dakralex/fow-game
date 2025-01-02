@@ -1,31 +1,14 @@
 package client.validation;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.Position;
-import client.map.TerrainType;
 
 public class HalfMapValidator {
-
-    private boolean validateFortPlacement(GameMap map) {
-        List<GameMapNode> fortNodes = map.getMapNodes().stream()
-                .filter(GameMapNode::hasPlayerFort)
-                .toList();
-
-        if (fortNodes.size() != 1) {
-            return false;
-        }
-
-        GameMapNode fortMapNode = fortNodes.getFirst();
-
-        return !fortMapNode.hasOpponentFort()
-                && fortMapNode.getTerrainType() == TerrainType.GRASS;
-    }
 
     private boolean validateTreasurePlacement(GameMap map) {
         return map.getMapNodes().stream().noneMatch(GameMapNode::hasTreasure);
@@ -63,12 +46,13 @@ public class HalfMapValidator {
         GameMapPositionsValidator mapPositionsValidator = new GameMapPositionsValidator();
         GameMapTerrainDistributionValidator mapTerrainDistributionValidator = new GameMapTerrainDistributionValidator();
         GameMapBorderAccessibilityValidator mapBorderAccessibilityValidator = new GameMapBorderAccessibilityValidator();
+        GameMapFortPlacementValidator mapFortPlacementValidator = new GameMapFortPlacementValidator();
 
         return mapSizeValidator.validate(map)
                 && mapPositionsValidator.validate(map)
                 && mapTerrainDistributionValidator.validate(map)
                 && mapBorderAccessibilityValidator.validate(map)
-                && validateFortPlacement(map)
+                && mapFortPlacementValidator.validate(map)
                 && validateTreasurePlacement(map)
                 && validateTerrainReachability(map);
     }
