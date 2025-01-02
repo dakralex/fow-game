@@ -94,7 +94,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
             throwOnInvalidUpdatePosition(newGameMapNode);
         }
 
-        if (!terrainType.equals(newGameMapNode.terrainType)) {
+        if (terrainType != newGameMapNode.terrainType) {
             throwOnInvalidUpdateTerrain(newGameMapNode);
         }
 
