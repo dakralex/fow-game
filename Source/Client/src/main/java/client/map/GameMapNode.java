@@ -168,7 +168,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
     }
 
     @Override
-    public final boolean equals(Object other) {
+    public boolean equals(Object other) {
         if (!(other instanceof GameMapNode otherMapNode)) return false;
 
         return Objects.equals(position, otherMapNode.position);
