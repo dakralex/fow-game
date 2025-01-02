@@ -37,7 +37,7 @@ public class MainClient {
     private static final String LAST_NAME = "Kral";
     private static final String UACCOUNT = "krald88";
 
-    private static final int SERVER_WAIT_TIME_MS = 400;
+    private static final long SERVER_WAIT_TIME_MS = 400L;
 
     private static GameMap generateGameMap() {
         MapGenerator mapGenerator = new MapGenerator();
@@ -222,7 +222,7 @@ public class MainClient {
 
                     return neighborNodes.stream()
                             .filter(neighborNode -> !neighborNode.isAccessible())
-                            .count() > 2;
+                            .count() > 2L;
                 })
                 .findFirst();
     }
