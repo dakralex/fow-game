@@ -170,11 +170,7 @@ public class MainClient {
 
         Collections.shuffle(lootableNodes);
 
-        if (lootableNodes.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.ofNullable(lootableNodes.getFirst());
-        }
+        return lootableNodes.stream().findFirst();
     }
 
     private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
