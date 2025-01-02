@@ -39,8 +39,4 @@ public record PositionArea(int x, int y, int width, int height) {
     public Position middlePoint() {
         return new Position((width - x) / 2, (height - y) / 2);
     }
-
-    public int size() {
-        return width * height;
-    }
 }
