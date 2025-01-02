@@ -34,8 +34,14 @@ public class GameMapBorderAccessibilityValidator implements GameMapValidationRul
     }
 
     @Override
-    public boolean validate(GameMap map) {
-        return Arrays.stream(MapDirection.values())
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+        boolean allBordersAccessibleEnough = Arrays.stream(MapDirection.values())
                 .allMatch(direction -> validateEachBorderAccessibility(map, direction));
+
+        if (!allBordersAccessibleEnough) {
+            note.addEntry(this,
+                          String.format("Game map has a border, where less than %d %% is accessible",
+                                        BORDER_ACCESS_MIN_PERCENTAGE));
+        }
     }
 }

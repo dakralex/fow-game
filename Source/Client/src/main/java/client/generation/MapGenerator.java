@@ -18,7 +18,9 @@ import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
 import client.map.TerrainType;
+import client.validation.GameMapValidationRule;
 import client.validation.HalfMapValidator;
+import client.validation.Notification;
 
 public class MapGenerator {
 
@@ -98,12 +100,19 @@ public class MapGenerator {
 
     public GameMap generateUntilValid(HalfMapValidator validator) {
         int generateTries = 0;
-        GameMap map = generateMap();
+        GameMap map;
+        Notification<GameMapValidationRule> validationErrors;
 
-        while (!validator.validate(map)) {
-            map = generateMap();
+        do {
             ++generateTries;
-        }
+            map = generateMap();
+            validationErrors = validator.validate(map);
+
+            if (validationErrors.hasEntries()) {
+                logger.debug("The generated half map violates the following rules:\n{}",
+                             validationErrors);
+            }
+        } while(validationErrors.hasEntries());
 
         logger.debug("It took {} tries to generate a valid GameMap instance.", generateTries);
 

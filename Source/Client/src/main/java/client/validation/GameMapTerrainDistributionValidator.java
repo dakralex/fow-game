@@ -14,7 +14,7 @@ public class GameMapTerrainDistributionValidator implements GameMapValidationRul
     private static final int WATER_MIN_AMOUNT = 7;
 
     @Override
-    public boolean validate(GameMap map) {
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
         List<TerrainType> terrains = map.getMapNodes().stream()
                 .map(GameMapNode::getTerrainType)
                 .toList();
@@ -23,8 +23,22 @@ public class GameMapTerrainDistributionValidator implements GameMapValidationRul
         int mountainCount = Collections.frequency(terrains, TerrainType.MOUNTAIN);
         int waterCount = Collections.frequency(terrains, TerrainType.WATER);
 
-        return grassCount >= GRASS_MIN_AMOUNT
-                && mountainCount >= MOUNTAIN_MIN_AMOUNT
-                && waterCount >= WATER_MIN_AMOUNT;
+        if (grassCount < GRASS_MIN_AMOUNT) {
+            note.addEntry(this,
+                          String.format("Game map contains less than %d grass fields",
+                                        GRASS_MIN_AMOUNT));
+        }
+
+        if (mountainCount < MOUNTAIN_MIN_AMOUNT) {
+            note.addEntry(this,
+                          String.format("Game map contains less than %d mountain fields",
+                                        MOUNTAIN_MIN_AMOUNT));
+        }
+
+        if (waterCount < WATER_MIN_AMOUNT) {
+            note.addEntry(this,
+                          String.format("Game map contains less than %d water fields",
+                                        WATER_MIN_AMOUNT));
+        }
     }
 }

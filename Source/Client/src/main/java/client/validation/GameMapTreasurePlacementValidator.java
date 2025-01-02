@@ -6,7 +6,9 @@ import client.map.GameMapNode;
 public class GameMapTreasurePlacementValidator implements GameMapValidationRule {
 
     @Override
-    public boolean validate(GameMap map) {
-        return map.getMapNodes().stream().noneMatch(GameMapNode::hasTreasure);
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+        if (map.getMapNodes().stream().anyMatch(GameMapNode::hasTreasure)) {
+            note.addEntry(this, "Game map has at least one field with a treasure");
+        }
     }
 }

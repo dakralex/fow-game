@@ -9,18 +9,23 @@ import client.map.TerrainType;
 public class GameMapFortPlacementValidator implements GameMapValidationRule {
 
     @Override
-    public boolean validate(GameMap map) {
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
         List<GameMapNode> fortNodes = map.getMapNodes().stream()
                 .filter(GameMapNode::hasPlayerFort)
                 .toList();
 
         if (fortNodes.size() != 1) {
-            return false;
+            note.addEntry(this, "Game map has no or more than one field with a fort");
         }
 
         GameMapNode fortMapNode = fortNodes.getFirst();
 
-        return !fortMapNode.hasOpponentFort()
-                && fortMapNode.getTerrainType() == TerrainType.GRASS;
+        if (fortMapNode.getTerrainType() != TerrainType.GRASS) {
+            note.addEntry(this, "Game map has a non-grass field with the fort");
+        }
+
+        if (fortMapNode.hasOpponentFort()) {
+            note.addEntry(this, "Game map has a field with the opponent's fort");
+        }
     }
 }

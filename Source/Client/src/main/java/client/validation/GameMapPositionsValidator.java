@@ -9,9 +9,11 @@ public class GameMapPositionsValidator implements GameMapValidationRule {
     private static final int Y_SIZE = 5;
 
     @Override
-    public boolean validate(GameMap map) {
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
         PositionArea area = new PositionArea(0, 0, X_SIZE, Y_SIZE);
 
-        return map.getPositions().stream().allMatch(area::isInside);
+        if (!map.getPositions().stream().allMatch(area::isInside)) {
+            note.addEntry(this, "Game Map contains fields, whose positions are out-of-bounds");
+        }
     }
 }

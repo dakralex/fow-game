@@ -9,7 +9,11 @@ public class GameMapSizeValidator implements GameMapValidationRule {
     private static final int MAP_SIZE = X_SIZE * Y_SIZE;
 
     @Override
-    public boolean validate(GameMap map) {
-        return map.getSize() == MAP_SIZE;
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
+        if (map.getSize() != MAP_SIZE) {
+            note.addEntry(this,
+                          String.format("Game map does contain less or more than %d fields",
+                                        MAP_SIZE));
+        }
     }
 }

@@ -19,7 +19,7 @@ public class GameMapTerrainReachabilityValidator implements GameMapValidationRul
     }
 
     @Override
-    public boolean validate(GameMap map) {
+    public void validate(GameMap map, Notification<GameMapValidationRule> note) {
         Position fortPosition = map.getMapNodes().stream()
                 .filter(GameMapNode::hasPlayerFort)
                 .map(GameMapNode::getPosition)
@@ -35,6 +35,9 @@ public class GameMapTerrainReachabilityValidator implements GameMapValidationRul
 
         floodFillMap(map, fortPosition, visitedNodes);
 
-        return visitedNodes.containsAll(accessiblePositions);
+        if (!visitedNodes.containsAll(accessiblePositions)) {
+            note.addEntry(this,
+                          "Game map does contain accessible fields, that cannot be reached (i.e. islands)");
+        }
     }
 }

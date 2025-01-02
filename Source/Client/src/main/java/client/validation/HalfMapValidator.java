@@ -16,8 +16,11 @@ public class HalfMapValidator {
             new GameMapTerrainReachabilityValidator()
     );
 
-    public boolean validate(GameMap map) {
-        return validationRules.stream()
-                .allMatch(rule -> rule.validate(map));
+    public Notification<GameMapValidationRule> validate(GameMap map) {
+        Notification<GameMapValidationRule> validationErrors = new Notification<>();
+
+        validationRules.forEach(rule -> rule.validate(map, validationErrors));
+
+        return validationErrors;
     }
 }
