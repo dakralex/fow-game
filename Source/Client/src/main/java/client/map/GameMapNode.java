@@ -126,6 +126,17 @@ public class GameMapNode implements Comparable<GameMapNode> {
         }
     }
 
+    /**
+     * Marks the GameMapNode as having the player fort placed on it.
+     * <p>
+     * This method should only be used for testing purposes, as the actual player fort should only
+     * be placed during half map generation through the
+     * {@link GameMapNode#GameMapNode(Position, TerrainType, FortState, TreasureState)} constructor.
+     */
+    public void placePlayerFort() {
+        this.fortState = FortState.PLAYER_FORT_PRESENT;
+    }
+
     public Position getPosition() {
         return position;
     }

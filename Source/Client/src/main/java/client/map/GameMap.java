@@ -33,6 +33,11 @@ public class GameMap {
 
     private final Map<Position, GameMapNode> nodes;
 
+    public GameMap(Map<Position, GameMapNode> nodes) {
+        this.nodes = HashMap.newHashMap(nodes.size());
+        this.nodes.putAll(nodes);
+    }
+
     public GameMap(Collection<GameMapNode> nodes) {
         this.nodes = HashMap.newHashMap(nodes.size());
         this.nodes.putAll(nodes.stream().collect(mapCollector));
