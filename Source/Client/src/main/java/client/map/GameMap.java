@@ -118,14 +118,7 @@ public class GameMap {
     }
 
     private Predicate<GameMapNode> getBorderPredicate(MapDirection direction) {
-        PositionArea mapArea = getArea();
-
-        return switch (direction) {
-            case EAST -> mapNode -> mapArea.isOnEastBorder(mapNode.getPosition());
-            case NORTH -> mapNode -> mapArea.isOnNorthBorder(mapNode.getPosition());
-            case SOUTH -> mapNode -> mapArea.isOnSouthBorder(mapNode.getPosition());
-            case WEST -> mapNode -> mapArea.isOnWestBorder(mapNode.getPosition());
-        };
+        return mapNode -> getArea().getBorderPredicate(direction).test(mapNode.getPosition());
     }
 
     public Collection<GameMapNode> getBorderNodes(MapDirection direction) {

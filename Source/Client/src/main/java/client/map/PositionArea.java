@@ -1,5 +1,6 @@
 package client.map;
 
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -36,20 +37,29 @@ public record PositionArea(int x, int y, int width, int height) {
         return !isInside(position);
     }
 
-    public boolean isOnEastBorder(Position position) {
+    private boolean isOnEastBorder(Position position) {
         return position.x() == x + width - 1;
     }
 
-    public boolean isOnNorthBorder(Position position) {
+    private boolean isOnNorthBorder(Position position) {
         return position.y() == y;
     }
 
-    public boolean isOnSouthBorder(Position position) {
+    private boolean isOnSouthBorder(Position position) {
         return position.y() == y + height - 1;
     }
 
-    public boolean isOnWestBorder(Position position) {
+    private boolean isOnWestBorder(Position position) {
         return position.x() == x;
+    }
+
+    public Predicate<Position> getBorderPredicate(MapDirection direction) {
+        return switch (direction) {
+            case EAST -> this::isOnEastBorder;
+            case NORTH -> this::isOnNorthBorder;
+            case SOUTH -> this::isOnSouthBorder;
+            case WEST -> this::isOnWestBorder;
+        };
     }
 
     public boolean isLandscape() {
