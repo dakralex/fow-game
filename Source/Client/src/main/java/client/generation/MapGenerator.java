@@ -52,13 +52,13 @@ public class MapGenerator {
         return new Position(x, y);
     }
 
-    private Set<Position> generatePositionRange() {
+    private static Set<Position> generatePositionRange() {
         return IntStream.range(0, MAP_SIZE)
                 .mapToObj(index -> new Position(index % X_SIZE, Math.floorDiv(index, X_SIZE)))
                 .collect(Collectors.toSet());
     }
 
-    private List<TerrainType> generateTerrainTypeQueue(int amount) {
+    private static List<TerrainType> generateTerrainTypeQueue(int amount) {
         List<TerrainType> terrainTypeQueue = new ArrayList<>(amount);
 
         terrainTypeQueue.addAll(Collections.nCopies(GRASS_MIN_AMOUNT, TerrainType.GRASS));

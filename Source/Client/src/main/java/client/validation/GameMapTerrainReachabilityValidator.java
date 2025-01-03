@@ -10,7 +10,7 @@ import client.map.Position;
 
 public class GameMapTerrainReachabilityValidator implements GameMapValidationRule {
 
-    private void floodFillMap(GameMap map, Position position, Set<Position> visitedNodes) {
+    private static void floodFillMap(GameMap map, Position position, Set<Position> visitedNodes) {
         visitedNodes.add(position);
 
         map.getReachableNeighbors(position).stream()

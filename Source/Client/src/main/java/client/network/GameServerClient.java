@@ -27,13 +27,13 @@ public class GameServerClient {
                 .build();
     }
 
-    private Mono<? extends Throwable> handleClientError(ClientResponse response) {
+    private static Mono<? extends Throwable> handleClientError(ClientResponse response) {
         String message = String.format("Client error: %s", response.statusCode());
 
         return Mono.error(new GameServerClientException(message));
     }
 
-    private Mono<? extends Throwable> handleServerError(ClientResponse response) {
+    private static Mono<? extends Throwable> handleServerError(ClientResponse response) {
         String message = String.format("Server error: %s", response.statusCode());
 
         return Mono.error(new GameServerClientException(message));
@@ -59,8 +59,8 @@ public class GameServerClient {
                 .uri(relativeUri)
                 .body(requestBody)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, this::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, this::handleServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, GameServerClient::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, GameServerClient::handleServerError)
                 .bodyToMono(ResponseEnvelope.class);
 
         ResponseEnvelope<R> response =
@@ -91,8 +91,8 @@ public class GameServerClient {
                 .method(HttpMethod.GET)
                 .uri(relativeUri)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, this::handleClientError)
-                .onStatus(HttpStatusCode::is5xxServerError, this::handleServerError)
+                .onStatus(HttpStatusCode::is4xxClientError, GameServerClient::handleClientError)
+                .onStatus(HttpStatusCode::is5xxServerError, GameServerClient::handleServerError)
                 .bodyToMono(ResponseEnvelope.class);
 
         ResponseEnvelope<R> response =

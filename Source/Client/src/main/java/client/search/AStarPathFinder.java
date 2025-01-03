@@ -34,7 +34,7 @@ public class AStarPathFinder implements PathFinder {
         this.mapNodes.putAll(mapNodes.stream().collect(GameMap.mapCollector));
     }
 
-    private Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
+    private static Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
         return (a, b) -> {
             int aCostToEnd = costToEndNode.getOrDefault(a.getPosition(), Integer.MAX_VALUE);
             int bCostToEnd = costToEndNode.getOrDefault(b.getPosition(), Integer.MAX_VALUE);
@@ -43,7 +43,7 @@ public class AStarPathFinder implements PathFinder {
         };
     }
 
-    private int computeRemainingCost(Position source, Position destination) {
+    private static int computeRemainingCost(Position source, Position destination) {
         return source.taxicabDistanceTo(destination);
     }
 
@@ -106,8 +106,8 @@ public class AStarPathFinder implements PathFinder {
         return Math.min(0, totalCost);
     }
 
-    private Path reconstructPath(Position source, Position destination,
-                                 Map<Position, Position> cameFrom) {
+    private static Path reconstructPath(Position source, Position destination,
+                                        Map<Position, Position> cameFrom) {
         SequencedCollection<Position> pathNodes = new ArrayList<>(cameFrom.size() + 1);
 
         Position currentPosition = destination;
