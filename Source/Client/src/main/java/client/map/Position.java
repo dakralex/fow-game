@@ -28,6 +28,14 @@ public record Position(int x, int y) implements Comparable<Position> {
         return Math.abs(x - other.x) + Math.abs(y - other.y);
     }
 
+    public boolean isHorizontallyLessThan(Position other) {
+        return x < other.x;
+    }
+
+    public boolean isVerticallyLessThan(Position other) {
+        return y < other.y;
+    }
+
     @Override
     public int compareTo(Position other) {
         if (this.y == other.y) {

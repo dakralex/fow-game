@@ -124,20 +124,19 @@ public class GameMap {
 
         Predicate<GameMapNode> predicate;
 
-        // TODO: Make this calculation easier to read, I don't have time for that now
         // The GameMap can be either square (10 x 10) or wide (20 x 5), when both clients have
         // sent their half maps, so we have consider either case for getting the half map
         if (mapArea.isLandscape()) {
-            if (position.x() < middlePoint.x()) {
-                predicate = mapNode -> mapNode.getPosition().x() < middlePoint.x();
+            if (position.isHorizontallyLessThan(middlePoint)) {
+                predicate = mapNode -> mapNode.isHorizontallyLessThan(middlePoint);
             } else {
-                predicate = mapNode -> mapNode.getPosition().x() >= middlePoint.x();
+                predicate = mapNode -> !mapNode.isHorizontallyLessThan(middlePoint);
             }
         } else {
-            if (position.y() < middlePoint.y()) {
-                predicate = mapNode -> mapNode.getPosition().y() < middlePoint.y();
+            if (position.isVerticallyLessThan(middlePoint)) {
+                predicate = mapNode -> mapNode.isVerticallyLessThan(middlePoint);
             } else {
-                predicate = mapNode -> mapNode.getPosition().y() >= middlePoint.y();
+                predicate = mapNode -> !mapNode.isVerticallyLessThan(middlePoint);
             }
         }
 
