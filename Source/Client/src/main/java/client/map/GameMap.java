@@ -124,7 +124,7 @@ public class GameMap {
     public Collection<GameMapNode> getBorderNodes(MapDirection direction) {
         Predicate<GameMapNode> isOnBorder = getBorderPredicate(direction);
 
-        return getMapNodes().stream().filter(isOnBorder).toList();
+        return getMapNodes(isOnBorder);
     }
 
     private Predicate<GameMapNode> getHalfMapBinaryRelation(Position position) {
@@ -152,12 +152,9 @@ public class GameMap {
     }
 
     private Collection<GameMapNode> getHalfMapNodes(Position position) {
-        Collection<GameMapNode> mapNodes = new ArrayList<>(getSize() / 2);
-        Predicate<GameMapNode> halfMapBinaryRelation = getHalfMapBinaryRelation(position);
+        Predicate<GameMapNode> isOnHalfMap = getHalfMapBinaryRelation(position);
 
-        mapNodes.addAll(getMapNodes(halfMapBinaryRelation));
-
-        return mapNodes;
+        return getMapNodes(isOnHalfMap);
     }
 
     private Position getPlayerFortPosition() {
