@@ -110,7 +110,7 @@ public class GameMap {
         return getMapNodes().stream().filter(predicate).toList();
     }
 
-    private PositionArea getArea() {
+    public PositionArea getArea() {
         Position minPosition = getPositions().stream().min(Position::compareTo).orElseThrow();
         Position maxPosition = getPositions().stream().max(Position::compareTo).orElseThrow();
 

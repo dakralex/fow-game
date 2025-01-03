@@ -11,13 +11,10 @@ import client.map.PositionArea;
 
 public class GameMapBorderAccessibilityValidator implements GameMapValidationRule {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
-
     private static final int BORDER_ACCESS_MIN_PERCENTAGE = 51;
 
-    private static Predicate<GameMapNode> getBorderPredicate(MapDirection direction) {
-        PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+    private static Predicate<GameMapNode> getBorderPredicate(GameMap map, MapDirection direction) {
+        PositionArea mapArea = map.getArea();
 
         return switch (direction) {
             case EAST -> mapNode -> mapArea.isOnEastBorder(mapNode.getPosition());
@@ -28,7 +25,7 @@ public class GameMapBorderAccessibilityValidator implements GameMapValidationRul
     }
 
     private static boolean isBorderAccessible(GameMap map, MapDirection direction) {
-        Predicate<GameMapNode> isOnBorder = getBorderPredicate(direction);
+        Predicate<GameMapNode> isOnBorder = getBorderPredicate(map, direction);
         List<GameMapNode> borderNodes = map.getMapNodes().stream().filter(isOnBorder).toList();
 
         int nodeCount = borderNodes.size();
