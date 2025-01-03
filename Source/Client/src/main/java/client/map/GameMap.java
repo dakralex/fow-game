@@ -153,7 +153,7 @@ public class GameMap {
         return getHalfMapNodes(getPlayerFortPosition());
     }
 
-    public Collection<GameMapNode> getOpponentMapNodes() {
+    public Collection<GameMapNode> getEnemyMapNodes() {
         Position playerFortPosition = getPlayerFortPosition();
 
         // TODO: Refactor/Improve this reflection calculation

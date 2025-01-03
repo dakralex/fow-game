@@ -226,18 +226,18 @@ public class MainClient {
     private static List<MapDirection> getNextFortFindingWalk(GameClientState clientState) {
         GameMap currentMap = clientState.getMap();
         Position currentPosition = clientState.getPlayer().getPosition();
-        Collection<GameMapNode> opponentMapNodes = currentMap.getOpponentMapNodes();
+        Collection<GameMapNode> enemyMapNodes = currentMap.getEnemyMapNodes();
 
-        return getWaterProtectedFortPosition(currentMap, opponentMapNodes)
+        return getWaterProtectedFortPosition(currentMap, enemyMapNodes)
                 .map(possiblePosition -> getDirectWalkTo(clientState, possiblePosition))
                 .orElseGet(() -> getNextWalkToUnvisitedNode(currentPosition,
                                                             currentMap,
-                                                            opponentMapNodes));
+                                                            enemyMapNodes));
     }
 
     private static Position getFortPosition(GameClientState state) {
         return state.getMapNodes().stream()
-                .filter(GameMapNode::hasOpponentFort)
+                .filter(GameMapNode::hasEnemyFort)
                 .findFirst()
                 .map(GameMapNode::getPosition)
                 .orElseThrow();
@@ -313,7 +313,7 @@ public class MainClient {
         System.out.println(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!",
                                             ANSIColor.GREEN));
 
-        while (!clientState.hasFoundOpponentFort()) {
+        while (!clientState.hasFoundEnemyFort()) {
             if (clientState.shouldClientAct()) {
                 if (currentDirections.isEmpty()) {
                     currentDirections.addAll(getNextFortFindingWalk(clientState));
@@ -328,20 +328,20 @@ public class MainClient {
                 System.exit(1);
             }
 
-            suspendForServer("finding opponent's fort");
+            suspendForServer("finding enemy's fort");
         }
 
-        // HAS FOUND OPPONENT'S FORT
+        // HAS FOUND ENEMY'S FORT
         currentDirections.clear();
 
-        System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE OPPONENT'S FORT!",
+        System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!",
                                             ANSIColor.GREEN));
 
         while (!clientState.hasClientWon()) {
             if (clientState.shouldClientAct()) {
                 if (currentDirections.isEmpty()) {
-                    Position opponentFortPosition = getFortPosition(clientState);
-                    currentDirections.addAll(getDirectWalkTo(clientState, opponentFortPosition));
+                    Position enemyFortPosition = getFortPosition(clientState);
+                    currentDirections.addAll(getDirectWalkTo(clientState, enemyFortPosition));
                 }
 
                 stateUpdater.sendMapMove(currentDirections.removeFirst());
@@ -353,7 +353,7 @@ public class MainClient {
                 System.exit(1);
             }
 
-            suspendForServer("going to the opponent's fort");
+            suspendForServer("going to the enemy's fort");
         }
 
         System.out.println(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));

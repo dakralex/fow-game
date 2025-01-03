@@ -24,15 +24,15 @@ public class GameClientState {
     private final String stateId;
     private final GameMap map;
     private final Player player;
-    private Optional<Player> opponent;
+    private Optional<Player> enemy;
 
     private GameClientState(String gameId, String stateId, GameMap map,
-                            Player player, Optional<Player> opponent) {
+                            Player player, Optional<Player> enemy) {
         this.gameId = gameId;
         this.stateId = stateId;
         this.map = map;
         this.player = player;
-        this.opponent = opponent;
+        this.enemy = enemy;
     }
 
     private static PlayerState pickOwnPlayer(Collection<PlayerState> players, String playerId) {
@@ -63,14 +63,14 @@ public class GameClientState {
                 .orElse(Position.originPosition);
     }
 
-    private static boolean isOpponentOnFullMapNode(FullMapNode fullMapNode) {
+    private static boolean isEnemyOnFullMapNode(FullMapNode fullMapNode) {
         return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
                 fullMapNode.getPlayerPositionState() == EPlayerPositionState.EnemyPlayerPosition;
     }
 
-    private static Position getOpponentPosition(FullMap fullMap) {
+    private static Position getEnemyPosition(FullMap fullMap) {
         return fullMap.getMapNodes().stream()
-                .filter(GameClientState::isOpponentOnFullMapNode)
+                .filter(GameClientState::isEnemyOnFullMapNode)
                 .findFirst()
                 .map(Position::fromFullMapNode)
                 .orElse(Position.originPosition);
@@ -85,21 +85,21 @@ public class GameClientState {
         PlayerState playerState = pickOwnPlayer(gameState.getPlayers(), playerId);
         Player player = Player.fromPlayerState(playerState, playerPosition);
 
-        Position opponentPosition = getOpponentPosition(gameState.getMap());
-        Optional<PlayerState> opponentState = pickOtherPlayer(gameState.getPlayers(), playerState);
-        Optional<Player> opponent = opponentState
-                .map(state -> Player.fromPlayerState(state, opponentPosition));
+        Position enemyPosition = getEnemyPosition(gameState.getMap());
+        Optional<PlayerState> enemyState = pickOtherPlayer(gameState.getPlayers(), playerState);
+        Optional<Player> enemy = enemyState
+                .map(state -> Player.fromPlayerState(state, enemyPosition));
 
-        return new GameClientState(gameId, stateId, map, player, opponent);
+        return new GameClientState(gameId, stateId, map, player, enemy);
     }
 
-    private void updateOpponent(Player newOpponent) {
-        if (opponent.isEmpty()) {
-            opponent = Optional.of(newOpponent);
+    private void updateEnemy(Player newEnemy) {
+        if (enemy.isEmpty()) {
+            enemy = Optional.of(newEnemy);
 
-            logger.info("Player {} joined the game", newOpponent);
+            logger.info("Player {} joined the game", newEnemy);
         } else {
-            opponent.get().update(newOpponent);
+            enemy.get().update(newEnemy);
         }
     }
 
@@ -110,7 +110,7 @@ public class GameClientState {
         }
 
         player.update(newState.player);
-        newState.opponent.ifPresent(this::updateOpponent);
+        newState.enemy.ifPresent(this::updateEnemy);
         map.update(newState.map, player.getPosition());
     }
 
@@ -131,7 +131,7 @@ public class GameClientState {
     }
 
     public boolean hasBothPlayers() {
-        return opponent.isPresent();
+        return enemy.isPresent();
     }
 
     public boolean shouldClientAct() {
@@ -147,9 +147,8 @@ public class GameClientState {
         return player.hasTreasure();
     }
 
-    public boolean hasFoundOpponentFort() {
-        return hasClientWon()
-                || map.getMapNodes().stream().anyMatch(GameMapNode::hasOpponentFort);
+    public boolean hasFoundEnemyFort() {
+        return hasClientWon() || map.getMapNodes().stream().anyMatch(GameMapNode::hasEnemyFort);
     }
 
     public boolean hasClientWon() {

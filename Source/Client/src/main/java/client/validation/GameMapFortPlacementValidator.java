@@ -24,8 +24,8 @@ public class GameMapFortPlacementValidator implements GameMapValidationRule {
             note.addEntry(this, "Game map has a non-grass field with the fort");
         }
 
-        if (fortMapNode.hasOpponentFort()) {
-            note.addEntry(this, "Game map has a field with the opponent's fort");
+        if (fortMapNode.hasEnemyFort()) {
+            note.addEntry(this, "Game map has a field with the enemy's fort");
         }
     }
 }

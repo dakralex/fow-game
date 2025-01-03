@@ -104,7 +104,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
 
     /**
      * Resets the current intelligence on the GameMapNode, i.e. whether the presence of the
-     * player's or opponent's fort and the presence of the player's treasure is known, if that
+     * player's or enemy's fort and the presence of the player's treasure is known, if that
      * information is known to be unreliable.
      * <p>
      * This method should be called if a new server-sourced GameMapNode is added to the
@@ -150,7 +150,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return fortState == FortState.PLAYER_FORT_PRESENT;
     }
 
-    public boolean hasOpponentFort() {
+    public boolean hasEnemyFort() {
         return fortState == FortState.ENEMY_FORT_PRESENT;
     }
 
@@ -164,7 +164,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
             return ANSIColor.format("F", ANSIColor.BRIGHT_BLACK, ANSIColor.RED);
         }
 
-        if (hasOpponentFort()) {
+        if (hasEnemyFort()) {
             return ANSIColor.format("F", ANSIColor.BRIGHT_BLACK, ANSIColor.BRIGHT_RED);
         }
 
