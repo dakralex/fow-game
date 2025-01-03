@@ -9,7 +9,7 @@ import client.util.ANSIColor;
 public class GameMapNode implements Comparable<GameMapNode> {
 
     private final Position position;
-    private final TerrainType terrainType;
+    private TerrainType terrainType;
     private FortState fortState = FortState.UNKNOWN;
     private TreasureState treasureState = TreasureState.UNKNOWN;
 
@@ -135,6 +135,18 @@ public class GameMapNode implements Comparable<GameMapNode> {
      */
     public void placePlayerFort() {
         this.fortState = FortState.PLAYER_FORT_PRESENT;
+    }
+
+    /**
+     * Change the GameMapNode's terrain type retrospectively.
+     * <p>
+     * This method should only be used for testing purposes, as the terrain type should only be set
+     * during half map generation through the constructor.
+     *
+     * @param terrainType the new terrain type
+     */
+    public void setTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
     }
 
     public Position getPosition() {

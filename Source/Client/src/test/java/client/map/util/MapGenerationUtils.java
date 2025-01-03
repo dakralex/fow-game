@@ -1,6 +1,7 @@
 package client.map.util;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -29,5 +30,16 @@ public class MapGenerationUtils {
         fortMapNode.placePlayerFort();
 
         return new GameMap(mapNodes);
+    }
+
+    public static GameMap changeGameMapNodes(GameMap map, Iterable<GameMapNode> mapNodes,
+                                             Function<GameMapNode, GameMapNode> mapper) {
+        Map<Position, GameMapNode> allMapNodes = map.getMapNodes().stream()
+                .collect(GameMap.mapCollector);
+
+        mapNodes.forEach(mapNode ->
+                                 allMapNodes.replace(mapNode.getPosition(), mapper.apply(mapNode)));
+
+        return new GameMap(allMapNodes);
     }
 }
