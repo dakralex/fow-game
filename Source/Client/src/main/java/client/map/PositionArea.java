@@ -9,7 +9,7 @@ public record PositionArea(int x, int y, int width, int height) {
              lowerRight.y() + 1 - upperLeft.y());
     }
 
-    public boolean isInside(Position position) {
+    private boolean isInside(Position position) {
         int posX = position.x();
         int posY = position.y();
 
@@ -17,6 +17,10 @@ public record PositionArea(int x, int y, int width, int height) {
         boolean withinYBoundary = posY >= y && posY < (y + height);
 
         return withinXBoundary && withinYBoundary;
+    }
+
+    public boolean isOutside(Position position) {
+        return !isInside(position);
     }
 
     public boolean isOnEastBorder(Position position) {
