@@ -9,8 +9,9 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import static client.map.util.MapGenerationUtils.generateEmptyGameMap;
+
 import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Stream;
 
 class GameMapTest {
@@ -24,26 +25,6 @@ class GameMapTest {
 
     private static final int VERTICAL_MAP_X_SIZE = HALF_MAP_X_SIZE;
     private static final int VERTICAL_MAP_Y_SIZE = 2 * HALF_MAP_Y_SIZE;
-
-    private static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
-                                                MapDirection playerFortPosition) {
-        PositionArea mapArea = new PositionArea(0, 0, mapXSize, mapYSize);
-        Map<Position, GameMapNode> mapNodes = mapArea.intoPositionStream()
-                .map(position -> new GameMapNode(position, TerrainType.GRASS))
-                .collect(GameMap.mapCollector);
-
-        Position fortPosition = switch (playerFortPosition) {
-            case EAST -> new Position(mapXSize - 1, mapYSize / 2);
-            case NORTH -> new Position(mapXSize / 2, 0);
-            case SOUTH -> new Position(mapXSize / 2, mapYSize - 1);
-            case WEST -> new Position(0, mapYSize / 2);
-        };
-
-        GameMapNode fortMapNode = mapNodes.get(fortPosition);
-        fortMapNode.placePlayerFort();
-
-        return new GameMap(mapNodes);
-    }
 
     @ParameterizedTest
     @ArgumentsSource(FullMapFortHalfMapArgumentsProvider.class)
