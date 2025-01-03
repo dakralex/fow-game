@@ -110,11 +110,28 @@ public class GameMap {
         return getMapNodes().stream().filter(predicate).toList();
     }
 
-    public PositionArea getArea() {
+    private PositionArea getArea() {
         Position minPosition = getPositions().stream().min(Position::compareTo).orElseThrow();
         Position maxPosition = getPositions().stream().max(Position::compareTo).orElseThrow();
 
         return new PositionArea(minPosition, maxPosition);
+    }
+
+    private Predicate<GameMapNode> getBorderPredicate(MapDirection direction) {
+        PositionArea mapArea = getArea();
+
+        return switch (direction) {
+            case EAST -> mapNode -> mapArea.isOnEastBorder(mapNode.getPosition());
+            case NORTH -> mapNode -> mapArea.isOnNorthBorder(mapNode.getPosition());
+            case SOUTH -> mapNode -> mapArea.isOnSouthBorder(mapNode.getPosition());
+            case WEST -> mapNode -> mapArea.isOnWestBorder(mapNode.getPosition());
+        };
+    }
+
+    public Collection<GameMapNode> getBorderNodes(MapDirection direction) {
+        Predicate<GameMapNode> isOnBorder = getBorderPredicate(direction);
+
+        return getMapNodes().stream().filter(isOnBorder).toList();
     }
 
     private Predicate<GameMapNode> getHalfMapBinaryRelation(Position position) {
