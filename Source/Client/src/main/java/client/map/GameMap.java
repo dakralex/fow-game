@@ -117,12 +117,10 @@ public class GameMap {
         return new PositionArea(minPosition, maxPosition);
     }
 
-    private Collection<GameMapNode> getHalfMapNodes(Position position) {
-        Collection<GameMapNode> mapNodes = new ArrayList<>(getSize() / 2);
+    private Predicate<GameMapNode> getHalfMapBinaryRelation(Position position) {
+        Predicate<GameMapNode> predicate;
         PositionArea mapArea = getArea();
         Position middlePoint = mapArea.middlePoint();
-
-        Predicate<GameMapNode> predicate;
 
         // The GameMap can be either square (10 x 10) or wide (20 x 5), when both clients have
         // sent their half maps, so we have consider either case for getting the half map
@@ -140,7 +138,14 @@ public class GameMap {
             }
         }
 
-        mapNodes.addAll(getMapNodes(predicate));
+        return predicate;
+    }
+
+    private Collection<GameMapNode> getHalfMapNodes(Position position) {
+        Collection<GameMapNode> mapNodes = new ArrayList<>(getSize() / 2);
+        Predicate<GameMapNode> halfMapBinaryRelation = getHalfMapBinaryRelation(position);
+
+        mapNodes.addAll(getMapNodes(halfMapBinaryRelation));
 
         return mapNodes;
     }
