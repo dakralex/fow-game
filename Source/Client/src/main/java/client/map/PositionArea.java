@@ -1,5 +1,6 @@
 package client.map;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public record PositionArea(int x, int y, int width, int height) {
@@ -12,7 +13,13 @@ public record PositionArea(int x, int y, int width, int height) {
     }
 
     public Stream<Position> intoPositionStream() {
-        return Stream.empty();
+        return IntStream.range(0, width * height)
+                .mapToObj(index -> {
+                    int posX = x + index % width;
+                    int posY = y + Math.floorDiv(index, width);
+
+                    return new Position(posX, posY);
+                });
     }
 
     private boolean isInside(Position position) {
