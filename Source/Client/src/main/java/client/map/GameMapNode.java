@@ -24,7 +24,7 @@ public class GameMapNode implements Comparable<GameMapNode> {
         this.fortState = fortState;
     }
 
-    private GameMapNode(Position position, TerrainType terrainType, FortState fortState,
+    public GameMapNode(Position position, TerrainType terrainType, FortState fortState,
                         TreasureState treasureState) {
         this.position = position;
         this.terrainType = terrainType;
