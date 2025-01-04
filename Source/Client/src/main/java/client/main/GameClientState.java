@@ -146,8 +146,7 @@ public class GameClientState {
     }
 
     public boolean hasFoundTreasure() {
-        return hasCollectedTreasure()
-                || map.getMapNodes().stream().anyMatch(GameMapNode::hasTreasure);
+        return hasCollectedTreasure() || map.anyMapNodeMatch(GameMapNode::hasTreasure);
     }
 
     public boolean hasCollectedTreasure() {
@@ -155,7 +154,7 @@ public class GameClientState {
     }
 
     public boolean hasFoundEnemyFort() {
-        return hasClientWon() || map.getMapNodes().stream().anyMatch(GameMapNode::hasEnemyFort);
+        return hasClientWon() || map.anyMapNodeMatch(GameMapNode::hasEnemyFort);
     }
 
     public boolean hasClientWon() {

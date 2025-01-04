@@ -202,6 +202,10 @@ public class GameMap {
         return getSize() == MAP_FULL_SIZE;
     }
 
+    public boolean anyMapNodeMatch(Predicate<GameMapNode> predicate) {
+        return getMapNodes().stream().anyMatch(predicate);
+    }
+
     public Optional<GameMapNode> getNodeAt(Position position) {
         return Optional.ofNullable(nodes.get(position));
     }
