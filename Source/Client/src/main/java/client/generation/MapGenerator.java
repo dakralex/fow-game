@@ -42,6 +42,12 @@ public class MapGenerator {
         this.terrainGenerator = new TerrainDistributionGenerator();
     }
 
+    public MapGenerator(long seed) {
+        this.random = new Random(seed);
+        this.fortGenerator = new FortGenerator();
+        this.terrainGenerator = new TerrainDistributionGenerator();
+    }
+
     private Position pickFortPosition() {
         int x = random.nextInt(X_FORT_BORDER_SIZE, X_SIZE - X_FORT_BORDER_SIZE);
         int y = random.nextInt(Y_FORT_BORDER_SIZE, Y_SIZE - X_FORT_BORDER_SIZE);
