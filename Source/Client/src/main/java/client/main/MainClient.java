@@ -294,7 +294,7 @@ public class MainClient {
                  MainClient::getNextTreasureFindingWalk);
 
         // HAS FOUND TREASURE
-        System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE TREASURE!", ANSIColor.GREEN));
+        logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE TREASURE!", ANSIColor.GREEN));
 
         runStage("going to the player's treasure",
                  GameClientState::hasCollectedTreasure,
@@ -306,8 +306,7 @@ public class MainClient {
                  });
 
         // HAS COLLECTED TREASURE
-        System.out.println(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!",
-                                            ANSIColor.GREEN));
+        logger.info(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!", ANSIColor.GREEN));
 
         runStage("finding enemy's fort",
                  GameClientState::hasFoundEnemyFort,
@@ -316,8 +315,7 @@ public class MainClient {
                  MainClient::getNextFortFindingWalk);
 
         // HAS FOUND ENEMY'S FORT
-        System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!",
-                                            ANSIColor.GREEN));
+        logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!", ANSIColor.GREEN));
 
         runStage("going to the enemy's fort",
                  GameClientState::hasClientWon,
@@ -328,6 +326,6 @@ public class MainClient {
                      return getDirectWalkTo(currentClientState, enemyFortPosition);
                  });
 
-        System.out.println(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));
+        logger.info(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));
     }
 }
