@@ -162,12 +162,10 @@ public class GameMap {
     }
 
     private Optional<GameMapNode> getPlayerFortMapNode() {
-        return getMapNodes().stream()
-                .filter(GameMapNode::hasPlayerFort)
-                .findFirst();
+        return getMapNodes(GameMapNode::hasPlayerFort).stream().findFirst();
     }
 
-    private Optional<Position> getPlayerFortPosition() {
+    public Optional<Position> getPlayerFortPosition() {
         return getPlayerFortMapNode().map(GameMapNode::getPosition);
     }
 

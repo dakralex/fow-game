@@ -20,11 +20,7 @@ public class GameMapTerrainReachabilityValidator implements GameMapValidationRul
 
     @Override
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
-        Position fortPosition = map.getMapNodes().stream()
-                .filter(GameMapNode::hasPlayerFort)
-                .map(GameMapNode::getPosition)
-                .findFirst()
-                .orElse(Position.originPosition);
+        Position fortPosition = map.getPlayerFortPosition().orElse(Position.originPosition);
 
         Collection<Position> accessiblePositions = map.getPositionsByMapNode(GameMapNode::isAccessible);
 
