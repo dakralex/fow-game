@@ -14,6 +14,10 @@ public class GameMapFortPlacementValidator implements GameMapValidationRule {
                 .filter(GameMapNode::hasAnyFort)
                 .toList();
 
+        if (fortNodes.stream().anyMatch(GameMapNode::hasEnemyFort)) {
+            note.addEntry(this, "Game map has at least one field with the enemy's fort");
+        }
+
         if (fortNodes.size() != 1) {
             note.addEntry(this, "Game map has no or more than one field with a fort");
         }
@@ -22,10 +26,6 @@ public class GameMapFortPlacementValidator implements GameMapValidationRule {
 
         if (fortMapNode.getTerrainType() != TerrainType.GRASS) {
             note.addEntry(this, "Game map has a non-grass field with the fort");
-        }
-
-        if (fortMapNode.hasEnemyFort()) {
-            note.addEntry(this, "Game map has a field with the enemy's fort");
         }
     }
 }
