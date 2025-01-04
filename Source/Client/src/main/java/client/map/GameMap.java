@@ -106,7 +106,7 @@ public class GameMap {
         return Collections.unmodifiableCollection(nodes.values());
     }
 
-    private Collection<GameMapNode> getMapNodes(Predicate<GameMapNode> predicate) {
+    public Collection<GameMapNode> getMapNodes(Predicate<GameMapNode> predicate) {
         return getMapNodes().stream().filter(predicate).toList();
     }
 

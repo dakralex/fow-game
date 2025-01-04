@@ -225,11 +225,8 @@ public class MainClient {
     }
 
     private static Position getTreasurePosition(GameClientState state) {
-        return state.getMapNodes().stream()
-                .filter(GameMapNode::hasTreasure)
-                .findFirst()
-                .map(GameMapNode::getPosition)
-                .orElseThrow();
+        // TODO Improve error handling here (by transitioning back to searching the treasure?)
+        return state.getMapNodePosition(GameMapNode::hasTreasure).orElseThrow();
     }
 
     private static Optional<Position> getWaterProtectedFortPosition(GameMap map,
@@ -261,11 +258,8 @@ public class MainClient {
     }
 
     private static Position getFortPosition(GameClientState state) {
-        return state.getMapNodes().stream()
-                .filter(GameMapNode::hasEnemyFort)
-                .findFirst()
-                .map(GameMapNode::getPosition)
-                .orElseThrow();
+        // TODO: Improve error handling here (by transitioning back to searching enemy fort?)
+        return state.getMapNodePosition(GameMapNode::hasEnemyFort).orElseThrow();
     }
 
     public static void main(String[] args) {

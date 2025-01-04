@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -120,6 +121,12 @@ public class GameClientState {
 
     public Collection<GameMapNode> getMapNodes() {
         return map.getMapNodes();
+    }
+
+    public Optional<Position> getMapNodePosition(Predicate<GameMapNode> predicate) {
+        return map.getMapNodes(predicate).stream()
+                .map(GameMapNode::getPosition)
+                .findFirst();
     }
 
     public Player getPlayer() {
