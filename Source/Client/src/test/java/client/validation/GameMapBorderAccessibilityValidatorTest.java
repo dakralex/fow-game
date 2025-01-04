@@ -1,7 +1,5 @@
 package client.validation;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -14,6 +12,7 @@ import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.TerrainType;
 import client.map.util.MapGenerationUtils;
+import client.validation.util.NotificationAssertUtils;
 
 class GameMapBorderAccessibilityValidatorTest {
 
@@ -27,13 +26,7 @@ class GameMapBorderAccessibilityValidatorTest {
     void CompletelyAccessibleBorder_validate_shouldMarkAsValid() {
         GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, MapDirection.WEST);
 
-        Notification<GameMapValidationRule> validationErrors = new Notification<>();
-        GameMapValidationRule validator = new GameMapBorderAccessibilityValidator();
-
-        validator.validate(map, validationErrors);
-
-        assertFalse(validationErrors.hasEntries(),
-                    "Validator should have caught no business rule violation");
+        NotificationAssertUtils.assertNoViolation(map, new GameMapBorderAccessibilityValidator());
     }
 
     @ParameterizedTest
@@ -44,12 +37,6 @@ class GameMapBorderAccessibilityValidatorTest {
 
         map = MapGenerationUtils.changeGameMapNodes(map, borderNodes, makeInaccessible);
 
-        Notification<GameMapValidationRule> validationErrors = new Notification<>();
-        GameMapValidationRule validator = new GameMapBorderAccessibilityValidator();
-
-        validator.validate(map, validationErrors);
-
-        assertTrue(validationErrors.hasEntries(),
-                   "Validator should have caught at least one business rule violation");
+        NotificationAssertUtils.assertSomeViolation(map, new GameMapBorderAccessibilityValidator());
     }
 }
