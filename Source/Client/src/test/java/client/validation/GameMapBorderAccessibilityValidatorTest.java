@@ -26,7 +26,7 @@ class GameMapBorderAccessibilityValidatorTest {
 
     @Test
     void CompletelyAccessibleBorder_validate_shouldMarkAsValid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, MapDirection.WEST);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
 
         NotificationAssertUtils.assertNoViolation(map, validator);
     }
@@ -34,7 +34,7 @@ class GameMapBorderAccessibilityValidatorTest {
     @ParameterizedTest
     @EnumSource(MapDirection.class)
     void CompletelyInaccessibleBorder_validate_shouldMarkAsInvalid(MapDirection borderDirection) {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, MapDirection.WEST);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
         Collection<GameMapNode> borderNodes = map.getBorderNodes(borderDirection);
 
         map = MapGenerationUtils.changeGameMapNodes(map, borderNodes, makeInaccessible);
