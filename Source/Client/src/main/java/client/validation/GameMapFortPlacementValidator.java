@@ -11,7 +11,7 @@ public class GameMapFortPlacementValidator implements GameMapValidationRule {
     @Override
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         List<GameMapNode> fortNodes = map.getMapNodes().stream()
-                .filter(GameMapNode::hasPlayerFort)
+                .filter(GameMapNode::hasAnyFort)
                 .toList();
 
         if (fortNodes.size() != 1) {

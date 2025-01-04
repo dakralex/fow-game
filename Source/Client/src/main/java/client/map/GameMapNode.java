@@ -196,6 +196,10 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return fortState == FortState.ENEMY_FORT_PRESENT;
     }
 
+    public boolean hasAnyFort() {
+        return hasPlayerFort() || hasEnemyFort();
+    }
+
     public boolean hasTreasure() {
         return treasureState == TreasureState.PLAYER_TREASURE_PRESENT;
     }
