@@ -3,7 +3,6 @@ package client.generation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,16 +32,14 @@ public class MapGenerator {
     private static final int X_FORT_BORDER_SIZE = 2;
     private static final int Y_FORT_BORDER_SIZE = 2;
 
-    private static final int GRASS_MIN_AMOUNT = 24;
-    private static final int MOUNTAIN_MIN_AMOUNT = 5;
-    private static final int WATER_MIN_AMOUNT = 7;
-
     private final Random random;
     private final FortGenerator fortGenerator;
+    private final TerrainDistributionGenerator terrainGenerator;
 
     public MapGenerator() {
         this.random = new Random();
         this.fortGenerator = new FortGenerator();
+        this.terrainGenerator = new TerrainDistributionGenerator();
     }
 
     private Position pickFortPosition() {
@@ -56,19 +53,6 @@ public class MapGenerator {
         PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
 
         return mapArea.intoPositionStream().collect(Collectors.toSet());
-    }
-
-    private static List<TerrainType> generateTerrainTypeQueue(int amount) {
-        List<TerrainType> terrainTypeQueue = new ArrayList<>(amount);
-
-        terrainTypeQueue.addAll(Collections.nCopies(GRASS_MIN_AMOUNT, TerrainType.GRASS));
-        terrainTypeQueue.addAll(Collections.nCopies(MOUNTAIN_MIN_AMOUNT, TerrainType.MOUNTAIN));
-        terrainTypeQueue.addAll(Collections.nCopies(WATER_MIN_AMOUNT, TerrainType.WATER));
-
-        int remainingAmount = amount - terrainTypeQueue.size();
-        terrainTypeQueue.addAll(Collections.nCopies(remainingAmount, TerrainType.MOUNTAIN));
-
-        return terrainTypeQueue;
     }
 
     private GameMap generateMap() {
@@ -86,7 +70,7 @@ public class MapGenerator {
         Set<Position> positionQueue = generatePositionRange();
         positionQueue.removeAll(mapNodes.keySet());
 
-        List<TerrainType> terrainTypeQueue = generateTerrainTypeQueue(remainingMapNodes);
+        List<TerrainType> terrainTypeQueue = terrainGenerator.generateTerrainQueue(remainingMapNodes);
         Collections.shuffle(terrainTypeQueue, random);
 
         Map<Position, GameMapNode> randomMapNodes = positionQueue.stream()
