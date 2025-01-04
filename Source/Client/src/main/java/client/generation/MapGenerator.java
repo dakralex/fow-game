@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
+import client.map.PositionArea;
 import client.map.TerrainType;
 import client.validation.GameMapValidationRule;
 import client.validation.HalfMapValidator;
@@ -53,9 +53,9 @@ public class MapGenerator {
     }
 
     private static Set<Position> generatePositionRange() {
-        return IntStream.range(0, MAP_SIZE)
-                .mapToObj(index -> new Position(index % X_SIZE, Math.floorDiv(index, X_SIZE)))
-                .collect(Collectors.toSet());
+        PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+
+        return mapArea.intoPositionStream().collect(Collectors.toSet());
     }
 
     private static List<TerrainType> generateTerrainTypeQueue(int amount) {
