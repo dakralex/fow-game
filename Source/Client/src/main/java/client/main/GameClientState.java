@@ -124,9 +124,7 @@ public class GameClientState {
     }
 
     public Optional<Position> getMapNodePosition(Predicate<GameMapNode> predicate) {
-        return map.getMapNodes(predicate).stream()
-                .map(GameMapNode::getPosition)
-                .findFirst();
+        return map.getPositionsByMapNode(predicate).stream().findFirst();
     }
 
     public Player getPlayer() {
