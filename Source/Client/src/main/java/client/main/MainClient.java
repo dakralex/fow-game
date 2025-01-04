@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import client.generation.MapGenerator;
@@ -69,6 +70,30 @@ public class MainClient {
             logger.info("{}...", reason);
 
             clientState.update(stateUpdater.pollGameState());
+
+            suspendForServer(reason.toLowerCase());
+        }
+    }
+
+    private static void runStage(String reason, Predicate<GameClientState> condition,
+                                 GameStateUpdater stateUpdater, GameClientState clientState,
+                                 Function<GameClientState, Collection<MapDirection>> nextDirectionsSupplier) {
+        List<MapDirection> currentDirections = new ArrayList<>();
+
+        while (!condition.test(clientState)) {
+            if (clientState.shouldClientAct()) {
+                if (currentDirections.isEmpty()) {
+                    currentDirections.addAll(nextDirectionsSupplier.apply(clientState));
+                }
+
+                stateUpdater.sendMapMove(currentDirections.removeFirst());
+            }
+
+            clientState.update(stateUpdater.pollGameState());
+
+            if (clientState.hasClientLost()) {
+                System.exit(1);
+            }
 
             suspendForServer(reason.toLowerCase());
         }
@@ -259,102 +284,49 @@ public class MainClient {
         GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
         GameClientState clientState = sendMap(serverClient, token, stateUpdater, gameMap);
 
-        List<MapDirection> currentDirections = new ArrayList<>();
-
         GameMap currentMap = clientState.getMap();
         logger.info("Client received the full map\n{}", currentMap);
 
-        while (!clientState.hasFoundTreasure()) {
-            if (clientState.shouldClientAct()) {
-                if (currentDirections.isEmpty()) {
-                    currentDirections.addAll(getNextTreasureFindingWalk(clientState));
-                }
-
-                MapDirection currentMove = currentDirections.removeFirst();
-                stateUpdater.sendMapMove(currentMove);
-            }
-
-            clientState.update(stateUpdater.pollGameState());
-
-            if (clientState.hasClientLost()) {
-                System.exit(1);
-            }
-
-            suspendForServer("finding the player's treasure");
-        }
+        runStage("finding the player's treasure",
+                 GameClientState::hasFoundTreasure,
+                 stateUpdater,
+                 clientState,
+                 MainClient::getNextTreasureFindingWalk);
 
         // HAS FOUND TREASURE
-        currentDirections.clear();
-
         System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE TREASURE!", ANSIColor.GREEN));
 
-        while (!clientState.hasCollectedTreasure()) {
-            if (clientState.shouldClientAct()) {
-                if (currentDirections.isEmpty()) {
-                    Position treasurePosition = getTreasurePosition(clientState);
-                    currentDirections.addAll(getDirectWalkTo(clientState, treasurePosition));
-                }
-
-                stateUpdater.sendMapMove(currentDirections.removeFirst());
-            }
-
-            clientState.update(stateUpdater.pollGameState());
-
-            if (clientState.hasClientLost()) {
-                System.exit(1);
-            }
-
-            suspendForServer("going to the player's treasure");
-        }
+        runStage("going to the player's treasure",
+                 GameClientState::hasCollectedTreasure,
+                 stateUpdater,
+                 clientState,
+                 currentClientState -> {
+                     Position treasurePosition = getTreasurePosition(currentClientState);
+                     return getDirectWalkTo(currentClientState, treasurePosition);
+                 });
 
         // HAS COLLECTED TREASURE
-        currentDirections.clear();
-
         System.out.println(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!",
                                             ANSIColor.GREEN));
 
-        while (!clientState.hasFoundEnemyFort()) {
-            if (clientState.shouldClientAct()) {
-                if (currentDirections.isEmpty()) {
-                    currentDirections.addAll(getNextFortFindingWalk(clientState));
-                }
-
-                stateUpdater.sendMapMove(currentDirections.removeFirst());
-            }
-
-            clientState.update(stateUpdater.pollGameState());
-
-            if (clientState.hasClientLost()) {
-                System.exit(1);
-            }
-
-            suspendForServer("finding enemy's fort");
-        }
+        runStage("finding enemy's fort",
+                 GameClientState::hasFoundEnemyFort,
+                 stateUpdater,
+                 clientState,
+                 MainClient::getNextFortFindingWalk);
 
         // HAS FOUND ENEMY'S FORT
-        currentDirections.clear();
-
         System.out.println(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!",
                                             ANSIColor.GREEN));
 
-        while (!clientState.hasClientWon()) {
-            if (clientState.shouldClientAct()) {
-                if (currentDirections.isEmpty()) {
-                    Position enemyFortPosition = getFortPosition(clientState);
-                    currentDirections.addAll(getDirectWalkTo(clientState, enemyFortPosition));
-                }
-
-                stateUpdater.sendMapMove(currentDirections.removeFirst());
-            }
-
-            clientState.update(stateUpdater.pollGameState());
-
-            if (clientState.hasClientLost()) {
-                System.exit(1);
-            }
-
-            suspendForServer("going to the enemy's fort");
-        }
+        runStage("going to the enemy's fort",
+                 GameClientState::hasClientWon,
+                 stateUpdater,
+                 clientState,
+                 currentClientState -> {
+                     Position enemyFortPosition = getFortPosition(currentClientState);
+                     return getDirectWalkTo(currentClientState, enemyFortPosition);
+                 });
 
         System.out.println(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));
     }
