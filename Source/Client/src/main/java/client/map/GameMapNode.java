@@ -149,6 +149,16 @@ public class GameMapNode implements Comparable<GameMapNode> {
     }
 
     /**
+     * Marks the GameMapNode as having the player treasure placed on it.
+     * <p>
+     * This method should only be used for testing purposes, as the actual player treasure should
+     * only be placed by the server and revealed if the player is near enough to see it.
+     */
+    public void placePlayerTreasure() {
+        this.treasureState = TreasureState.PLAYER_TREASURE_PRESENT;
+    }
+
+    /**
      * Change the GameMapNode's terrain type retrospectively.
      * <p>
      * This method should only be used for testing purposes, as the terrain type should only be set
