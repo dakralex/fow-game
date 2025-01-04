@@ -1,5 +1,6 @@
 package client.map.util;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -13,6 +14,9 @@ import client.map.TerrainType;
 
 public class MapGenerationUtils {
 
+    private static final Consumer<Map<Position, GameMapNode>> dummyConsumer =
+            mapNodes -> {};
+
     public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
                                                Consumer<Map<Position, GameMapNode>> mapper) {
         PositionArea mapArea = new PositionArea(0, 0, mapXSize, mapYSize);
@@ -23,6 +27,10 @@ public class MapGenerationUtils {
         mapper.accept(mapNodes);
 
         return new GameMap(mapNodes);
+    }
+
+    public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize) {
+        return generateEmptyGameMap(mapXSize, mapYSize, dummyConsumer);
     }
 
     public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,

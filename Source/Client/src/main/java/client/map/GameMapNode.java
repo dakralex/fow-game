@@ -138,6 +138,17 @@ public class GameMapNode implements Comparable<GameMapNode> {
     }
 
     /**
+     * Marks the GameMapNode as having the enemy fort placed on it.
+     * <p>
+     * This method should only be used for testing purposes, as the actual enemy fort should only
+     * be placed by adding a server-sourced GameMapNode when receiving the full {@link GameMap}
+     * at game start.
+     */
+    public void placeEnemyFort() {
+        this.fortState = FortState.ENEMY_FORT_PRESENT;
+    }
+
+    /**
      * Change the GameMapNode's terrain type retrospectively.
      * <p>
      * This method should only be used for testing purposes, as the terrain type should only be set
