@@ -10,6 +10,18 @@ import client.map.Position;
 
 public class GameMapTerrainReachabilityValidator implements GameMapValidationRule {
 
+    /**
+     * Flood-fills the specified {@link GameMap} by recursively traversing all reachable neighbors
+     * starting from {@code position} and marking each visited {@link GameMapNode} by adding their
+     * position in {@code visitedNodes}.
+     * <p>
+     * To check whether a specific set of {@link GameMapNode} were reached, check whether
+     * {@code visitedNodes} contain all desired position with {@link Set#containsAll(Collection)}.
+     *
+     * @param map the map to flood-fill on
+     * @param position the starting position
+     * @param visitedNodes all visited positions while traversing
+     */
     private static void floodFillMap(GameMap map, Position position, Set<Position> visitedNodes) {
         visitedNodes.add(position);
 
