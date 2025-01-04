@@ -87,6 +87,10 @@ public class GameMap {
         return getPositions().stream().filter(predicate).toList();
     }
 
+    public Collection<Position> getPositionsByMapNode(Predicate<GameMapNode> predicate) {
+        return getMapNodes(predicate).stream().map(GameMapNode::getPosition).toList();
+    }
+
     private Collection<Position> getPositionsInSight(Position cameraPosition) {
         int cameraViewRadius = getNodeAt(cameraPosition)
                 .map(GameMapNode::getTerrainType)

@@ -1,8 +1,8 @@
 package client.validation;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -26,10 +26,7 @@ public class GameMapTerrainReachabilityValidator implements GameMapValidationRul
                 .findFirst()
                 .orElse(Position.originPosition);
 
-        Set<Position> accessiblePositions = map.getMapNodes().stream()
-                .filter(GameMapNode::isAccessible)
-                .map(GameMapNode::getPosition)
-                .collect(Collectors.toSet());
+        Collection<Position> accessiblePositions = map.getPositionsByMapNode(GameMapNode::isAccessible);
 
         Set<Position> visitedNodes = HashSet.newHashSet(accessiblePositions.size());
 

@@ -1,6 +1,6 @@
 package client.validation;
 
-import java.util.List;
+import java.util.Collection;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -9,9 +9,7 @@ public class GameMapFortPlacementValidator implements GameMapValidationRule {
 
     @Override
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
-        List<GameMapNode> fortNodes = map.getMapNodes().stream()
-                .filter(GameMapNode::hasAnyFort)
-                .toList();
+        Collection<GameMapNode> fortNodes = map.getMapNodes(GameMapNode::hasAnyFort);
 
         if (!fortNodes.stream().allMatch(GameMapNode::isLootable)) {
             note.addEntry(this, "Game map has at least one non-grass field with a fort");
