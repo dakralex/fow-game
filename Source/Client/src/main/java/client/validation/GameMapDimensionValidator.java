@@ -14,9 +14,14 @@ public class GameMapDimensionValidator implements GameMapValidationRule {
 
     @Override
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
-        PositionArea area = new PositionArea(0, 0, X_SIZE, Y_SIZE);
-        Set<Position> areaPositions = area.intoPositionStream()
+        PositionArea actualArea = map.getArea();
+        PositionArea expectedArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+        Set<Position> areaPositions = expectedArea.intoPositionStream()
                 .collect(Collectors.toUnmodifiableSet());
+
+        if (!actualArea.equals(expectedArea)) {
+            note.addEntry(this, "Game Map does not have the expected dimensions");
+        }
 
         if (!map.getPositions().equals(areaPositions)) {
             note.addEntry(this, "Game Map contains fields with unexpected positions");
