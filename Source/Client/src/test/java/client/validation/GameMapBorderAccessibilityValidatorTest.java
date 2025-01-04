@@ -4,12 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
+import client.map.PositionArea;
 import client.map.TerrainType;
 import client.map.util.MapGenerationUtils;
 import client.validation.util.NotificationAssertUtils;
@@ -34,10 +35,11 @@ class GameMapBorderAccessibilityValidatorTest {
     @ParameterizedTest
     @EnumSource(MapDirection.class)
     void CompletelyInaccessibleBorder_validate_shouldMarkAsInvalid(MapDirection borderDirection) {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
-        Collection<GameMapNode> borderNodes = map.getBorderNodes(borderDirection);
+        PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+        Predicate<GameMapNode> isOnBorder = mapNode ->
+                mapArea.getBorderPredicate(borderDirection).test(mapNode.getPosition());
 
-        map = MapGenerationUtils.changeGameMapNodes(map, borderNodes, makeInaccessible);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, makeInaccessible, isOnBorder);
 
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }

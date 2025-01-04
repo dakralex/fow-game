@@ -1,9 +1,9 @@
 package client.map.util;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -35,6 +35,26 @@ public class MapGenerationUtils {
         return new GameMap(mapNodes);
     }
 
+    public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
+                                               Function<GameMapNode, GameMapNode> mapper,
+                                               Predicate<GameMapNode> condition, long maxCount) {
+        Map<Position, GameMapNode> mapNodes = generateEmptyGameMapNodes(mapXSize, mapYSize);
+
+        mapNodes = mapNodes.values().stream()
+                .filter(condition)
+                .limit(maxCount)
+                .map(mapper)
+                .collect(GameMap.mapCollector);
+
+        return new GameMap(mapNodes);
+    }
+
+    public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
+                                               Function<GameMapNode, GameMapNode> mapper,
+                                               Predicate<GameMapNode> condition) {
+        return generateEmptyGameMap(mapXSize, mapYSize, mapper, condition, Long.MAX_VALUE);
+    }
+
     public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize) {
         return generateEmptyGameMap(mapXSize, mapYSize, dummyConsumer);
     }
@@ -52,16 +72,5 @@ public class MapGenerationUtils {
             GameMapNode fortMapNode = mapNodes.get(fortPosition);
             fortMapNode.placePlayerFort();
         });
-    }
-
-    public static GameMap changeGameMapNodes(GameMap map, Iterable<GameMapNode> mapNodes,
-                                             Function<GameMapNode, GameMapNode> mapper) {
-        Map<Position, GameMapNode> allMapNodes = map.getMapNodes().stream()
-                .collect(GameMap.mapCollector);
-
-        mapNodes.forEach(mapNode ->
-                                 allMapNodes.replace(mapNode.getPosition(), mapper.apply(mapNode)));
-
-        return new GameMap(allMapNodes);
     }
 }
