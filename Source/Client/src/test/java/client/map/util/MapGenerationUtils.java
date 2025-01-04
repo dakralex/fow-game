@@ -17,12 +17,18 @@ public class MapGenerationUtils {
     private static final Consumer<Map<Position, GameMapNode>> dummyConsumer =
             mapNodes -> {};
 
-    public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
-                                               Consumer<Map<Position, GameMapNode>> manipulator) {
+    private static Map<Position, GameMapNode> generateEmptyGameMapNodes(int mapXSize,
+                                                                        int mapYSize) {
         PositionArea mapArea = new PositionArea(0, 0, mapXSize, mapYSize);
-        Map<Position, GameMapNode> mapNodes = mapArea.intoPositionStream()
+
+        return mapArea.intoPositionStream()
                 .map(position -> new GameMapNode(position, TerrainType.GRASS))
                 .collect(GameMap.mapCollector);
+    }
+
+    public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
+                                               Consumer<Map<Position, GameMapNode>> manipulator) {
+        Map<Position, GameMapNode> mapNodes = generateEmptyGameMapNodes(mapXSize, mapYSize);
 
         manipulator.accept(mapNodes);
 
