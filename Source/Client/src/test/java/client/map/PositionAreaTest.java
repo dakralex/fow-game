@@ -3,6 +3,7 @@ package client.map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -61,6 +62,22 @@ class PositionAreaTest {
                    "Positions should be in the x coordinate range");
         assertTrue(positionsOutsideYBound.isEmpty(),
                    "Positions should be in the y coordinate range");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"5,5", "5,15", "15,5", "15,15"})
+    void PositionArea_isCorner_shouldReturnTrueForCorners(int x, int y) {
+        PositionArea area = new PositionArea(5, 5, 10, 10);
+
+        assertTrue(area.isCorner(new Position(x, y)), "Position should be identified as a corner");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"4,4", "6,6", "4,16", "6,14", "16,4", "14,6", "14,14", "16,16"})
+    void PositionArea_isCorner_shouldReturnFalseForAnythingOtherThanCorners(int x, int y) {
+        PositionArea area = new PositionArea(5, 5, 10, 10);
+
+        assertFalse(area.isCorner(new Position(x, y)), "Position should not be identified as a corner");
     }
 
     private static class HalfMapArgumentProvider implements ArgumentsProvider {

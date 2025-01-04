@@ -62,6 +62,27 @@ public record PositionArea(int x, int y, int width, int height) {
         };
     }
 
+    private Position upperLeft() {
+        return new Position(x, y);
+    }
+
+    private Position upperRight() {
+        return new Position(x + width, y);
+    }
+
+    private Position lowerLeft() {
+        return new Position(x, y + height);
+    }
+
+    private Position lowerRight() {
+        return new Position(x + width, y + width);
+    }
+
+    public boolean isCorner(Position position) {
+        return position.equals(upperLeft()) || position.equals(upperRight())
+                || position.equals(lowerLeft()) || position.equals(lowerRight());
+    }
+
     public boolean isLandscape() {
         return width > height;
     }
