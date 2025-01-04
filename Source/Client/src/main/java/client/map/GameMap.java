@@ -157,20 +157,24 @@ public class GameMap {
         return getMapNodes(isOnHalfMap);
     }
 
-    private Position getPlayerFortPosition() {
+    private Optional<GameMapNode> getPlayerFortMapNode() {
         return getMapNodes().stream()
                 .filter(GameMapNode::hasPlayerFort)
-                .findFirst()
-                .map(GameMapNode::getPosition)
-                .orElseThrow();
+                .findFirst();
+    }
+
+    private Optional<Position> getPlayerFortPosition() {
+        return getPlayerFortMapNode().map(GameMapNode::getPosition);
     }
 
     public Collection<GameMapNode> getPlayerMapNodes() {
-        return getHalfMapNodes(getPlayerFortPosition());
+        // TODO: Improve error handling here
+        return getHalfMapNodes(getPlayerFortPosition().orElseThrow());
     }
 
     public Collection<GameMapNode> getEnemyMapNodes() {
-        Position playerFortPosition = getPlayerFortPosition();
+        // TODO: Improve error handling here
+        Position playerFortPosition = getPlayerFortPosition().orElseThrow();
 
         // TODO: Refactor/Improve this reflection calculation
         PositionArea mapArea = getArea();
