@@ -7,8 +7,7 @@ import client.map.GameMap;
 public class HalfMapValidator {
 
     private static final List<GameMapValidationRule> validationRules = List.of(
-            new GameMapSizeValidator(),
-            new GameMapPositionsValidator(),
+            new GameMapDimensionValidator(),
             new GameMapTerrainDistributionValidator(),
             new GameMapBorderAccessibilityValidator(),
             new GameMapFortPlacementValidator(),

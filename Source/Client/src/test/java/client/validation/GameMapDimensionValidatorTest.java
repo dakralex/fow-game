@@ -15,12 +15,12 @@ import client.map.GameMap;
 import client.map.util.MapGenerationUtils;
 import client.validation.util.NotificationAssertUtils;
 
-class GameMapSizeValidatorTest {
+class GameMapDimensionValidatorTest {
 
     private static final int X_SIZE = 10;
     private static final int Y_SIZE = 5;
 
-    private static final GameMapValidationRule validator = new GameMapSizeValidator();
+    private static final GameMapValidationRule validator = new GameMapDimensionValidator();
 
     @Test
     void CorrectlySizedMap_validate_shouldMarkAsValid() {
