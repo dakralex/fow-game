@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import client.map.comparator.LootabilityComparator;
 import client.util.ANSIColor;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
@@ -143,15 +144,7 @@ public class GameMap {
         return getMapNodes().stream()
                 .filter(GameMapNode::isUnvisited)
                 .filter(GameMapNode::isAccessible)
-                .sorted((a, b) -> {
-                    if (a.isLootable() && !b.isLootable()) {
-                        return 1;
-                    } else if (!a.isLootable() && b.isLootable()) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                })
+                .sorted(new LootabilityComparator())
                 .toList();
     }
 
