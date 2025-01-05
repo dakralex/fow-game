@@ -2,6 +2,7 @@ package client.map;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import messagesbase.messagesfromclient.EMove;
 
@@ -14,9 +15,9 @@ public enum MapDirection {
     private final int dx;
     private final int dy;
 
-    MapDirection(int dx, int y) {
+    MapDirection(int dx, int dy) {
         this.dx = dx;
-        this.dy = y;
+        this.dy = dy;
     }
 
     public static MapDirection randomDirection(Random random) {
@@ -25,9 +26,13 @@ public enum MapDirection {
         return values()[randomValue];
     }
 
+    private static Predicate<MapDirection> equalsTo(int dx, int dy) {
+        return direction -> direction.dx == dx && direction.dy == dy;
+    }
+
     public static MapDirection fromDifferentials(int dx, int dy) {
         return Arrays.stream(values())
-                .filter(direction -> direction.dx == dx && direction.dy == dy)
+                .filter(equalsTo(dx, dy))
                 .findFirst()
                 .orElseThrow(() -> {
                     String errorMessage = String.format("No direction found for (%d, %d)", dx, dy);
