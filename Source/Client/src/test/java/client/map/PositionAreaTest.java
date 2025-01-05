@@ -22,9 +22,9 @@ class PositionAreaTest {
 
     @ParameterizedTest
     @ArgumentsSource(PositionStreamPositionsProvider.class)
-    void PositionArea_intoPositionStream_shouldReturnAllCorrectPositions(PositionArea area,
-                                                                         Collection<Position> expectedPositions) {
-        assertArrayEquals(area.intoPositionStream().sorted().toArray(),
+    void PositionArea_intoStream_shouldReturnAllCorrectPositions(PositionArea area,
+                                                                 Collection<Position> expectedPositions) {
+        assertArrayEquals(area.intoStream().sorted().toArray(),
                           expectedPositions.stream().sorted().toArray(),
                           "Position stream should contain exactly the expected positions");
     }
@@ -47,11 +47,11 @@ class PositionAreaTest {
 
     @ParameterizedTest
     @ArgumentsSource(HalfMapArgumentProvider.class)
-    void HalfMaps_intoPositionStream_shouldOutputCompleteHalfMapPositionStream(int x, int y,
-                                                                               int width,
-                                                                               int height) {
+    void HalfMaps_intoStream_shouldOutputCompleteHalfMapPositionStream(int x, int y,
+                                                                       int width,
+                                                                       int height) {
         PositionArea area = new PositionArea(x, y, width, height);
-        Collection<Position> areaPositions = area.intoPositionStream().toList();
+        Collection<Position> areaPositions = area.intoStream().toList();
 
         assertEquals(HALF_MAP_SIZE,
                      areaPositions.size(),

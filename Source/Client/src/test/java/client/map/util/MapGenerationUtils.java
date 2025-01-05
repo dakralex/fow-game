@@ -24,7 +24,7 @@ public class MapGenerationUtils {
                                                                         int mapYSize) {
         PositionArea mapArea = new PositionArea(0, 0, mapXSize, mapYSize);
 
-        return mapArea.intoPositionStream()
+        return mapArea.intoStream()
                 .map(position -> new GameMapNode(position, TerrainType.GRASS))
                 .collect(GameMap.mapCollector);
     }

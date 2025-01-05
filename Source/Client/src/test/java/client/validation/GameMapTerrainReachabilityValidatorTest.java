@@ -23,7 +23,7 @@ class GameMapTerrainReachabilityValidatorTest {
     private static final GameMapValidationRule validator = new GameMapTerrainReachabilityValidator();
 
     private static Function<GameMapNode, GameMapNode> makeIsolatedIsland(PositionArea mapArea) {
-        Collection<Position> allPositions = mapArea.intoPositionStream().toList();
+        Collection<Position> allPositions = mapArea.intoStream().toList();
 
         Collection<Position> borderNodesExceptCorners = Arrays.stream(MapDirection.values())
                 .map(mapArea::getBorderPredicate)

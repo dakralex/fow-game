@@ -16,7 +16,7 @@ public class GameMapDimensionValidator implements GameMapValidationRule {
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         PositionArea actualArea = map.getArea();
         PositionArea expectedArea = new PositionArea(0, 0, HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
-        Set<Position> areaPositions = expectedArea.intoPositionStream()
+        Set<Position> areaPositions = expectedArea.intoStream()
                 .collect(Collectors.toUnmodifiableSet());
 
         if (!actualArea.equals(expectedArea)) {

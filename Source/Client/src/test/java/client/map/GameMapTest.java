@@ -74,7 +74,7 @@ class GameMapTest {
                 .map(GameMapNode::getPosition)
                 .sorted().toList();
 
-        Collection<Position> areaPositions = expectedArea.intoPositionStream().sorted().toList();
+        Collection<Position> areaPositions = expectedArea.intoStream().sorted().toList();
 
         assertEquals(HALF_MAP_SIZE,
                      mapNodePositions.size(),
@@ -96,7 +96,7 @@ class GameMapTest {
                 .map(GameMapNode::getPosition)
                 .sorted().toList();
 
-        Collection<Position> areaPositions = expectedArea.intoPositionStream().sorted().toList();
+        Collection<Position> areaPositions = expectedArea.intoStream().sorted().toList();
 
         assertEquals(HALF_MAP_SIZE,
                      mapNodePositions.size(),

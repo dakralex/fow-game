@@ -60,7 +60,7 @@ public class MapGenerator {
     private static Set<Position> generatePositionRange() {
         PositionArea mapArea = new PositionArea(0, 0, HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
-        return mapArea.intoPositionStream().collect(Collectors.toSet());
+        return mapArea.intoStream().collect(Collectors.toSet());
     }
 
     private GameMap generateMap() {

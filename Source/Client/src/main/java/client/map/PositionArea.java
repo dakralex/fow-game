@@ -15,7 +15,7 @@ public record PositionArea(int x, int y, int width, int height) {
              lowerRight.y() + 1 - upperLeft.y());
     }
 
-    public Stream<Position> intoPositionStream() {
+    public Stream<Position> intoStream() {
         return IntStream.range(0, width * height)
                 .mapToObj(index -> {
                     int posX = x + index % width;
