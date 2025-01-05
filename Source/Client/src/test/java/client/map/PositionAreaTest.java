@@ -65,7 +65,7 @@ class PositionAreaTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"5,5", "5,15", "15,5", "15,15"})
+    @CsvSource({"5,5", "5,14", "14,5", "14,14"})
     void PositionArea_isCorner_shouldReturnTrueForCorners(int x, int y) {
         PositionArea area = new PositionArea(5, 5, 10, 10);
 
@@ -73,7 +73,7 @@ class PositionAreaTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"4,4", "6,6", "4,16", "6,14", "16,4", "14,6", "14,14", "16,16"})
+    @CsvSource({"4,4", "6,6", "4,15", "6,13", "15,4", "13,6", "13,13", "15,15"})
     void PositionArea_isCorner_shouldReturnFalseForAnythingOtherThanCorners(int x, int y) {
         PositionArea area = new PositionArea(5, 5, 10, 10);
 

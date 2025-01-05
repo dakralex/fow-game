@@ -62,20 +62,20 @@ public record PositionArea(int x, int y, int width, int height) {
         };
     }
 
-    private Position upperLeft() {
+    public Position upperLeft() {
         return new Position(x, y);
     }
 
-    private Position upperRight() {
-        return new Position(x + width, y);
+    public Position upperRight() {
+        return new Position(x + width - 1, y);
     }
 
-    private Position lowerLeft() {
-        return new Position(x, y + height);
+    public Position lowerLeft() {
+        return new Position(x, y + height - 1);
     }
 
-    private Position lowerRight() {
-        return new Position(x + width, y + width);
+    public Position lowerRight() {
+        return new Position(x + width - 1, y + height - 1);
     }
 
     public boolean isCorner(Position position) {
