@@ -1,5 +1,7 @@
 package client.map;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -78,9 +80,12 @@ public record PositionArea(int x, int y, int width, int height) {
         return new Position(x + width - 1, y + height - 1);
     }
 
+    private Collection<Position> corners() {
+        return List.of(upperLeft(), upperRight(), lowerLeft(), lowerRight());
+    }
+
     public boolean isCorner(Position position) {
-        return position.equals(upperLeft()) || position.equals(upperRight())
-                || position.equals(lowerLeft()) || position.equals(lowerRight());
+        return corners().stream().anyMatch(position::equals);
     }
 
     public Position middlePoint() {
