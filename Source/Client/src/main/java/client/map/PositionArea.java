@@ -83,11 +83,11 @@ public record PositionArea(int x, int y, int width, int height) {
                 || position.equals(lowerLeft()) || position.equals(lowerRight());
     }
 
-    public boolean isLandscape() {
-        return width > height;
+    public Position middlePoint() {
+        return new Position(x + width / 2, y + height / 2);
     }
 
-    public Position middlePoint() {
-        return new Position((width - x) / 2, (height - y) / 2);
+    public boolean isLandscape() {
+        return width > height;
     }
 }
