@@ -28,7 +28,6 @@ public class GameMap {
     public static final Collector<GameMapNode, ?, Map<Position, GameMapNode>> mapCollector =
             Collectors.toMap(GameMapNode::getPosition, Function.identity());
 
-    private static final Logger logger = LoggerFactory.getLogger(GameMap.class);
     private static final int MAP_FULL_SIZE = 100;
 
     private final Map<Position, GameMapNode> nodes;
