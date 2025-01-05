@@ -58,8 +58,6 @@ class GameMapTerrainReachabilityValidatorTest {
                                                               makeIsolatedIsland(mapArea),
                                                               GameMapNode::isLootable);
 
-        System.err.println(map);
-
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }
 }
