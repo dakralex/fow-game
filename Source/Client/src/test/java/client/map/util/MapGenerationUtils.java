@@ -17,6 +17,9 @@ public class MapGenerationUtils {
     private static final Consumer<Map<Position, GameMapNode>> dummyConsumer =
             mapNodes -> {};
 
+    public static final Function<GameMapNode, GameMapNode> makeInaccessible =
+                    mapNode -> new GameMapNode(mapNode.getPosition(), TerrainType.WATER);
+
     private static Map<Position, GameMapNode> generateEmptyGameMapNodes(int mapXSize,
                                                                         int mapYSize) {
         PositionArea mapArea = new PositionArea(0, 0, mapXSize, mapYSize);

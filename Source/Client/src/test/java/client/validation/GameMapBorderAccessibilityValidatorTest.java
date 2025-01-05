@@ -1,17 +1,17 @@
 package client.validation;
 
+import static client.map.util.MapGenerationUtils.makeInaccessible;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.PositionArea;
-import client.map.TerrainType;
 import client.map.util.MapGenerationUtils;
 import client.validation.util.NotificationAssertUtils;
 
@@ -21,9 +21,6 @@ class GameMapBorderAccessibilityValidatorTest {
     private static final int HALF_MAP_Y_SIZE = 5;
 
     private static final GameMapValidationRule validator = new GameMapBorderAccessibilityValidator();
-
-    private static final Function<GameMapNode, GameMapNode> makeInaccessible =
-            mapNode -> new GameMapNode(mapNode.getPosition(), TerrainType.WATER);
 
     @Test
     void CompletelyAccessibleBorder_validate_shouldMarkAsValid() {
