@@ -17,14 +17,14 @@ import client.validation.util.NotificationAssertUtils;
 
 class GameMapDimensionValidatorTest {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
 
     private static final GameMapValidationRule validator = new GameMapDimensionValidator();
 
     @Test
     void CorrectlySizedMap_validate_shouldMarkAsValid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
         NotificationAssertUtils.assertNoViolation(map, validator);
     }
@@ -43,12 +43,12 @@ class GameMapDimensionValidatorTest {
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     // One-off Half Map dimensions
-                    arguments(X_SIZE, Y_SIZE - 1),
-                    arguments(X_SIZE, Y_SIZE + 1),
-                    arguments(X_SIZE - 1, Y_SIZE),
-                    arguments(X_SIZE + 1, Y_SIZE),
+                    arguments(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE - 1),
+                    arguments(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE + 1),
+                    arguments(HALF_MAP_X_SIZE - 1, HALF_MAP_Y_SIZE),
+                    arguments(HALF_MAP_X_SIZE + 1, HALF_MAP_Y_SIZE),
                     // Full Map dimensions
-                    arguments(2 * X_SIZE, 2 * Y_SIZE)
+                    arguments(2 * HALF_MAP_X_SIZE, 2 * HALF_MAP_Y_SIZE)
             );
         }
     }

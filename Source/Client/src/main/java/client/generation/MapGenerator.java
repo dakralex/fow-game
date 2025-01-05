@@ -25,9 +25,9 @@ public class MapGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(MapGenerator.class);
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
-    private static final int MAP_SIZE = X_SIZE * Y_SIZE;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
+    private static final int HALF_MAP_SIZE = HALF_MAP_X_SIZE * HALF_MAP_Y_SIZE;
 
     private static final int X_FORT_BORDER_SIZE = 2;
     private static final int Y_FORT_BORDER_SIZE = 2;
@@ -49,20 +49,20 @@ public class MapGenerator {
     }
 
     private Position pickFortPosition() {
-        int x = random.nextInt(X_FORT_BORDER_SIZE, X_SIZE - X_FORT_BORDER_SIZE);
-        int y = random.nextInt(Y_FORT_BORDER_SIZE, Y_SIZE - X_FORT_BORDER_SIZE);
+        int x = random.nextInt(X_FORT_BORDER_SIZE, HALF_MAP_X_SIZE - X_FORT_BORDER_SIZE);
+        int y = random.nextInt(Y_FORT_BORDER_SIZE, HALF_MAP_Y_SIZE - X_FORT_BORDER_SIZE);
 
         return new Position(x, y);
     }
 
     private static Set<Position> generatePositionRange() {
-        PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+        PositionArea mapArea = new PositionArea(0, 0, HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
         return mapArea.intoPositionStream().collect(Collectors.toSet());
     }
 
     private GameMap generateMap() {
-        Map<Position, GameMapNode> mapNodes = HashMap.newHashMap(MAP_SIZE);
+        Map<Position, GameMapNode> mapNodes = HashMap.newHashMap(HALF_MAP_SIZE);
 
         Position fortPosition = pickFortPosition();
         MapDirection fortEntranceDirection = MapDirection.randomDirection(random);
@@ -71,7 +71,7 @@ public class MapGenerator {
 
         mapNodes.putAll(fortStructureNodes);
 
-        int remainingMapNodes = MAP_SIZE - mapNodes.size();
+        int remainingMapNodes = HALF_MAP_SIZE - mapNodes.size();
 
         Set<Position> positionQueue = generatePositionRange();
         positionQueue.removeAll(mapNodes.keySet());

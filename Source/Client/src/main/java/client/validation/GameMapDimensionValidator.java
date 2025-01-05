@@ -9,13 +9,13 @@ import client.map.PositionArea;
 
 public class GameMapDimensionValidator implements GameMapValidationRule {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
 
     @Override
     public void validate(GameMap map, Notification<? super GameMapValidationRule> note) {
         PositionArea actualArea = map.getArea();
-        PositionArea expectedArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+        PositionArea expectedArea = new PositionArea(0, 0, HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
         Set<Position> areaPositions = expectedArea.intoPositionStream()
                 .collect(Collectors.toUnmodifiableSet());
 

@@ -15,12 +15,12 @@ import client.validation.util.NotificationAssertUtils;
 
 class GameMapFortPlacementValidatorTest {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
 
     private static final Consumer<Map<Position, GameMapNode>> placeTwoPlayerForts = mapNodes -> {
-        mapNodes.get(new Position(0, Y_SIZE / 2)).placePlayerFort();
-        mapNodes.get(new Position(X_SIZE / 2, 0)).placePlayerFort();
+        mapNodes.get(new Position(0, HALF_MAP_Y_SIZE / 2)).placePlayerFort();
+        mapNodes.get(new Position(HALF_MAP_X_SIZE / 2, 0)).placePlayerFort();
     };
 
     private static final Consumer<Map<Position, GameMapNode>> placeEnemyFort =
@@ -37,35 +37,43 @@ class GameMapFortPlacementValidatorTest {
 
     @Test
     void PlayerFortPlaced_validate_shouldMarkAsValid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, MapDirection.WEST);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
+                                                              MapDirection.WEST);
 
         NotificationAssertUtils.assertNoViolation(map, validator);
     }
 
     @Test
     void MultipleFortsPlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, placeTwoPlayerForts);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
+                                                              placeTwoPlayerForts);
 
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }
 
     @Test
     void NoFortPlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }
 
     @Test
     void EnemyFortPlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, placeEnemyFort);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
+                                                              placeEnemyFort);
 
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }
 
     @Test
     void NoGrassFortPlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, placeWaterPlayerFort);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
+                                                              placeWaterPlayerFort);
 
         NotificationAssertUtils.assertSomeViolation(map, validator);
     }

@@ -10,9 +10,9 @@ import client.validation.HalfMapValidator;
 
 class MapGeneratorTest {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
-    private static final int MAP_SIZE = X_SIZE * Y_SIZE;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
+    private static final int HALF_MAP_SIZE = HALF_MAP_X_SIZE * HALF_MAP_Y_SIZE;
 
     private static final long STANDARD_START_SEED = 0xDEAD_FACADEL;
 
@@ -27,6 +27,6 @@ class MapGeneratorTest {
         GameMap map = mapGenerator.generateUntilValid(validator);
 
         // Dummy assertion to have at least one assertion in the test case
-        assertEquals(MAP_SIZE, map.getSize(), "Game Map should have the expected size");
+        assertEquals(HALF_MAP_SIZE, map.getSize(), "Game Map should have the expected size");
     }
 }

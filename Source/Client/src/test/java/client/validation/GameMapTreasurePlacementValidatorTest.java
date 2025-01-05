@@ -11,8 +11,8 @@ import client.validation.util.NotificationAssertUtils;
 
 class GameMapTreasurePlacementValidatorTest {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
 
     private static final GameMapValidationRule validator = new GameMapTreasurePlacementValidator();
 
@@ -24,15 +24,15 @@ class GameMapTreasurePlacementValidatorTest {
 
     @Test
     void NoTreasurePlaced_validate_shouldMarkAsValid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
         NotificationAssertUtils.assertNoViolation(map, validator);
     }
 
     @Test
     void OneTreasurePlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE,
-                                                              Y_SIZE,
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
                                                               placePlayerTreasure,
                                                               GameMapNode::isLootable,
                                                               1L);
@@ -42,8 +42,8 @@ class GameMapTreasurePlacementValidatorTest {
 
     @Test
     void TwoTreasuresPlaced_validate_shouldMarkAsInvalid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE,
-                                                              Y_SIZE,
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
                                                               placePlayerTreasure,
                                                               GameMapNode::isLootable,
                                                               2L);

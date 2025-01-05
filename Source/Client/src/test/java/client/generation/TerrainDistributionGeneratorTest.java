@@ -17,9 +17,9 @@ class TerrainDistributionGeneratorTest {
 
     private static final int MAP_MIN_SIZE = GRASS_MIN_AMOUNT + MOUNTAIN_MIN_AMOUNT + WATER_MIN_AMOUNT;
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
-    private static final int MAP_SIZE = X_SIZE * Y_SIZE;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
+    private static final int HALF_MAP_SIZE = HALF_MAP_X_SIZE * HALF_MAP_Y_SIZE;
 
     private static void assertEnoughTerrainTypes(Collection<TerrainType> terrainTypes) {
         int grassAmount = Collections.frequency(terrainTypes, TerrainType.GRASS);
@@ -47,7 +47,7 @@ class TerrainDistributionGeneratorTest {
     void GameHalfMapSpace_generateTerrainQueue_shouldCorrectlyOutputTerrainDistribution() {
         TerrainDistributionGenerator terrainGenerator = new TerrainDistributionGenerator();
 
-        assertEnoughTerrainTypes(terrainGenerator.generateTerrainQueue(MAP_SIZE));
+        assertEnoughTerrainTypes(terrainGenerator.generateTerrainQueue(HALF_MAP_SIZE));
     }
 
     @Test

@@ -17,8 +17,8 @@ import client.validation.util.NotificationAssertUtils;
 
 class GameMapTerrainReachabilityValidatorTest {
 
-    private static final int X_SIZE = 10;
-    private static final int Y_SIZE = 5;
+    private static final int HALF_MAP_X_SIZE = 10;
+    private static final int HALF_MAP_Y_SIZE = 5;
 
     private static final GameMapValidationRule validator = new GameMapTerrainReachabilityValidator();
 
@@ -42,17 +42,19 @@ class GameMapTerrainReachabilityValidatorTest {
 
     @Test
     void EmptyMap_validate_shouldMarkAsValid() {
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE, Y_SIZE, MapDirection.EAST);
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
+                                                              MapDirection.EAST);
 
         NotificationAssertUtils.assertNoViolation(map, validator);
     }
 
     @Test
     void BigIslandMap_validate_shouldMarkAsInvalid() {
-        PositionArea mapArea = new PositionArea(0, 0, X_SIZE, Y_SIZE);
+        PositionArea mapArea = new PositionArea(0, 0, HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
-        GameMap map = MapGenerationUtils.generateEmptyGameMap(X_SIZE,
-                                                              Y_SIZE,
+        GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE,
+                                                              HALF_MAP_Y_SIZE,
                                                               makeIsolatedIsland(mapArea),
                                                               GameMapNode::isLootable);
 
