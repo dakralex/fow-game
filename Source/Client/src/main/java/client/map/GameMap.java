@@ -75,6 +75,17 @@ public class GameMap {
         });
     }
 
+    public int getSize() {
+        return nodes.size();
+    }
+
+    public PositionArea getArea() {
+        Position minPosition = getPositions().stream().min(Position::compareTo).orElseThrow();
+        Position maxPosition = getPositions().stream().max(Position::compareTo).orElseThrow();
+
+        return new PositionArea(minPosition, maxPosition);
+    }
+
     public Set<Position> getPositions() {
         return Collections.unmodifiableSet(nodes.keySet());
     }
@@ -102,6 +113,10 @@ public class GameMap {
         return new ArrayList<>(visiblePositions);
     }
 
+    public Optional<GameMapNode> getNodeAt(Position position) {
+        return Optional.ofNullable(nodes.get(position));
+    }
+
     public Collection<GameMapNode> getMapNodes() {
         return Collections.unmodifiableCollection(nodes.values());
     }
@@ -112,13 +127,6 @@ public class GameMap {
 
     public Collection<GameMapNode> getMapNodes(Predicate<GameMapNode> predicate) {
         return getMapNodes().stream().filter(predicate).toList();
-    }
-
-    public PositionArea getArea() {
-        Position minPosition = getPositions().stream().min(Position::compareTo).orElseThrow();
-        Position maxPosition = getPositions().stream().max(Position::compareTo).orElseThrow();
-
-        return new PositionArea(minPosition, maxPosition);
     }
 
     private Predicate<GameMapNode> getBorderPredicate(MapDirection direction) {
@@ -155,22 +163,6 @@ public class GameMap {
         return new GameMap(getMapNodes(getArea().intoOtherHalfStream(playerFortPosition)));
     }
 
-    public int getSize() {
-        return nodes.size();
-    }
-
-    public boolean isFullMap() {
-        return getSize() == FULL_MAP_SIZE;
-    }
-
-    public boolean anyMapNodeMatch(Predicate<GameMapNode> predicate) {
-        return getMapNodes().stream().anyMatch(predicate);
-    }
-
-    public Optional<GameMapNode> getNodeAt(Position position) {
-        return Optional.ofNullable(nodes.get(position));
-    }
-
     private Stream<GameMapNode> getNeighborsStream(Position position) {
         return Arrays.stream(MapDirection.values())
                 .map(position::stepInDirection)
@@ -188,6 +180,14 @@ public class GameMap {
         return getNeighborsStream(position)
                 .filter(GameMapNode::isAccessible)
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public boolean anyMapNodeMatch(Predicate<GameMapNode> predicate) {
+        return getMapNodes().stream().anyMatch(predicate);
+    }
+
+    public boolean isFullMap() {
+        return getSize() == FULL_MAP_SIZE;
     }
 
     @Override
