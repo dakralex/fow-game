@@ -65,12 +65,13 @@ class GameMapTest {
 
     @ParameterizedTest
     @ArgumentsSource(FullMapFortHalfMapArgumentsProvider.class)
-    void FullMap_getPlayerMapNodes_shouldReturnCorrectHalfMapNodes(int mapXSize,
-                                                                   int mapYSize,
-                                                                   MapDirection fortPlacement,
-                                                                   PositionArea expectedArea) {
+    void FullMap_getPlayerHalfMap_shouldReturnCorrectHalfHalfMap(int mapXSize,
+                                                                 int mapYSize,
+                                                                 MapDirection fortPlacement,
+                                                                 PositionArea expectedArea) {
         GameMap map = generateEmptyGameMap(mapXSize, mapYSize, fortPlacement);
-        Collection<Position> mapNodePositions = map.getPlayerMapNodes().stream()
+        GameMap playerHalfMap = map.getPlayerHalfMap();
+        Collection<Position> mapNodePositions = playerHalfMap.getMapNodes().stream()
                 .map(GameMapNode::getPosition)
                 .sorted().toList();
 
@@ -86,13 +87,14 @@ class GameMapTest {
 
     @ParameterizedTest
     @ArgumentsSource(FullMapFortHalfMapArgumentsProvider.class)
-    void FullMap_getEnemyMapNodes_shouldReturnCorrectHalfMapNodes(int mapXSize, int mapYSize,
-                                                                  MapDirection oppositeFortPlacement,
-                                                                  PositionArea expectedArea) {
+    void FullMap_getEnemyHalfMap_shouldReturnCorrectHalfMap(int mapXSize, int mapYSize,
+                                                            MapDirection oppositeFortPlacement,
+                                                            PositionArea expectedArea) {
         MapDirection fortPlacement = oppositeFortPlacement.getOpposite();
 
         GameMap map = generateEmptyGameMap(mapXSize, mapYSize, fortPlacement);
-        Collection<Position> mapNodePositions = map.getEnemyMapNodes().stream()
+        GameMap enemyHalfMap = map.getEnemyHalfMap();
+        Collection<Position> mapNodePositions = enemyHalfMap.getMapNodes().stream()
                 .map(GameMapNode::getPosition)
                 .sorted().toList();
 

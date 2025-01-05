@@ -144,7 +144,8 @@ public class MainClient {
     private static List<MapDirection> getNextTreasureFindingWalk(GameClientState clientState) {
         GameMap currentMap = clientState.getMap();
         Position currentPosition = clientState.getPlayer().getPosition();
-        Collection<GameMapNode> playerMapNodes = currentMap.getPlayerMapNodes();
+        GameMap playerHalfMap = currentMap.getPlayerHalfMap();
+        Collection<GameMapNode> playerMapNodes = playerHalfMap.getMapNodes();
 
         return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerMapNodes);
     }
@@ -182,7 +183,8 @@ public class MainClient {
     private static List<MapDirection> getNextFortFindingWalk(GameClientState clientState) {
         GameMap currentMap = clientState.getMap();
         Position currentPosition = clientState.getPlayer().getPosition();
-        Collection<GameMapNode> enemyMapNodes = currentMap.getEnemyMapNodes();
+        GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
+        Collection<GameMapNode> enemyMapNodes = enemyHalfMap.getMapNodes();
 
         return getWaterProtectedFortPosition(currentMap, enemyMapNodes)
                 .map(possiblePosition -> getDirectWalkTo(clientState, possiblePosition))

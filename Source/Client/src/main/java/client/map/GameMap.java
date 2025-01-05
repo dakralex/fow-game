@@ -139,20 +139,20 @@ public class GameMap {
         return getPlayerFortMapNode().map(GameMapNode::getPosition);
     }
 
-    public Collection<GameMapNode> getPlayerMapNodes() {
+    public GameMap getPlayerHalfMap() {
         // TODO: Improve error handling here
         Position playerFortPosition = getPlayerFortPosition().orElseThrow();
 
-        return getMapNodes(getArea().intoCurrentHalfStream(playerFortPosition));
+        return new GameMap(getMapNodes(getArea().intoCurrentHalfStream(playerFortPosition)));
     }
 
-    public Collection<GameMapNode> getEnemyMapNodes() {
+    public GameMap getEnemyHalfMap() {
         // TODO: Improve error handling here
         Position playerFortPosition = getPlayerFortPosition().orElseThrow();
 
         // Retrieve the enemy's half map nodes with respect to the player's fort position,
         // since the enemy's fort position is most likely not known yet
-        return getMapNodes(getArea().intoOtherHalfStream(playerFortPosition));
+        return new GameMap(getMapNodes(getArea().intoOtherHalfStream(playerFortPosition)));
     }
 
     public int getSize() {
