@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 class PositionAreaTest {
@@ -18,6 +19,15 @@ class PositionAreaTest {
     private static final int HALF_MAP_X_SIZE = 10;
     private static final int HALF_MAP_Y_SIZE = 5;
     private static final int HALF_MAP_SIZE = HALF_MAP_X_SIZE * HALF_MAP_Y_SIZE;
+
+    @ParameterizedTest
+    @ArgumentsSource(PositionStreamPositionsProvider.class)
+    void PositionArea_intoPositionStream_shouldReturnAllCorrectPositions(PositionArea area,
+                                                                         Collection<Position> expectedPositions) {
+        assertArrayEquals(area.intoPositionStream().sorted().toArray(),
+                          expectedPositions.stream().sorted().toArray(),
+                          "Position stream should contain exactly the expected positions");
+    }
 
     @ParameterizedTest
     @CsvSource({"5,5", "10,10", "5,10", "10, 5", "7,7"})
@@ -86,6 +96,35 @@ class PositionAreaTest {
 
         assertTrue(area.isMiddle(new Position(x, y)),
                    "Position should be identified as in the middle");
+    }
+
+    private static class PositionStreamPositionsProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+            // @formatter:off
+            return Stream.of(
+                    arguments(new PositionArea(2, 1, 1, 2), List.of(
+                            new Position(2, 1),
+                            new Position(2, 2)
+                    )),
+                    arguments(new PositionArea(1, 2, 2, 1), List.of(
+                            new Position(1, 2), new Position(2, 2)
+                    )),
+                    arguments(new PositionArea(4, 3, 3, 4), List.of(
+                            new Position(4, 3), new Position(5, 3), new Position(6, 3),
+                            new Position(4, 4), new Position(5, 4), new Position(6, 4),
+                            new Position(4, 5), new Position(5, 5), new Position(6, 5),
+                            new Position(4, 6), new Position(5, 6), new Position(6, 6)
+                    )),
+                    arguments(new PositionArea(3, 4, 4, 3), List.of(
+                            new Position(3, 4), new Position(4, 4), new Position(5, 4), new Position(6, 4),
+                            new Position(3, 5), new Position(4, 5), new Position(5, 5), new Position(6, 5),
+                            new Position(3, 6), new Position(4, 6), new Position(5, 6), new Position(6, 6)
+                    ))
+            );
+            // @formatter:on
+        }
     }
 
     private static class HalfMapArgumentProvider implements ArgumentsProvider {
