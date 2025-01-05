@@ -50,6 +50,11 @@ public enum MapDirection {
         };
     }
 
+    /**
+     * Returns the opposite direction.
+     *
+     * @return opposite direction
+     */
     public MapDirection getOpposite() {
         return switch (this) {
             case EAST -> WEST;
@@ -59,6 +64,19 @@ public enum MapDirection {
         };
     }
 
+    /**
+     * Returns the direction perpendicular to the right.
+     * <p>
+     * For example, the perpendicular direction of {@link #NORTH} to the right is {@link #EAST}.
+     * <p>
+     * NORTH
+     * ^
+     * |
+     * |
+     * -----> EAST
+     *
+     * @return direction perpendicular to the right
+     */
     public MapDirection getPerpendicular() {
         return switch (this) {
             case EAST -> SOUTH;
