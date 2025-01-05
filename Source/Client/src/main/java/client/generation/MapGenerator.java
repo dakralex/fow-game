@@ -36,16 +36,18 @@ public class MapGenerator {
     private final FortGenerator fortGenerator;
     private final TerrainDistributionGenerator terrainGenerator;
 
-    public MapGenerator() {
-        this.random = new Random();
+    private MapGenerator(Random random) {
+        this.random = random;
         this.fortGenerator = new FortGenerator();
         this.terrainGenerator = new TerrainDistributionGenerator();
     }
 
+    public MapGenerator() {
+        this(new Random());
+    }
+
     public MapGenerator(long seed) {
-        this.random = new Random(seed);
-        this.fortGenerator = new FortGenerator();
-        this.terrainGenerator = new TerrainDistributionGenerator();
+        this(new Random(seed));
     }
 
     private Position pickFortPosition() {
