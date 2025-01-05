@@ -139,6 +139,22 @@ public class GameMap {
         return getMapNodes(isOnBorder);
     }
 
+    public Collection<GameMapNode> getUnvisitedNodes() {
+        return getMapNodes().stream()
+                .filter(GameMapNode::isUnvisited)
+                .filter(GameMapNode::isAccessible)
+                .sorted((a, b) -> {
+                    if (a.isLootable() && !b.isLootable()) {
+                        return 1;
+                    } else if (!a.isLootable() && b.isLootable()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                })
+                .toList();
+    }
+
     private Optional<GameMapNode> getPlayerFortMapNode() {
         return getMapNodes(GameMapNode::hasPlayerFort).stream().findFirst();
     }

@@ -51,30 +51,11 @@ public class MainClient {
         }
     }
 
-    private static List<GameMapNode> getUnvisitedMapNodes(GameMap map) {
-        Collection<GameMapNode> mapNodes = map.getMapNodes();
-
-        return new ArrayList<>(
-                mapNodes.stream()
-                        .filter(GameMapNode::isUnvisited)
-                        .filter(GameMapNode::isAccessible)
-                        .sorted((a, b) -> {
-                            if (a.isLootable() && !b.isLootable()) {
-                                return 1;
-                            } else if (!a.isLootable() && b.isLootable()) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
-                        })
-                        .toList());
-    }
-
     private static Position getRandomUnvisitedMapNode(GameMap map) {
-        List<GameMapNode> unvisitedMapNodes = getUnvisitedMapNodes(map);
-        Collections.shuffle(unvisitedMapNodes);
+        List<GameMapNode> mapNodes = new ArrayList<>(map.getUnvisitedNodes().stream().toList());
+        Collections.shuffle(mapNodes);
 
-        return unvisitedMapNodes.stream()
+        return mapNodes.stream()
                 .findFirst()
                 .orElseThrow()
                 .getPosition();
@@ -90,11 +71,11 @@ public class MainClient {
     }
 
     private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
-        List<GameMapNode> unvisitedDeadEndMapNodes = getUnvisitedMapNodes(haystackMap).stream()
+        List<GameMapNode> mapNodes = haystackMap.getMapNodes().stream()
                 .sorted(getNeighborCountComparator(map))
                 .toList();
 
-        return unvisitedDeadEndMapNodes.stream()
+        return mapNodes.stream()
                 .findFirst()
                 .map(GameMapNode::getPosition)
                 .orElseGet(() -> getRandomUnvisitedMapNode(haystackMap));
