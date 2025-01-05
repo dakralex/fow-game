@@ -33,19 +33,7 @@ public record PositionArea(int x, int y, int width, int height) {
         }
     }
 
-    /**
-     * Returns a stream of {@link Position}s for the half area, i.e. the are in which the
-     * specified {@code position} is located in.
-     * <p>
-     * This method will split the area in half dependent on the fact whether position area
-     * covers a horizontal or vertical space.
-     *
-     * @param position position inside of the half area
-     * @return half area that position is located in
-     */
-    public Stream<Position> intoHalfStream(Position position) {
-        MapDirection directionFromMiddle = getDirectionFromMiddle(position);
-
+    private Stream<Position> intoHalfStream(MapDirection directionFromMiddle) {
         int halfWidth = width / 2;
         int halfHeight = height / 2;
 
@@ -57,6 +45,39 @@ public record PositionArea(int x, int y, int width, int height) {
         };
 
         return halfMapArea.intoStream();
+    }
+
+    /**
+     * Returns a stream of {@link Position}s for the current half of the area, i.e. the area
+     * in which the specified {@code position} is located in.
+     * <p>
+     * This method will split the area in half dependent on the fact whether position area
+     * covers a horizontal or vertical space.
+     *
+     * @param position position inside of the half area
+     * @return half area that position is located in
+     */
+    public Stream<Position> intoCurrentHalfStream(Position position) {
+        MapDirection directionFromMiddle = getDirectionFromMiddle(position);
+
+        return intoHalfStream(directionFromMiddle);
+    }
+
+    /**
+     * Returns a stream of {@link Position}s for the other half of the area, i.e. the area on
+     * the other side of the area in which the specified {@code position} is located in.
+     * <p>
+     * This method will split the position area in half dependent on the fact whether position
+     * area covers a horizontal or vertical position area.
+     *
+     * @param position position opposite of the half area
+     * @return opposite half area to the area that position is located in
+     */
+    public Stream<Position> intoOtherHalfStream(Position position) {
+        MapDirection directionToMiddle = getDirectionFromMiddle(position).getOpposite();
+
+        // By providing the opposite, we get the other half instead of the current half
+        return intoHalfStream(directionToMiddle);
     }
 
     private boolean isInside(Position position) {
@@ -122,7 +143,7 @@ public record PositionArea(int x, int y, int width, int height) {
         return corners().stream().anyMatch(position::equals);
     }
 
-    public Position middlePoint() {
+    private Position middlePoint() {
         return new Position(x + width / 2, y + height / 2);
     }
 
@@ -133,7 +154,7 @@ public record PositionArea(int x, int y, int width, int height) {
                 && (position.x() == middlePoint.x() || position.y() == middlePoint.y());
     }
 
-    public boolean isLandscape() {
+    private boolean isLandscape() {
         return width > height;
     }
 }

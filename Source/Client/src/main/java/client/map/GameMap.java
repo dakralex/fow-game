@@ -131,10 +131,6 @@ public class GameMap {
         return getMapNodes(isOnBorder);
     }
 
-    private Collection<GameMapNode> getHalfMapNodes(Position position) {
-        return getMapNodes(getArea().intoHalfStream(position));
-    }
-
     private Optional<GameMapNode> getPlayerFortMapNode() {
         return getMapNodes(GameMapNode::hasPlayerFort).stream().findFirst();
     }
@@ -145,29 +141,18 @@ public class GameMap {
 
     public Collection<GameMapNode> getPlayerMapNodes() {
         // TODO: Improve error handling here
-        return getHalfMapNodes(getPlayerFortPosition().orElseThrow());
+        Position playerFortPosition = getPlayerFortPosition().orElseThrow();
+
+        return getMapNodes(getArea().intoCurrentHalfStream(playerFortPosition));
     }
 
     public Collection<GameMapNode> getEnemyMapNodes() {
         // TODO: Improve error handling here
         Position playerFortPosition = getPlayerFortPosition().orElseThrow();
 
-        // TODO: Refactor/Improve this reflection calculation
-        PositionArea mapArea = getArea();
-        Position middlePoint = mapArea.middlePoint();
-        Position reflectivePosition;
-
-        if (mapArea.isLandscape()) {
-            int xMiddleDistance = middlePoint.x() - playerFortPosition.x();
-            int xReflectivePosition = playerFortPosition.x() + 2 * xMiddleDistance;
-            reflectivePosition = new Position(xReflectivePosition, playerFortPosition.y());
-        } else {
-            int yMiddleDistance = middlePoint.y() - playerFortPosition.y();
-            int yReflectivePosition = playerFortPosition.y() + 2 * yMiddleDistance;
-            reflectivePosition = new Position(playerFortPosition.x(), yReflectivePosition);
-        }
-
-        return getHalfMapNodes(reflectivePosition);
+        // Retrieve the enemy's half map nodes with respect to the player's fort position,
+        // since the enemy's fort position is most likely not known yet
+        return getMapNodes(getArea().intoOtherHalfStream(playerFortPosition));
     }
 
     public int getSize() {
