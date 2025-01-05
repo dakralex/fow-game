@@ -35,16 +35,29 @@ public class MapGenerationUtils {
         return new GameMap(mapNodes);
     }
 
+    /**
+     * Generate an empty {@link GameMap} instance (i.e. only grass fields) with a manipulating
+     * {@code mapper} function changing some {@link GameMapNode}s.
+     *
+     * @param mapXSize the width of the game map
+     * @param mapYSize the height of the game map
+     * @param mapper the manipulating method to change existing map nodes
+     * @param condition the condition which map nodes should be changed
+     * @param maxCount the maximum count that should be selected with the condition
+     * @return the generated game map
+     */
     public static GameMap generateEmptyGameMap(int mapXSize, int mapYSize,
                                                Function<GameMapNode, GameMapNode> mapper,
                                                Predicate<GameMapNode> condition, long maxCount) {
         Map<Position, GameMapNode> mapNodes = generateEmptyGameMapNodes(mapXSize, mapYSize);
 
-        mapNodes = mapNodes.values().stream()
+        Map<Position, GameMapNode> newMapNodes = mapNodes.values().stream()
                 .filter(condition)
                 .limit(maxCount)
                 .map(mapper)
                 .collect(GameMap.mapCollector);
+
+        mapNodes.putAll(newMapNodes);
 
         return new GameMap(mapNodes);
     }
