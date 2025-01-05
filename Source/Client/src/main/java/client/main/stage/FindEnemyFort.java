@@ -115,20 +115,16 @@ public class FindEnemyFort implements Stage {
                 .findFirst();
     }
 
-    private static List<MapDirection> getNextFortFindingWalk(GameClientState clientState) {
-        GameMap currentMap = clientState.getMap();
-        Position currentPosition = clientState.getPlayer().getPosition();
+    @Override
+    public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
+        GameMap currentMap = state.getMap();
+        Position currentPosition = state.getPlayer().getPosition();
         GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
 
         return getWaterProtectedFortPosition(currentMap, enemyHalfMap)
-                .map(possiblePosition -> getDirectWalkTo(clientState, possiblePosition))
+                .map(possiblePosition -> getDirectWalkTo(state, possiblePosition))
                 .orElseGet(() -> getNextWalkToUnvisitedNode(currentPosition,
                                                             currentMap,
                                                             enemyHalfMap));
-    }
-
-    @Override
-    public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
-        return getNextFortFindingWalk(state);
     }
 }

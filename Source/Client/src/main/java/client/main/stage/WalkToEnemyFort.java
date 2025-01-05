@@ -21,14 +21,10 @@ public class WalkToEnemyFort implements Stage {
                 .intoMapDirections(clientState.getMap());
     }
 
-    private static Position getFortPosition(GameClientState state) {
-        // TODO: Improve error handling here (by transitioning back to searching enemy fort?)
-        return state.getMapNodePosition(GameMapNode::hasEnemyFort).orElseThrow();
-    }
-
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
-        Position fortPosition = getFortPosition(state);
+        // TODO: Improve error handling here (by transitioning back to searching enemy fort?)
+        Position fortPosition = state.getMapNodePosition(GameMapNode::hasEnemyFort).orElseThrow();
 
         return getDirectWalkTo(state, fortPosition);
     }

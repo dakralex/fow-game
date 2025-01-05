@@ -21,14 +21,10 @@ public class WalkToTreasure implements Stage {
                 .intoMapDirections(clientState.getMap());
     }
 
-    private static Position getTreasurePosition(GameClientState state) {
-        // TODO Improve error handling here (by transitioning back to searching the treasure?)
-        return state.getMapNodePosition(GameMapNode::hasTreasure).orElseThrow();
-    }
-
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
-        Position treasurePosition = getTreasurePosition(state);
+        // TODO Improve error handling here (by transitioning back to searching the treasure?)
+        Position treasurePosition = state.getMapNodePosition(GameMapNode::hasTreasure).orElseThrow();
 
         return getDirectWalkTo(state, treasurePosition);
     }
