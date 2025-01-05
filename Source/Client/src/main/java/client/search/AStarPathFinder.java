@@ -9,8 +9,6 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SequencedCollection;
-import java.util.Set;
-import java.util.function.Predicate;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
