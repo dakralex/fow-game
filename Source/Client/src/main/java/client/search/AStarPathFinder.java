@@ -167,9 +167,6 @@ public class AStarPathFinder implements PathFinder {
             }
         }
 
-        String errorMessage =
-                String.format("Could not find any path from %s to %s", source, destination);
-
-        throw new IllegalStateException(errorMessage);
+        throw new PathNotFoundException(source, destination);
     }
 }
