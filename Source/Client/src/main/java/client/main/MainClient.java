@@ -136,7 +136,7 @@ public class MainClient {
                                                                  Collection<GameMapNode> nodeHaystack) {
         Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
                 .orElseGet(() -> getDeadEndUnvisitedMapNode(map, nodeHaystack));
-        PathFinder pathFinder = new AStarPathFinder(map.getMapNodes());
+        PathFinder pathFinder = new AStarPathFinder(map);
 
         return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);
     }
@@ -151,7 +151,7 @@ public class MainClient {
 
     private static List<MapDirection> getDirectWalkTo(GameClientState clientState,
                                                       Position destination) {
-        PathFinder pathFinder = new AStarPathFinder(clientState.getMapNodes());
+        PathFinder pathFinder = new AStarPathFinder(clientState.getMap());
 
         return pathFinder
                 .findPath(clientState.getPlayer().getPosition(), destination)

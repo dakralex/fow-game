@@ -46,7 +46,7 @@ class AStarPathFinderTest {
     void EmptyGrassMap_findPath_shouldOutputStraightPath(Position source, Position destination) {
         GameMap map = MapGenerationUtils.generateEmptyGameMap(HALF_MAP_X_SIZE, HALF_MAP_Y_SIZE);
 
-        PathFinder pathFinder = new AStarPathFinder(map.getMapNodes());
+        PathFinder pathFinder = new AStarPathFinder(map);
         Path path = pathFinder.findPath(source, destination);
 
         assertStraightPath(map, path);
@@ -65,7 +65,7 @@ class AStarPathFinderTest {
                                                               makeInaccessible,
                                                               isMiddle);
 
-        PathFinder pathFinder = new AStarPathFinder(map.getMapNodes());
+        PathFinder pathFinder = new AStarPathFinder(map);
         assertThrows(PathNotFoundException.class, () -> pathFinder.findPath(source, destination));
     }
 

@@ -119,10 +119,6 @@ public class GameClientState {
         return map;
     }
 
-    public Collection<GameMapNode> getMapNodes() {
-        return map.getMapNodes();
-    }
-
     public Optional<Position> getMapNodePosition(Predicate<GameMapNode> predicate) {
         return map.getPositionsByMapNode(predicate).stream().findFirst();
     }

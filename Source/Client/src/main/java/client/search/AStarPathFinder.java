@@ -25,8 +25,8 @@ public class AStarPathFinder implements PathFinder {
 
     private final GameMap map;
 
-    public AStarPathFinder(Collection<GameMapNode> mapNodes) {
-        map = new GameMap(mapNodes);
+    public AStarPathFinder(GameMap map) {
+        this.map = new GameMap(map.getMapNodes());
     }
 
     private static Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
@@ -42,33 +42,13 @@ public class AStarPathFinder implements PathFinder {
         return source.taxicabDistanceTo(destination);
     }
 
-    private Optional<GameMapNode> getNodeAt(Position position) {
-        return map.getNodeAt(position);
-    }
-
-    private Set<GameMapNode> getReachableNeighbors(Position position) {
-        return map.getReachableNeighbors(position);
-    }
-
-    private Set<Position> getPositions() {
-        return map.getPositions();
-    }
-
-    private Collection<Position> getPositions(Predicate<Position> predicate) {
-        return map.getPositions(predicate);
-    }
-
-    private Collection<Position> getPositionsInSight(Position cameraPosition) {
-        return map.getPositionsInSight(cameraPosition);
-    }
-
     private int computeTravelCost(GameMapNode from, GameMapNode to) {
         int totalCost = 3 * TerrainType.computeTravelCost(from.getTerrainType(),
                                                           to.getTerrainType());
 
-        Collection<Position> visiblePositions = getPositionsInSight(to.getPosition());
+        Collection<Position> visiblePositions = map.getPositionsInSight(to.getPosition());
         long explorationValue = visiblePositions.stream()
-                .map(this::getNodeAt)
+                .map(map::getNodeAt)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .filter(GameMapNode::isUnvisited)
@@ -100,7 +80,7 @@ public class AStarPathFinder implements PathFinder {
 
         Queue<GameMapNode> openSet = new PriorityQueue<>(DIRECTION_COUNT + 1,
                                                          getCostComparator(costToEndNode));
-        openSet.add(getNodeAt(source).orElseThrow());
+        openSet.add(map.getNodeAt(source).orElseThrow());
 
         Map<Position, Position> cameFrom = new HashMap<>();
         cameFrom.put(source, source);
@@ -116,7 +96,7 @@ public class AStarPathFinder implements PathFinder {
                 return reconstructPath(source, destination, cameFrom);
             }
 
-            Collection<GameMapNode> neighborNodes = getReachableNeighbors(currentPosition);
+            Collection<GameMapNode> neighborNodes = map.getReachableNeighbors(currentPosition);
 
             for (GameMapNode neighborNode : neighborNodes) {
                 Position neighborPosition = neighborNode.getPosition();
