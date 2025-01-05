@@ -4,23 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
-import client.map.GameMap;
-import client.map.GameMapNode;
+import client.main.stage.FindEnemyFort;
+import client.main.stage.FindTreasure;
+import client.main.stage.Stage;
+import client.main.stage.WalkToEnemyFort;
+import client.main.stage.WalkToTreasure;
 import client.map.MapDirection;
-import client.map.Position;
 import client.network.GameServerClient;
 import client.network.GameStateUpdater;
-import client.search.AStarPathFinder;
-import client.search.PathFinder;
 import client.util.ANSIColor;
 
 public class MainClient {
@@ -29,13 +23,13 @@ public class MainClient {
 
     private static void runStage(String reason, Predicate<GameClientState> condition,
                                  GameStateUpdater stateUpdater, GameClientState clientState,
-                                 Function<GameClientState, Collection<MapDirection>> nextDirectionsSupplier) {
+                                 Stage stageHandler) {
         List<MapDirection> currentDirections = new ArrayList<>();
 
         while (!condition.test(clientState)) {
             if (clientState.shouldClientAct()) {
                 if (currentDirections.isEmpty()) {
-                    currentDirections.addAll(nextDirectionsSupplier.apply(clientState));
+                    currentDirections.addAll(stageHandler.retrieveNextDirections(clientState));
                 }
 
                 stateUpdater.sendMapMove(currentDirections.removeFirst());
@@ -51,133 +45,6 @@ public class MainClient {
         }
     }
 
-    private static Position getRandomUnvisitedMapNode(GameMap map) {
-        List<GameMapNode> mapNodes = new ArrayList<>(map.getUnvisitedNodes().stream().toList());
-        Collections.shuffle(mapNodes);
-
-        return mapNodes.stream()
-                .findFirst()
-                .orElseThrow()
-                .getPosition();
-    }
-
-    private static Comparator<GameMapNode> getNeighborCountComparator(GameMap map) {
-        return (a, b) -> {
-            int aNeighborCount = map.getReachableNeighbors(a.getPosition()).size();
-            int bNeighborCount = map.getReachableNeighbors(b.getPosition()).size();
-
-            return bNeighborCount - aNeighborCount;
-        };
-    }
-
-    private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
-        List<GameMapNode> mapNodes = haystackMap.getMapNodes().stream()
-                .sorted(getNeighborCountComparator(map))
-                .toList();
-
-        return mapNodes.stream()
-                .findFirst()
-                .map(GameMapNode::getPosition)
-                .orElseGet(() -> getRandomUnvisitedMapNode(haystackMap));
-    }
-
-    private static Comparator<Position> getFarthestAwayComparator(Position source) {
-        return (a, b) -> {
-            int aDistance = source.taxicabDistanceTo(a);
-            int bDistance = source.taxicabDistanceTo(b);
-
-            return aDistance - bDistance;
-        };
-    }
-
-    private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
-        Comparator<Position> farthestAwayComparator = getFarthestAwayComparator(source);
-        List<Position> lootableNodes = new ArrayList<>();
-        Collection<Position> nearbyLootableNodes = new ArrayList<>();
-
-        do {
-            nearbyLootableNodes.clear();
-            nearbyLootableNodes.addAll(
-                    map.getReachableNeighbors(source)
-                            .stream()
-                            .filter(GameMapNode::isUnvisited)
-                            .filter(GameMapNode::isLootable)
-                            .map(GameMapNode::getPosition)
-                            .filter(position -> !lootableNodes.contains(position))
-                            .sorted(farthestAwayComparator)
-                            .toList());
-            lootableNodes.addAll(nearbyLootableNodes);
-        } while (!nearbyLootableNodes.isEmpty());
-
-        Collections.shuffle(lootableNodes);
-
-        return lootableNodes.stream().findFirst();
-    }
-
-    private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
-                                                                 GameMap haystackMap) {
-        Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
-                .orElseGet(() -> getDeadEndUnvisitedMapNode(map, haystackMap));
-        PathFinder pathFinder = new AStarPathFinder(map);
-
-        return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);
-    }
-
-    private static List<MapDirection> getNextTreasureFindingWalk(GameClientState clientState) {
-        GameMap currentMap = clientState.getMap();
-        Position currentPosition = clientState.getPlayer().getPosition();
-        GameMap playerHalfMap = currentMap.getPlayerHalfMap();
-
-        return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerHalfMap);
-    }
-
-    private static List<MapDirection> getDirectWalkTo(GameClientState clientState,
-                                                      Position destination) {
-        PathFinder pathFinder = new AStarPathFinder(clientState.getMap());
-
-        return pathFinder
-                .findPath(clientState.getPlayer().getPosition(), destination)
-                .intoMapDirections(clientState.getMap());
-    }
-
-    private static Position getTreasurePosition(GameClientState state) {
-        // TODO Improve error handling here (by transitioning back to searching the treasure?)
-        return state.getMapNodePosition(GameMapNode::hasTreasure).orElseThrow();
-    }
-
-    private static Optional<Position> getWaterProtectedFortPosition(GameMap map,
-                                                                    GameMap haystackMap) {
-        return haystackMap.getMapNodes().stream()
-                .filter(GameMapNode::isLootable)
-                .filter(GameMapNode::isUnvisited)
-                .map(GameMapNode::getPosition)
-                .filter(mapNodePosition -> {
-                    Set<GameMapNode> neighborNodes = map.getAllNeighbors(mapNodePosition);
-
-                    return neighborNodes.stream()
-                            .filter(neighborNode -> !neighborNode.isAccessible())
-                            .count() > 2L;
-                })
-                .findFirst();
-    }
-
-    private static List<MapDirection> getNextFortFindingWalk(GameClientState clientState) {
-        GameMap currentMap = clientState.getMap();
-        Position currentPosition = clientState.getPlayer().getPosition();
-        GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
-
-        return getWaterProtectedFortPosition(currentMap, enemyHalfMap)
-                .map(possiblePosition -> getDirectWalkTo(clientState, possiblePosition))
-                .orElseGet(() -> getNextWalkToUnvisitedNode(currentPosition,
-                                                            currentMap,
-                                                            enemyHalfMap));
-    }
-
-    private static Position getFortPosition(GameClientState state) {
-        // TODO: Improve error handling here (by transitioning back to searching enemy fort?)
-        return state.getMapNodePosition(GameMapNode::hasEnemyFort).orElseThrow();
-    }
-
     public static void main(String[] args) {
         // parse these parameters in compliance to the automatic client evaluation
         String serverBaseUrl = args[1];
@@ -191,7 +58,7 @@ public class MainClient {
                  GameClientState::hasFoundTreasure,
                  stateUpdater,
                  clientState,
-                 MainClient::getNextTreasureFindingWalk);
+                 new FindTreasure());
 
         // HAS FOUND TREASURE
         logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE TREASURE!", ANSIColor.GREEN));
@@ -200,10 +67,7 @@ public class MainClient {
                  GameClientState::hasCollectedTreasure,
                  stateUpdater,
                  clientState,
-                 currentClientState -> {
-                     Position treasurePosition = getTreasurePosition(currentClientState);
-                     return getDirectWalkTo(currentClientState, treasurePosition);
-                 });
+                 new WalkToTreasure());
 
         // HAS COLLECTED TREASURE
         logger.info(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!", ANSIColor.GREEN));
@@ -212,7 +76,7 @@ public class MainClient {
                  GameClientState::hasFoundEnemyFort,
                  stateUpdater,
                  clientState,
-                 MainClient::getNextFortFindingWalk);
+                 new FindEnemyFort());
 
         // HAS FOUND ENEMY'S FORT
         logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!", ANSIColor.GREEN));
@@ -221,10 +85,7 @@ public class MainClient {
                  GameClientState::hasClientWon,
                  stateUpdater,
                  clientState,
-                 currentClientState -> {
-                     Position enemyFortPosition = getFortPosition(currentClientState);
-                     return getDirectWalkTo(currentClientState, enemyFortPosition);
-                 });
+                 new WalkToEnemyFort());
 
         logger.info(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));
     }
