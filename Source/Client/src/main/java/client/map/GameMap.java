@@ -82,7 +82,7 @@ public class GameMap {
         return Collections.unmodifiableSet(nodes.keySet());
     }
 
-    private Collection<Position> getPositions(Predicate<Position> predicate) {
+    public Collection<Position> getPositions(Predicate<Position> predicate) {
         return getPositions().stream().filter(predicate).toList();
     }
 

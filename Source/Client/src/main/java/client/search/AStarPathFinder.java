@@ -1,12 +1,9 @@
 package client.search;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
@@ -14,7 +11,6 @@ import java.util.Queue;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -27,11 +23,10 @@ public class AStarPathFinder implements PathFinder {
 
     private static final int DIRECTION_COUNT = MapDirection.values().length;
 
-    private final Map<Position, GameMapNode> mapNodes;
+    private final GameMap map;
 
     public AStarPathFinder(Collection<GameMapNode> mapNodes) {
-        this.mapNodes = HashMap.newHashMap(mapNodes.size());
-        this.mapNodes.putAll(mapNodes.stream().collect(GameMap.mapCollector));
+        map = new GameMap(mapNodes);
     }
 
     private static Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
@@ -48,45 +43,23 @@ public class AStarPathFinder implements PathFinder {
     }
 
     private Optional<GameMapNode> getNodeAt(Position position) {
-        return Optional.ofNullable(mapNodes.get(position));
+        return map.getNodeAt(position);
     }
 
-    private Stream<GameMapNode> getNeighborsStream(Position position) {
-        return Arrays.stream(MapDirection.values())
-                .map(position::stepInDirection)
-                .map(this::getNodeAt)
-                .filter(Optional::isPresent)
-                .map(Optional::get);
-    }
-
-    private List<GameMapNode> getReachableNeighbors(Position position) {
-        return getNeighborsStream(position)
-                .filter(GameMapNode::isAccessible)
-                .toList();
+    private Set<GameMapNode> getReachableNeighbors(Position position) {
+        return map.getReachableNeighbors(position);
     }
 
     private Set<Position> getPositions() {
-        return Collections.unmodifiableSet(mapNodes.keySet());
+        return map.getPositions();
     }
 
     private Collection<Position> getPositions(Predicate<Position> predicate) {
-        return getPositions().stream().filter(predicate).toList();
+        return map.getPositions(predicate);
     }
 
     private Collection<Position> getPositionsInSight(Position cameraPosition) {
-        // TODO: Reduce code duplication from GameMap
-        int cameraViewRadius = getNodeAt(cameraPosition)
-                .map(GameMapNode::getTerrainType)
-                .map(TerrainType::getViewRadius)
-                .orElse(-1);
-
-        Collection<Position> visiblePositions = getPositions(position -> {
-            int distance = cameraPosition.chebyshevDistanceTo(position);
-
-            return distance <= cameraViewRadius;
-        });
-
-        return new ArrayList<>(visiblePositions);
+        return map.getPositionsInSight(cameraPosition);
     }
 
     private int computeTravelCost(GameMapNode from, GameMapNode to) {
@@ -122,8 +95,8 @@ public class AStarPathFinder implements PathFinder {
 
     @Override
     public Path findPath(Position source, Position destination) {
-        Map<Position, Integer> costToStartNode = HashMap.newHashMap(mapNodes.size());
-        Map<Position, Integer> costToEndNode = HashMap.newHashMap(mapNodes.size());
+        Map<Position, Integer> costToStartNode = HashMap.newHashMap(map.getSize());
+        Map<Position, Integer> costToEndNode = HashMap.newHashMap(map.getSize());
 
         Queue<GameMapNode> openSet = new PriorityQueue<>(DIRECTION_COUNT + 1,
                                                          getCostComparator(costToEndNode));
@@ -143,7 +116,7 @@ public class AStarPathFinder implements PathFinder {
                 return reconstructPath(source, destination, cameFrom);
             }
 
-            List<GameMapNode> neighborNodes = getReachableNeighbors(currentPosition);
+            Collection<GameMapNode> neighborNodes = getReachableNeighbors(currentPosition);
 
             for (GameMapNode neighborNode : neighborNodes) {
                 Position neighborPosition = neighborNode.getPosition();
