@@ -178,14 +178,6 @@ public class GameMapNode implements Comparable<GameMapNode> {
         return terrainType;
     }
 
-    public boolean isHorizontallyLessThan(Position other) {
-        return position.isHorizontallyLessThan(other);
-    }
-
-    public boolean isVerticallyLessThan(Position other) {
-        return position.isVerticallyLessThan(other);
-    }
-
     public boolean isAccessible() {
         return terrainType == TerrainType.GRASS || terrainType == TerrainType.MOUNTAIN;
     }

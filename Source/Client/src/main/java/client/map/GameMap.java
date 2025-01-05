@@ -106,6 +106,10 @@ public class GameMap {
         return Collections.unmodifiableCollection(nodes.values());
     }
 
+    private Collection<GameMapNode> getMapNodes(Stream<Position> positions) {
+        return positions.map(nodes::get).toList();
+    }
+
     public Collection<GameMapNode> getMapNodes(Predicate<GameMapNode> predicate) {
         return getMapNodes().stream().filter(predicate).toList();
     }
@@ -127,34 +131,8 @@ public class GameMap {
         return getMapNodes(isOnBorder);
     }
 
-    private Predicate<GameMapNode> getHalfMapBinaryRelation(Position position) {
-        Predicate<GameMapNode> predicate;
-        PositionArea mapArea = getArea();
-        Position middlePoint = mapArea.middlePoint();
-
-        // The GameMap can be either square (10 x 10) or wide (20 x 5), when both clients have
-        // sent their half maps, so we have consider either case for getting the half map
-        if (mapArea.isLandscape()) {
-            if (position.isHorizontallyLessThan(middlePoint)) {
-                predicate = mapNode -> mapNode.isHorizontallyLessThan(middlePoint);
-            } else {
-                predicate = mapNode -> !mapNode.isHorizontallyLessThan(middlePoint);
-            }
-        } else {
-            if (position.isVerticallyLessThan(middlePoint)) {
-                predicate = mapNode -> mapNode.isVerticallyLessThan(middlePoint);
-            } else {
-                predicate = mapNode -> !mapNode.isVerticallyLessThan(middlePoint);
-            }
-        }
-
-        return predicate;
-    }
-
     private Collection<GameMapNode> getHalfMapNodes(Position position) {
-        Predicate<GameMapNode> isOnHalfMap = getHalfMapBinaryRelation(position);
-
-        return getMapNodes(isOnHalfMap);
+        return getMapNodes(getArea().intoHalfStream(position));
     }
 
     private Optional<GameMapNode> getPlayerFortMapNode() {

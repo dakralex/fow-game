@@ -25,6 +25,40 @@ public record PositionArea(int x, int y, int width, int height) {
                 });
     }
 
+    private MapDirection getDirectionFromMiddle(Position position) {
+        if (isLandscape()) {
+            return middlePoint().getHorizontalDirection(position);
+        } else {
+            return middlePoint().getVerticalDirection(position);
+        }
+    }
+
+    /**
+     * Returns a stream of {@link Position}s for the half area, i.e. the are in which the
+     * specified {@code position} is located in.
+     * <p>
+     * This method will split the area in half dependent on the fact whether position area
+     * covers a horizontal or vertical space.
+     *
+     * @param position position inside of the half area
+     * @return half area that position is located in
+     */
+    public Stream<Position> intoHalfStream(Position position) {
+        MapDirection directionFromMiddle = getDirectionFromMiddle(position);
+
+        int halfWidth = width / 2;
+        int halfHeight = height / 2;
+
+        PositionArea halfMapArea = switch (directionFromMiddle) {
+            case EAST -> new PositionArea(x + halfWidth, y, halfWidth, height);
+            case NORTH -> new PositionArea(x, y, width, halfHeight);
+            case SOUTH -> new PositionArea(x, y + halfHeight, width, halfHeight);
+            case WEST -> new PositionArea(x, y, halfWidth, height);
+        };
+
+        return halfMapArea.intoStream();
+    }
+
     private boolean isInside(Position position) {
         int posX = position.x();
         int posY = position.y();

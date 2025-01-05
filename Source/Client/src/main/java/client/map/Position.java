@@ -20,20 +20,20 @@ public record Position(int x, int y) implements Comparable<Position> {
         return MapDirection.fromDifferentials(other.x - x, other.y - y);
     }
 
+    public MapDirection getHorizontalDirection(Position other) {
+        return MapDirection.fromDifferentials(other.x - x, 0);
+    }
+
+    public MapDirection getVerticalDirection(Position other) {
+        return MapDirection.fromDifferentials(0, other.y - y);
+    }
+
     public int chebyshevDistanceTo(Position other) {
         return Math.max(Math.abs(x - other.x), Math.abs(y - other.y));
     }
 
     public int taxicabDistanceTo(Position other) {
         return Math.abs(x - other.x) + Math.abs(y - other.y);
-    }
-
-    public boolean isHorizontallyLessThan(Position other) {
-        return x < other.x;
-    }
-
-    public boolean isVerticallyLessThan(Position other) {
-        return y < other.y;
     }
 
     @Override
