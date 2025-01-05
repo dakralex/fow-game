@@ -1,5 +1,7 @@
 package client.network;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
@@ -16,6 +18,10 @@ import messagesbase.messagesfromclient.ERequestState;
 import reactor.core.publisher.Mono;
 
 public class GameServerClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameServerClient.class);
+
+    private static final long SERVER_WAIT_TIME_MS = 400L;
 
     private final WebClient webClient;
 
@@ -37,6 +43,23 @@ public class GameServerClient {
         String message = String.format("Server error: %s", response.statusCode());
 
         return Mono.error(new GameServerClientException(message));
+    }
+
+    /**
+     * Suspend the current thread to wait for the server.
+     * <p>
+     * This ensures that we wait at least the amount of the time to allow the server to process
+     * requests from other clients with respect to fairness.
+     *
+     * @param reason message to print while waiting
+     */
+    public static void suspendForServer(String reason) {
+        try {
+            Thread.sleep(SERVER_WAIT_TIME_MS);
+        } catch (InterruptedException e) {
+            logger.warn("Unexpected interrupt while {}", reason, e);
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**

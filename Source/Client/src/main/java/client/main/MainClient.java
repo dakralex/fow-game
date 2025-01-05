@@ -38,8 +38,6 @@ public class MainClient {
     private static final String LAST_NAME = "Kral";
     private static final String UACCOUNT = "krald88";
 
-    private static final long SERVER_WAIT_TIME_MS = 400L;
-
     private static GameMap generateGameMap() {
         MapGenerator mapGenerator = new MapGenerator();
         HalfMapValidator mapValidator = new HalfMapValidator();
@@ -55,15 +53,6 @@ public class MainClient {
         return registrar.registerPlayer();
     }
 
-    private static void suspendForServer(String reason) {
-        try {
-            Thread.sleep(SERVER_WAIT_TIME_MS);
-        } catch (InterruptedException e) {
-            logger.warn("Unexpected interrupt while {}", reason, e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
     private static void waitOn(String reason, Predicate<GameClientState> condition,
                                GameStateUpdater stateUpdater, GameClientState clientState) {
         while (!condition.test(clientState)) {
@@ -71,7 +60,7 @@ public class MainClient {
 
             clientState.update(stateUpdater.pollGameState());
 
-            suspendForServer(reason.toLowerCase());
+            GameServerClient.suspendForServer(reason.toLowerCase());
         }
     }
 
@@ -95,7 +84,7 @@ public class MainClient {
                 System.exit(1);
             }
 
-            suspendForServer(reason.toLowerCase());
+            GameServerClient.suspendForServer(reason.toLowerCase());
         }
     }
 
