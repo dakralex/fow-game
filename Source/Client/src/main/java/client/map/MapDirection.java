@@ -30,6 +30,13 @@ public enum MapDirection {
         return direction -> direction.dx == dx && direction.dy == dy;
     }
 
+    /**
+     * Returns the direction that the vector represented by {@code (dx, dy)} points to.
+     *
+     * @param dx the differential value of {@code x}
+     * @param dy the differential value of {@code y}
+     * @return the direction pointed to by the differentials
+     */
     public static MapDirection fromDifferentials(int dx, int dy) {
         return Arrays.stream(values())
                 .filter(equalsTo(dx, dy))
