@@ -30,6 +30,14 @@ public enum MapDirection {
         return direction -> direction.dx == dx && direction.dy == dy;
     }
 
+    private static int normalizeValue(int value) {
+        if (value == 0) {
+            return 0;
+        } else {
+            return value / Math.abs(value);
+        }
+    }
+
     /**
      * Returns the direction that the vector represented by {@code (dx, dy)} points to.
      *
@@ -38,8 +46,12 @@ public enum MapDirection {
      * @return the direction pointed to by the differentials
      */
     public static MapDirection fromDifferentials(int dx, int dy) {
+        // Normalize the differentials to allow values beyond [-1;1]
+        int dxNormalized = normalizeValue(dx);
+        int dyNormalized = normalizeValue(dy);
+
         return Arrays.stream(values())
-                .filter(equalsTo(dx, dy))
+                .filter(equalsTo(dxNormalized, dyNormalized))
                 .findFirst()
                 .orElseThrow(() -> {
                     String errorMessage = String.format("No direction found for (%d, %d)", dx, dy);
