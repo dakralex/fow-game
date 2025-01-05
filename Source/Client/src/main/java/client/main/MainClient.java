@@ -51,7 +51,9 @@ public class MainClient {
         }
     }
 
-    private static List<GameMapNode> getUnvisitedMapNodes(Collection<GameMapNode> mapNodes) {
+    private static List<GameMapNode> getUnvisitedMapNodes(GameMap map) {
+        Collection<GameMapNode> mapNodes = map.getMapNodes();
+
         return new ArrayList<>(
                 mapNodes.stream()
                         .filter(GameMapNode::isUnvisited)
@@ -68,8 +70,8 @@ public class MainClient {
                         .toList());
     }
 
-    private static Position getRandomUnvisitedMapNode(Collection<GameMapNode> mapNodes) {
-        List<GameMapNode> unvisitedMapNodes = getUnvisitedMapNodes(mapNodes);
+    private static Position getRandomUnvisitedMapNode(GameMap map) {
+        List<GameMapNode> unvisitedMapNodes = getUnvisitedMapNodes(map);
         Collections.shuffle(unvisitedMapNodes);
 
         return unvisitedMapNodes.stream()
@@ -87,16 +89,15 @@ public class MainClient {
         };
     }
 
-    private static Position getDeadEndUnvisitedMapNode(GameMap map,
-                                                       Collection<GameMapNode> mapNodes) {
-        List<GameMapNode> unvisitedDeadEndMapNodes = getUnvisitedMapNodes(mapNodes).stream()
+    private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
+        List<GameMapNode> unvisitedDeadEndMapNodes = getUnvisitedMapNodes(haystackMap).stream()
                 .sorted(getNeighborCountComparator(map))
                 .toList();
 
         return unvisitedDeadEndMapNodes.stream()
                 .findFirst()
                 .map(GameMapNode::getPosition)
-                .orElseGet(() -> getRandomUnvisitedMapNode(mapNodes));
+                .orElseGet(() -> getRandomUnvisitedMapNode(haystackMap));
     }
 
     private static Comparator<Position> getFarthestAwayComparator(Position source) {
@@ -133,9 +134,9 @@ public class MainClient {
     }
 
     private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
-                                                                 Collection<GameMapNode> nodeHaystack) {
+                                                                 GameMap haystackMap) {
         Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
-                .orElseGet(() -> getDeadEndUnvisitedMapNode(map, nodeHaystack));
+                .orElseGet(() -> getDeadEndUnvisitedMapNode(map, haystackMap));
         PathFinder pathFinder = new AStarPathFinder(map);
 
         return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);
@@ -145,9 +146,8 @@ public class MainClient {
         GameMap currentMap = clientState.getMap();
         Position currentPosition = clientState.getPlayer().getPosition();
         GameMap playerHalfMap = currentMap.getPlayerHalfMap();
-        Collection<GameMapNode> playerMapNodes = playerHalfMap.getMapNodes();
 
-        return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerMapNodes);
+        return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerHalfMap);
     }
 
     private static List<MapDirection> getDirectWalkTo(GameClientState clientState,
@@ -165,8 +165,8 @@ public class MainClient {
     }
 
     private static Optional<Position> getWaterProtectedFortPosition(GameMap map,
-                                                                    Collection<GameMapNode> mapNodes) {
-        return mapNodes.stream()
+                                                                    GameMap haystackMap) {
+        return haystackMap.getMapNodes().stream()
                 .filter(GameMapNode::isLootable)
                 .filter(GameMapNode::isUnvisited)
                 .map(GameMapNode::getPosition)
@@ -184,13 +184,12 @@ public class MainClient {
         GameMap currentMap = clientState.getMap();
         Position currentPosition = clientState.getPlayer().getPosition();
         GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
-        Collection<GameMapNode> enemyMapNodes = enemyHalfMap.getMapNodes();
 
-        return getWaterProtectedFortPosition(currentMap, enemyMapNodes)
+        return getWaterProtectedFortPosition(currentMap, enemyHalfMap)
                 .map(possiblePosition -> getDirectWalkTo(clientState, possiblePosition))
                 .orElseGet(() -> getNextWalkToUnvisitedNode(currentPosition,
                                                             currentMap,
-                                                            enemyMapNodes));
+                                                            enemyHalfMap));
     }
 
     private static Position getFortPosition(GameClientState state) {
