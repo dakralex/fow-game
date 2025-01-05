@@ -80,6 +80,15 @@ class PositionAreaTest {
         assertFalse(area.isCorner(new Position(x, y)), "Position should not be identified as a corner");
     }
 
+    @ParameterizedTest
+    @CsvSource({"5,10", "10,5", "10,14", "14,10", "10,10"})
+    void PositionArea_isMiddle_shouldReturnTrueForMiddles(int x, int y) {
+        PositionArea area = new PositionArea(5, 5, 10, 10);
+
+        assertTrue(area.isMiddle(new Position(x, y)),
+                   "Position should be identified as in the middle");
+    }
+
     private static class HalfMapArgumentProvider implements ArgumentsProvider {
 
         @Override
