@@ -29,7 +29,7 @@ public class FindTreasure implements Stage {
     }
 
     private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
-        List<GameMapNode> mapNodes = haystackMap.getMapNodes().stream()
+        List<GameMapNode> mapNodes = haystackMap.getUnvisitedNodes().stream()
                 .sorted(new NeighborCountComparator(map))
                 .toList();
 
