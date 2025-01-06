@@ -102,4 +102,14 @@ public class FindTreasure implements Stage {
     public boolean hasReachedObjective(GameClientState state) {
         return state.hasFoundTreasure();
     }
+
+    @Override
+    public String getStageStartMessage() {
+        return "finding the player's treasure";
+    }
+
+    @Override
+    public String getStageCompletionMessage() {
+        return "found the player's treasure";
+    }
 }

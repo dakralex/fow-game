@@ -20,9 +20,14 @@ public class MainClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
 
-    private static void runStage(String reason, GameStateUpdater stateUpdater,
-                                 GameClientState clientState, Stage stageHandler) {
+    private static void runStage(GameStateUpdater stateUpdater, GameClientState clientState,
+                                 Stage stageHandler) {
         List<MapDirection> currentDirections = new ArrayList<>();
+        String stageStartMessage = stageHandler.getStageStartMessage();
+        String stageCompletionMessage = stageHandler.getStageCompletionMessage();
+
+        logger.info("--> Stage Start: {}",
+                    ANSIColor.format(stageStartMessage, ANSIColor.BRIGHT_RED));
 
         while (!stageHandler.hasReachedObjective(clientState)) {
             if (clientState.shouldClientAct()) {
@@ -39,8 +44,11 @@ public class MainClient {
                 System.exit(1);
             }
 
-            GameServerClient.suspendForServer(reason.toLowerCase());
+            GameServerClient.suspendForServer(stageStartMessage);
         }
+
+        logger.info("--> Stage completed: {}",
+                    ANSIColor.format(stageCompletionMessage.toUpperCase(), ANSIColor.GREEN));
     }
 
     public static void main(String[] args) {
@@ -52,23 +60,9 @@ public class MainClient {
         GameClientState clientState = bootstrapper.bootstrap();
         GameStateUpdater stateUpdater = bootstrapper.getStateUpdater();
 
-        runStage("finding the player's treasure", stateUpdater, clientState, new FindTreasure());
-
-        // HAS FOUND TREASURE
-        logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE TREASURE!", ANSIColor.GREEN));
-
-        runStage("going to the player's treasure", stateUpdater, clientState, new WalkToTreasure());
-
-        // HAS COLLECTED TREASURE
-        logger.info(ANSIColor.format("THE CLIENT HAS COLLECTED THE TREASURE!", ANSIColor.GREEN));
-
-        runStage("finding enemy's fort", stateUpdater, clientState, new FindEnemyFort());
-
-        // HAS FOUND ENEMY'S FORT
-        logger.info(ANSIColor.format("THE CLIENT HAS FOUND THE ENEMY'S FORT!", ANSIColor.GREEN));
-
-        runStage("going to the enemy's fort", stateUpdater, clientState, new WalkToEnemyFort());
-
-        logger.info(ANSIColor.format("THE CLIENT HAS WON!", ANSIColor.GREEN));
+        runStage(stateUpdater, clientState, new FindTreasure());
+        runStage(stateUpdater, clientState, new WalkToTreasure());
+        runStage(stateUpdater, clientState, new FindEnemyFort());
+        runStage(stateUpdater, clientState, new WalkToEnemyFort());
     }
 }

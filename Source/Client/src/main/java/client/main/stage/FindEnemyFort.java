@@ -132,4 +132,14 @@ public class FindEnemyFort implements Stage {
     public boolean hasReachedObjective(GameClientState state) {
         return state.hasFoundEnemyFort();
     }
+
+    @Override
+    public String getStageStartMessage() {
+        return "finding the enemy's fort";
+    }
+
+    @Override
+    public String getStageCompletionMessage() {
+        return "found the enemy's fort";
+    }
 }

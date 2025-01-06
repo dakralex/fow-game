@@ -33,4 +33,14 @@ public class WalkToEnemyFort implements Stage {
     public boolean hasReachedObjective(GameClientState state) {
         return state.hasClientWon();
     }
+
+    @Override
+    public String getStageStartMessage() {
+        return "going to the enemy's fort";
+    }
+
+    @Override
+    public String getStageCompletionMessage() {
+        return "client has won";
+    }
 }

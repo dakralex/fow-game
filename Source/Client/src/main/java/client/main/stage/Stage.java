@@ -26,4 +26,17 @@ public interface Stage {
      */
     boolean hasReachedObjective(GameClientState state);
 
+    /**
+     * Returns a message that should be printed at the current stage's startup.
+     *
+     * @return the current stage's startup message
+     */
+    String getStageStartMessage();
+
+    /**
+     * Returns a message that should be printed at the current stage's completion.
+     *
+     * @return the current stage's completion message
+     */
+    String getStageCompletionMessage();
 }
