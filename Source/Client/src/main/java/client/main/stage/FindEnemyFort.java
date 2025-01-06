@@ -127,4 +127,9 @@ public class FindEnemyFort implements Stage {
                                                             currentMap,
                                                             enemyHalfMap));
     }
+
+    @Override
+    public boolean hasReachedObjective(GameClientState state) {
+        return state.hasFoundEnemyFort();
+    }
 }

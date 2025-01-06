@@ -97,4 +97,9 @@ public class FindTreasure implements Stage {
 
         return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerHalfMap);
     }
+
+    @Override
+    public boolean hasReachedObjective(GameClientState state) {
+        return state.hasFoundTreasure();
+    }
 }

@@ -28,4 +28,9 @@ public class WalkToEnemyFort implements Stage {
 
         return getDirectWalkTo(state, fortPosition);
     }
+
+    @Override
+    public boolean hasReachedObjective(GameClientState state) {
+        return state.hasClientWon();
+    }
 }

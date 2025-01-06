@@ -28,4 +28,9 @@ public class WalkToTreasure implements Stage {
 
         return getDirectWalkTo(state, treasurePosition);
     }
+
+    @Override
+    public boolean hasReachedObjective(GameClientState state) {
+        return state.hasCollectedTreasure();
+    }
 }

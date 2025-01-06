@@ -18,4 +18,12 @@ public interface Stage {
      */
     Collection<MapDirection> retrieveNextDirections(GameClientState state);
 
+    /**
+     * Returns true whether the current stage's objective has been reached.
+     *
+     * @param state the current game state
+     * @return whether the stage's objective has been reached
+     */
+    boolean hasReachedObjective(GameClientState state);
+
 }
