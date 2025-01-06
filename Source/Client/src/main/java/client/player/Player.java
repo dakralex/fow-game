@@ -96,6 +96,10 @@ public class Player {
         return hasTreasure;
     }
 
+    public boolean isPlayerAt(Position otherPosition) {
+        return position.equals(otherPosition);
+    }
+
     @Override
     public String toString() {
         return String.format("%s [%s]", details, playerId);

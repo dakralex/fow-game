@@ -157,8 +157,12 @@ public class GameClientState {
         return hasClientWon() || map.anyMapNodeMatch(GameMapNode::hasEnemyFort);
     }
 
+    private boolean isPlayerAtEnemyFort() {
+        return map.getPlayerFortPosition().stream().allMatch(player::isPlayerAt);
+    }
+
     public boolean hasClientWon() {
-        return player.hasWon();
+        return player.hasWon() || isPlayerAtEnemyFort();
     }
 
     public boolean hasClientLost() {
