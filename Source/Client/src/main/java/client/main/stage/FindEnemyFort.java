@@ -13,6 +13,7 @@ import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
+import client.map.comparator.NeighborCountComparator;
 import client.search.AStarPathFinder;
 import client.search.PathFinder;
 
@@ -28,18 +29,9 @@ public class FindEnemyFort implements Stage {
                 .getPosition();
     }
 
-    private static Comparator<GameMapNode> getNeighborCountComparator(GameMap map) {
-        return (a, b) -> {
-            int aNeighborCount = map.getReachableNeighbors(a.getPosition()).size();
-            int bNeighborCount = map.getReachableNeighbors(b.getPosition()).size();
-
-            return bNeighborCount - aNeighborCount;
-        };
-    }
-
     private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
         List<GameMapNode> mapNodes = haystackMap.getMapNodes().stream()
-                .sorted(getNeighborCountComparator(map))
+                .sorted(new NeighborCountComparator(map))
                 .toList();
 
         return mapNodes.stream()
