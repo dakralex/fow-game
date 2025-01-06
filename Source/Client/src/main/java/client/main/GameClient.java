@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import client.main.stage.FindEnemyFort;
@@ -20,6 +21,13 @@ public class GameClient implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
 
+    private static final Collection<Stage> sequentialStages = List.of(
+            new FindTreasure(),
+            new WalkToTreasure(),
+            new FindEnemyFort(),
+            new WalkToEnemyFort()
+    );
+
     private final GameClientState clientState;
     private final GameStateUpdater stateUpdater;
 
@@ -28,19 +36,18 @@ public class GameClient implements Runnable {
         this.stateUpdater = stateUpdater;
     }
 
-    private static void runStage(GameStateUpdater stateUpdater, GameClientState clientState,
-                                 Stage stageHandler) {
+    private void runStage(Stage stage) {
         List<MapDirection> currentDirections = new ArrayList<>();
-        String stageStartMessage = stageHandler.getStageStartMessage();
-        String stageCompletionMessage = stageHandler.getStageCompletionMessage();
+        String stageStartMessage = stage.getStageStartMessage();
+        String stageCompletionMessage = stage.getStageCompletionMessage();
 
         logger.info("--> Stage Start: {}",
                     ANSIColor.format(stageStartMessage, ANSIColor.BRIGHT_RED));
 
-        while (!stageHandler.hasReachedObjective(clientState)) {
+        while (!stage.hasReachedObjective(clientState)) {
             if (clientState.shouldClientAct()) {
                 if (currentDirections.isEmpty()) {
-                    currentDirections.addAll(stageHandler.retrieveNextDirections(clientState));
+                    currentDirections.addAll(stage.retrieveNextDirections(clientState));
                 }
 
                 stateUpdater.sendMapMove(currentDirections.removeFirst());
@@ -62,9 +69,6 @@ public class GameClient implements Runnable {
 
     @Override
     public void run() {
-        runStage(stateUpdater, clientState, new FindTreasure());
-        runStage(stateUpdater, clientState, new WalkToTreasure());
-        runStage(stateUpdater, clientState, new FindEnemyFort());
-        runStage(stateUpdater, clientState, new WalkToEnemyFort());
+        sequentialStages.forEach(this::runStage);
     }
 }
