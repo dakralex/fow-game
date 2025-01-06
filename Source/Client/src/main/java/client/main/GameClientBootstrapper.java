@@ -3,7 +3,6 @@ package client.main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import client.generation.MapGenerator;
@@ -26,12 +25,10 @@ public class GameClientBootstrapper {
     private static final String U_ACCOUNT = "krald88";
 
     private final String gameId;
-    private Optional<GameClientToken> clientToken;
     private final GameServerClient serverClient;
 
     public GameClientBootstrapper(String gameId, String serverBaseUrl) {
         this.gameId = gameId;
-        this.clientToken = Optional.empty();
         this.serverClient = new GameServerClient(serverBaseUrl);
     }
 
@@ -79,26 +76,6 @@ public class GameClientBootstrapper {
         return clientState;
     }
 
-    private GameClientToken retrieveToken() {
-        GameClientToken token = registerPlayer(serverClient, gameId);
-        logger.info("Client acquired Player ID {}", token.playerId());
-
-        this.clientToken = Optional.of(token);
-
-        return token;
-    }
-
-    /**
-     * Returns the {@link GameStateUpdater} instance produced while building the
-     * {@link GameClientState}. This method should only be called after {@link #bootstrap()}.
-     *
-     * @return the state updater of the bootstrapper
-     */
-    public GameStateUpdater getStateUpdater() {
-        // TODO: Improve error handling here
-        return new GameStateUpdater(serverClient, clientToken.orElseThrow());
-    }
-
     /**
      * Bootstraps and returns the {@link GameClientState}.
      * <p>
@@ -109,18 +86,20 @@ public class GameClientBootstrapper {
      *
      * @return the server-provided game-ready game state
      */
-    public GameClientState bootstrap() {
+    public GameClient bootstrap() {
         GameMap gameMap = generateGameMap();
         logger.info("Client generated the following player's half map\n{}", gameMap);
 
-        GameClientToken token = retrieveToken();
-        GameStateUpdater stateUpdater = getStateUpdater();
+        GameClientToken token = registerPlayer(serverClient, gameId);
+        logger.info("Client acquired Player ID {}", token.playerId());
+
+        GameStateUpdater stateUpdater = new GameStateUpdater(serverClient, token);
         GameClientState clientState = sendMap(serverClient, token, stateUpdater, gameMap);
 
         GameMap currentMap = clientState.getMap();
         logger.info("Client received the full map\n{}", currentMap);
 
-        return clientState;
+        return new GameClient(clientState, stateUpdater);
     }
 
 }

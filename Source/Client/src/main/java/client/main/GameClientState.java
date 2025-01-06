@@ -4,9 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import client.main.stage.FindEnemyFort;
+import client.main.stage.FindTreasure;
+import client.main.stage.Stage;
+import client.main.stage.WalkToEnemyFort;
+import client.main.stage.WalkToTreasure;
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.Position;
