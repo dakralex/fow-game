@@ -41,7 +41,8 @@ public class MainClient {
             clientState.update(stateUpdater.pollGameState());
 
             if (clientState.hasClientLost()) {
-                System.exit(1);
+                logger.info("--> {}", ANSIColor.format("CLIENT HAS LOST", ANSIColor.BRIGHT_RED));
+                System.exit(0);
             }
 
             GameServerClient.suspendForServer(stageStartMessage);
