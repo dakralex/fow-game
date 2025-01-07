@@ -197,20 +197,9 @@ public class GameMap {
         return lootableNodes.stream().findFirst();
     }
 
-    private Optional<GameMapNode> getPlayerTreasureMapNode() {
-        return getMapNodes(GameMapNode::hasTreasure).stream().findFirst();
-    }
-
-    public Optional<Position> getPlayerTreasurePosition() {
-        return getPlayerTreasureMapNode().map(GameMapNode::getPosition);
-    }
-
-    private Optional<GameMapNode> getPlayerFortMapNode() {
-        return getMapNodes(GameMapNode::hasPlayerFort).stream().findFirst();
-    }
-
     public Optional<Position> getPlayerFortPosition() {
-        return getPlayerFortMapNode().map(GameMapNode::getPosition);
+        return getMapNodes(GameMapNode::hasPlayerFort).stream().findFirst()
+                .map(GameMapNode::getPosition);
     }
 
     public GameMap getPlayerHalfMap() {
