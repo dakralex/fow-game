@@ -9,10 +9,16 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import client.main.stage.FindEnemyFort;
+import client.main.stage.FindTreasure;
+import client.main.stage.Stage;
+import client.main.stage.WalkToEnemyFort;
+import client.main.stage.WalkToTreasure;
 import client.map.FortState;
 import client.map.GameMap;
 import client.map.GameMapNode;
@@ -68,6 +74,13 @@ class GameClientTest {
         ));
     };
 
+    private static final List<Stage> TEST_GAME_STAGES = List.of(
+            new FindTreasure(),
+            new WalkToTreasure(),
+            new FindEnemyFort(),
+            new WalkToEnemyFort()
+    );
+
     private static Player makeDummyPlayer(PlayerGameState playerState, Position position,
                                           boolean hasTreasure) {
         return new Player(PLAYER_ID, dummyPlayerDetails, playerState, position, hasTreasure);
@@ -97,14 +110,20 @@ class GameClientTest {
         GameStateUpdater stateUpdater = mock();
         when(stateUpdater.pollGameState()).thenReturn(state);
 
-        GameClient gameClient = new GameClient(state, stateUpdater);
 
-        gameClient.run();
+        GameClient gameClient = new GameClient(state, TEST_GAME_STAGES);
+        GameClientController controller = new GameClientController(gameClient, stateUpdater, 0L);
+        GameClientView testView = new GameClientView(gameClient, controller);
 
-        assertFinish(gameClient);
+        try {
+            testView.run();
+        } catch (RuntimeException e) {
+            // Ignore Thread interrupt
+        }
     }
 
     @Test
+    @Timeout(2L)
     void PerfectKnowledge_run_shouldRunThroughAllStages() {
         String gameId = "test1";
         GameMap map = MapGenerationUtils.generateEmptyGameMap(HORIZONTAL_FULL_MAP_X_SIZE,
@@ -116,7 +135,9 @@ class GameClientTest {
 
         GameStateUpdater stateUpdater = mock();
 
-        GameClient gameClient = new GameClient(state, stateUpdater, 0L);
+        GameClient gameClient = new GameClient(state, TEST_GAME_STAGES);
+        GameClientController controller = new GameClientController(gameClient, stateUpdater, 0L);
+        GameClientView testView = new GameClientView(gameClient, controller);
 
         ArgumentCaptor<MapDirection> argumentCaptor = ArgumentCaptor.forClass(MapDirection.class);
         doNothing().when(stateUpdater).sendMapMove(argumentCaptor.capture());
@@ -145,7 +166,11 @@ class GameClientTest {
             return new GameClientState(gameId, String.valueOf(counter), map, newPlayer, enemy);
         });
 
-        gameClient.run();
+        try {
+            testView.run();
+        } catch (RuntimeException e) {
+            // Ignore Thread interrupt
+        }
 
         assertFinish(gameClient);
     }

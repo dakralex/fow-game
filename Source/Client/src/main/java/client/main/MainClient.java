@@ -8,8 +8,8 @@ public class MainClient {
         String gameId = args[2];
 
         GameClientBootstrapper bootstrapper = new GameClientBootstrapper(gameId, serverBaseUrl);
-        GameClient gameClient = bootstrapper.bootstrap();
+        GameClientView mainView = bootstrapper.bootstrap();
 
-        gameClient.run();
+        mainView.run();
     }
 }

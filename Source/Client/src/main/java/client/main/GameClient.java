@@ -1,86 +1,83 @@
 package client.main;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import client.main.stage.FindEnemyFort;
-import client.main.stage.FindTreasure;
 import client.main.stage.Stage;
-import client.main.stage.WalkToEnemyFort;
-import client.main.stage.WalkToTreasure;
 import client.map.MapDirection;
-import client.network.GameServerClient;
-import client.network.GameStateUpdater;
-import client.util.ANSIColor;
+import client.util.Observable;
 
-public class GameClient implements Runnable {
+public class GameClient extends Observable<GameClientEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MainClient.class);
+    private Stage currentStage;
+    private final List<Stage> stages;
+    private final List<MapDirection> currentDirections;
+    private final GameClientState currentState;
 
-    private static final Collection<Stage> sequentialStages = List.of(
-            new FindTreasure(),
-            new WalkToTreasure(),
-            new FindEnemyFort(),
-            new WalkToEnemyFort()
-    );
-
-    private static final long DEFAULT_WAIT_TIME_MS = 400L;
-
-    private final GameClientState clientState;
-    private final GameStateUpdater stateUpdater;
-    private final long waitTimeMs;
-
-    public GameClient(GameClientState clientState, GameStateUpdater stateUpdater, long waitTimeMs) {
-        this.clientState = clientState;
-        this.stateUpdater = stateUpdater;
-        this.waitTimeMs = waitTimeMs;
+    public GameClient(GameClientState currentState, List<Stage> stages) {
+        this.stages = new ArrayList<>(stages);
+        this.currentStage = this.stages.removeFirst();
+        this.currentDirections = new ArrayList<>(1);
+        this.currentState = currentState;
     }
 
-    public GameClient(GameClientState clientState, GameStateUpdater stateUpdater) {
-        this(clientState, stateUpdater, DEFAULT_WAIT_TIME_MS);
-    }
+    public void runStage() {
+        notifyObservers(GameClientEvent.STAGE_START);
 
-    private void runStage(Stage stage) {
-        List<MapDirection> currentDirections = new ArrayList<>();
-        String stageStartMessage = stage.getStageStartMessage();
-        String stageCompletionMessage = stage.getStageCompletionMessage();
-
-        logger.info("--> Stage Start: {}",
-                    ANSIColor.format(stageStartMessage, ANSIColor.BRIGHT_RED));
-
-        while (!stage.hasReachedObjective(clientState)) {
-            if (clientState.shouldClientAct()) {
-                if (currentDirections.isEmpty()) {
-                    currentDirections.addAll(stage.retrieveNextDirections(clientState));
-                }
-
-                stateUpdater.sendMapMove(currentDirections.removeFirst());
+        while (!currentStage.hasReachedObjective(currentState)) {
+            if (currentState.shouldClientAct()) {
+                notifyObservers(GameClientEvent.SHOULD_SEND_MOVE);
             }
 
-            clientState.update(stateUpdater.pollGameState());
+            notifyObservers(GameClientEvent.SHOULD_UPDATE_STATE);
 
-            if (clientState.hasClientLost()) {
-                logger.info("--> {}", ANSIColor.format("CLIENT HAS LOST", ANSIColor.BRIGHT_RED));
-                System.exit(0);
+            if (currentState.hasClientWon()) {
+                notifyObservers(GameClientEvent.HAS_WON);
+                return;
             }
 
-            GameServerClient.suspendForServer(stageStartMessage, waitTimeMs);
+            if (currentState.hasClientLost()) {
+                notifyObservers(GameClientEvent.HAS_LOST);
+                return;
+            }
+
+            notifyObservers(GameClientEvent.SHOULD_SUSPEND);
         }
 
-        logger.info("--> Stage completed: {}",
-                    ANSIColor.format(stageCompletionMessage.toUpperCase(), ANSIColor.GREEN));
+        notifyObservers(GameClientEvent.STAGE_COMPLETE);
+    }
+
+    public void runNextStage() {
+        if (stages.isEmpty()) {
+            notifyObservers(GameClientEvent.HAS_LOST);
+        }
+
+        currentStage = stages.removeFirst();
+
+        runStage();
+    }
+
+    public Stage getCurrentStage() {
+        return currentStage;
+    }
+
+    public String getCurrentTitle() {
+        return currentStage.getStageStartMessage();
+    }
+
+    public MapDirection getNextMove() {
+        if (currentDirections.isEmpty()) {
+            currentDirections.addAll(currentStage.retrieveNextDirections(currentState));
+        }
+
+        return currentDirections.removeFirst();
+    }
+
+    public void updateState(GameClientState newState) {
+        currentState.update(newState);
     }
 
     public GameClientState getCurrentState() {
-        return clientState;
-    }
-
-    @Override
-    public void run() {
-        sequentialStages.forEach(this::runStage);
+        return currentState;
     }
 }
