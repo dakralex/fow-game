@@ -12,14 +12,14 @@ import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
-import client.map.comparator.FarthestDistanceComparator;
+import client.map.comparator.TaxicabDistanceComparator;
 import client.search.AStarPathFinder;
 import client.search.PathFinder;
 
 public class FindTreasure implements Stage {
 
     private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
-        Comparator<Position> farthestAwayComparator = new FarthestDistanceComparator(source);
+        Comparator<Position> distanceComparator = new TaxicabDistanceComparator(source);
         List<Position> lootableNodes = new ArrayList<>();
         Collection<Position> nearbyLootableNodes = new ArrayList<>();
 
@@ -32,7 +32,7 @@ public class FindTreasure implements Stage {
                             .filter(GameMapNode::isLootable)
                             .map(GameMapNode::getPosition)
                             .filter(position -> !lootableNodes.contains(position))
-                            .sorted(farthestAwayComparator)
+                            .sorted(distanceComparator)
                             .toList());
             lootableNodes.addAll(nearbyLootableNodes);
         } while (!nearbyLootableNodes.isEmpty());

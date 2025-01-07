@@ -4,11 +4,11 @@ import java.util.Comparator;
 
 import client.map.Position;
 
-public class FarthestDistanceComparator implements Comparator<Position> {
+public class TaxicabDistanceComparator implements Comparator<Position> {
 
     private final Position source;
 
-    public FarthestDistanceComparator(Position source) {
+    public TaxicabDistanceComparator(Position source) {
         this.source = source;
     }
 
