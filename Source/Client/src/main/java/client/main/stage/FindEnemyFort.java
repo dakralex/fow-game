@@ -82,15 +82,6 @@ public class FindEnemyFort implements Stage {
         return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);
     }
 
-    private static List<MapDirection> getDirectWalkTo(GameClientState clientState,
-                                                      Position destination) {
-        PathFinder pathFinder = new AStarPathFinder(clientState.getMap());
-
-        return pathFinder
-                .findPath(clientState.getPlayerPosition(), destination)
-                .intoMapDirections(clientState.getMap());
-    }
-
     private static Optional<Position> getWaterProtectedFortPosition(GameMap map,
                                                                     GameMap haystackMap) {
         return haystackMap.getMapNodes().stream()
@@ -114,7 +105,7 @@ public class FindEnemyFort implements Stage {
         GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
 
         return getWaterProtectedFortPosition(currentMap, enemyHalfMap)
-                .map(possiblePosition -> getDirectWalkTo(state, possiblePosition))
+                .map(possiblePosition -> AStarPathFinder.getDirectWalkTo(state, possiblePosition))
                 .orElseGet(() -> getNextWalkToUnvisitedNode(currentPosition,
                                                             currentMap,
                                                             enemyHalfMap));

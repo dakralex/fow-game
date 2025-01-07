@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.SequencedCollection;
 
+import client.main.GameClientState;
 import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
@@ -25,6 +27,15 @@ public class AStarPathFinder implements PathFinder {
 
     public AStarPathFinder(GameMap map) {
         this.map = new GameMap(map.getMapNodes());
+    }
+
+    public static List<MapDirection> getDirectWalkTo(GameClientState clientState,
+                                                     Position destination) {
+        GameMap map = clientState.getMap();
+        PathFinder pathFinder = new AStarPathFinder(map);
+        Path path = pathFinder.findPath(clientState.getPlayerPosition(), destination);
+
+        return path.intoMapDirections(map);
     }
 
     private static Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
