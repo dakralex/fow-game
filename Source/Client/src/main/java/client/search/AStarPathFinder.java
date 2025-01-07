@@ -38,6 +38,19 @@ public class AStarPathFinder implements PathFinder {
         return path.intoMapDirections(map);
     }
 
+    public static List<MapDirection> getWalkToUnvisitedMapNode(GameClientState clientState,
+                                                               GameMap haystackMap) {
+        GameMap map = clientState.getMap();
+        Position source = clientState.getPlayerPosition();
+        Position destination = map.getRandomNearbyLootablePosition(source)
+                .or(haystackMap::getRandomUnvisitedDeadEndPosition)
+                .orElseThrow();
+        PathFinder pathFinder = new AStarPathFinder(map);
+        Path path = pathFinder.findPath(source, destination);
+
+        return path.intoMapDirections(map);
+    }
+
     private static Comparator<GameMapNode> getCostComparator(Map<Position, Integer> costToEndNode) {
         return (a, b) -> {
             int aCostToEnd = costToEndNode.getOrDefault(a.getPosition(), Integer.MAX_VALUE);
