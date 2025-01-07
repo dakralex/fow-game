@@ -13,32 +13,10 @@ import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
 import client.map.comparator.FarthestDistanceComparator;
-import client.map.comparator.NeighborCountComparator;
 import client.search.AStarPathFinder;
 import client.search.PathFinder;
 
 public class FindTreasure implements Stage {
-
-    private static Position getRandomUnvisitedMapNode(GameMap map) {
-        List<GameMapNode> mapNodes = new ArrayList<>(map.getUnvisitedNodes().stream().toList());
-        Collections.shuffle(mapNodes);
-
-        return mapNodes.stream()
-                .findFirst()
-                .orElseThrow()
-                .getPosition();
-    }
-
-    private static Position getDeadEndUnvisitedMapNode(GameMap haystackMap) {
-        List<GameMapNode> mapNodes = haystackMap.getUnvisitedNodes().stream()
-                .sorted(new NeighborCountComparator(haystackMap))
-                .toList();
-
-        return mapNodes.stream()
-                .findFirst()
-                .map(GameMapNode::getPosition)
-                .orElseGet(() -> getRandomUnvisitedMapNode(haystackMap));
-    }
 
     private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
         Comparator<Position> farthestAwayComparator = new FarthestDistanceComparator(source);
@@ -66,8 +44,10 @@ public class FindTreasure implements Stage {
 
     private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
                                                                  GameMap haystackMap) {
+        // TODO: Improve error handling here
         Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
-                .orElseGet(() -> getDeadEndUnvisitedMapNode(haystackMap));
+                .or(haystackMap::getRandomUnvisitedDeadEndPosition)
+                .orElseThrow();
         PathFinder pathFinder = new AStarPathFinder(map);
 
         return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);

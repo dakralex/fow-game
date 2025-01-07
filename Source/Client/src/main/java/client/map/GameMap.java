@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import client.map.comparator.LootabilityComparator;
+import client.map.comparator.NeighborCountComparator;
 import client.util.ANSIColor;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
@@ -140,12 +142,33 @@ public class GameMap {
         return getMapNodes(isOnBorder);
     }
 
-    public Collection<GameMapNode> getUnvisitedNodes() {
+    private Collection<GameMapNode> getUnvisitedNodes() {
         return getMapNodes().stream()
                 .filter(GameMapNode::isUnvisited)
                 .filter(GameMapNode::isAccessible)
                 .sorted(new LootabilityComparator())
                 .toList();
+    }
+
+    private Optional<Position> getRandomUnvisitedPosition() {
+        // TODO: Make 'random' to 'best' unvisited position OR parameterize randomness
+        List<GameMapNode> mapNodes = new ArrayList<>(getUnvisitedNodes().stream().toList());
+        Collections.shuffle(mapNodes);
+
+        return mapNodes.stream()
+                .findFirst()
+                .map(GameMapNode::getPosition);
+    }
+
+    public Optional<Position> getRandomUnvisitedDeadEndPosition() {
+        List<GameMapNode> mapNodes = getUnvisitedNodes().stream()
+                .sorted(new NeighborCountComparator(this))
+                .toList();
+
+        return mapNodes.stream()
+                .findFirst()
+                .map(GameMapNode::getPosition)
+                .or(this::getRandomUnvisitedPosition);
     }
 
     private Optional<GameMapNode> getPlayerFortMapNode() {
