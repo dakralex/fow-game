@@ -13,6 +13,7 @@ import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
+import client.map.comparator.FarthestDistanceComparator;
 import client.map.comparator.NeighborCountComparator;
 import client.search.AStarPathFinder;
 import client.search.PathFinder;
@@ -40,17 +41,8 @@ public class FindEnemyFort implements Stage {
                 .orElseGet(() -> getRandomUnvisitedMapNode(haystackMap));
     }
 
-    private static Comparator<Position> getFarthestAwayComparator(Position source) {
-        return (a, b) -> {
-            int aDistance = source.taxicabDistanceTo(a);
-            int bDistance = source.taxicabDistanceTo(b);
-
-            return aDistance - bDistance;
-        };
-    }
-
     private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
-        Comparator<Position> farthestAwayComparator = getFarthestAwayComparator(source);
+        Comparator<Position> farthestAwayComparator = new FarthestDistanceComparator(source);
         List<Position> lootableNodes = new ArrayList<>();
         Collection<Position> nearbyLootableNodes = new ArrayList<>();
 
