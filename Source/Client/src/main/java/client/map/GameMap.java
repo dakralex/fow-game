@@ -34,14 +34,17 @@ public class GameMap {
 
     private final Map<Position, GameMapNode> nodes;
 
-    public GameMap(Map<Position, GameMapNode> nodes) {
-        this.nodes = HashMap.newHashMap(nodes.size());
-        this.nodes.putAll(nodes);
+    public GameMap(Map<Position, GameMapNode> mapNodes) {
+        this.nodes = HashMap.newHashMap(mapNodes.size());
+        this.nodes.putAll(mapNodes);
     }
 
-    public GameMap(Collection<GameMapNode> nodes) {
-        this.nodes = HashMap.newHashMap(nodes.size());
-        this.nodes.putAll(nodes.stream().collect(mapCollector));
+    public GameMap(Stream<GameMapNode> mapNodeStream) {
+        this(mapNodeStream.collect(mapCollector));
+    }
+
+    public GameMap(Collection<GameMapNode> mapNodes) {
+        this(mapNodes.stream());
     }
 
     public static GameMap fromFullMap(FullMap fullMap) {
