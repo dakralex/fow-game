@@ -17,7 +17,7 @@ public class WalkToTreasure implements Stage {
         PathFinder pathFinder = new AStarPathFinder(clientState.getMap());
 
         return pathFinder
-                .findPath(clientState.getPlayer().getPosition(), destination)
+                .findPath(clientState.getPlayerPosition(), destination)
                 .intoMapDirections(clientState.getMap());
     }
 

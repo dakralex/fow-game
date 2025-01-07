@@ -87,7 +87,7 @@ public class FindEnemyFort implements Stage {
         PathFinder pathFinder = new AStarPathFinder(clientState.getMap());
 
         return pathFinder
-                .findPath(clientState.getPlayer().getPosition(), destination)
+                .findPath(clientState.getPlayerPosition(), destination)
                 .intoMapDirections(clientState.getMap());
     }
 
@@ -110,7 +110,7 @@ public class FindEnemyFort implements Stage {
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
         GameMap currentMap = state.getMap();
-        Position currentPosition = state.getPlayer().getPosition();
+        Position currentPosition = state.getPlayerPosition();
         GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
 
         return getWaterProtectedFortPosition(currentMap, enemyHalfMap)

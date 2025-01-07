@@ -84,7 +84,7 @@ public class FindTreasure implements Stage {
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
         GameMap currentMap = state.getMap();
-        Position currentPosition = state.getPlayer().getPosition();
+        Position currentPosition = state.getPlayerPosition();
         GameMap playerHalfMap = currentMap.getPlayerHalfMap();
 
         return getNextWalkToUnvisitedNode(currentPosition, currentMap, playerHalfMap);

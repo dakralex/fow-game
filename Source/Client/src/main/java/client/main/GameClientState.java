@@ -133,8 +133,8 @@ public class GameClientState {
         return map.getPositionsByMapNode(predicate).stream().findFirst();
     }
 
-    public Player getPlayer() {
-        return player;
+    public Position getPlayerPosition() {
+        return player.getPosition();
     }
 
     public boolean hasFullMap() {
