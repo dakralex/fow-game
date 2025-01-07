@@ -65,8 +65,8 @@ class GameClientTest {
         Position enemyFortPosition = new Position(HORIZONTAL_FULL_MAP_X_SIZE - 1,
                                                   HORIZONTAL_FULL_MAP_Y_SIZE - 1);
 
-        Player player = makeDummyPlayer(PlayerGameState.MUST_ACT, enemyFortPosition, true);
-        Player enemy = makeDummyEnemy(PlayerGameState.MUST_WAIT, new Position(0, 0), false);
+        Player player = makeDummyPlayer(PlayerGameState.WON, enemyFortPosition, true);
+        Player enemy = makeDummyEnemy(PlayerGameState.LOST, new Position(0, 0), false);
         GameClientState state = new GameClientState("test0", "0", map, player, enemy);
 
         GameStateUpdater stateUpdater = mock();
