@@ -21,8 +21,6 @@ public class GameServerClient {
 
     private static final Logger logger = LoggerFactory.getLogger(GameServerClient.class);
 
-    private static final long SERVER_WAIT_TIME_MS = 400L;
-
     private final WebClient webClient;
 
     public GameServerClient(String serverBaseUrl) {
@@ -52,10 +50,11 @@ public class GameServerClient {
      * requests from other clients with respect to fairness.
      *
      * @param reason message to print while waiting
+     * @param waitTimeMs wait time to counter congestion
      */
-    public static void suspendForServer(String reason) {
+    public static void suspendForServer(String reason, long waitTimeMs) {
         try {
-            Thread.sleep(SERVER_WAIT_TIME_MS);
+            Thread.sleep(waitTimeMs);
         } catch (InterruptedException e) {
             logger.warn("Unexpected interrupt while {}", reason, e);
             Thread.currentThread().interrupt();

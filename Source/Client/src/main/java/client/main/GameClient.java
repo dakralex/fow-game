@@ -28,12 +28,20 @@ public class GameClient implements Runnable {
             new WalkToEnemyFort()
     );
 
+    private static final long DEFAULT_WAIT_TIME_MS = 400L;
+
     private final GameClientState clientState;
     private final GameStateUpdater stateUpdater;
+    private final long waitTimeMs;
 
-    public GameClient(GameClientState clientState, GameStateUpdater stateUpdater) {
+    public GameClient(GameClientState clientState, GameStateUpdater stateUpdater, long waitTimeMs) {
         this.clientState = clientState;
         this.stateUpdater = stateUpdater;
+        this.waitTimeMs = waitTimeMs;
+    }
+
+    public GameClient(GameClientState clientState, GameStateUpdater stateUpdater) {
+        this(clientState, stateUpdater, DEFAULT_WAIT_TIME_MS);
     }
 
     private void runStage(Stage stage) {
@@ -60,7 +68,7 @@ public class GameClient implements Runnable {
                 System.exit(0);
             }
 
-            GameServerClient.suspendForServer(stageStartMessage);
+            GameServerClient.suspendForServer(stageStartMessage, waitTimeMs);
         }
 
         logger.info("--> Stage completed: {}",

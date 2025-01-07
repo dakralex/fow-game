@@ -24,23 +24,20 @@ public class GameClientBootstrapper {
     private static final String LAST_NAME = "Kral";
     private static final String U_ACCOUNT = "krald88";
 
+    private static final long DEFAULT_WAIT_TIME_MS = 400L;
+
     private final String gameId;
     private final GameServerClient serverClient;
+    private final long waitTimeMs;
 
-    public GameClientBootstrapper(String gameId, String serverBaseUrl) {
+    private GameClientBootstrapper(String gameId, String serverBaseUrl, long waitTimeMs) {
         this.gameId = gameId;
         this.serverClient = new GameServerClient(serverBaseUrl);
+        this.waitTimeMs = waitTimeMs;
     }
 
-    private static void waitOn(String reason, Predicate<GameClientState> condition,
-                               GameStateUpdater stateUpdater, GameClientState clientState) {
-        while (!condition.test(clientState)) {
-            logger.info("{}...", reason);
-
-            clientState.update(stateUpdater.pollGameState());
-
-            GameServerClient.suspendForServer(reason.toLowerCase());
-        }
+    public GameClientBootstrapper(String gameId, String serverBaseUrl) {
+        this(gameId, serverBaseUrl, DEFAULT_WAIT_TIME_MS);
     }
 
     private static GameMap generateGameMap() {
@@ -58,7 +55,18 @@ public class GameClientBootstrapper {
         return registrar.registerPlayer();
     }
 
-    private static GameClientState sendMap(GameServerClient serverClient, GameClientToken token,
+    private void waitOn(String reason, Predicate<GameClientState> condition,
+                        GameStateUpdater stateUpdater, GameClientState clientState) {
+        while (!condition.test(clientState)) {
+            logger.info("{}...", reason);
+
+            clientState.update(stateUpdater.pollGameState());
+
+            GameServerClient.suspendForServer(reason.toLowerCase(), waitTimeMs);
+        }
+    }
+
+    private GameClientState sendMap(GameServerClient serverClient, GameClientToken token,
                                            GameStateUpdater stateUpdater, GameMap gameMap) {
         GameClientState clientState = stateUpdater.pollGameState();
 
