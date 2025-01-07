@@ -29,9 +29,9 @@ public class FindTreasure implements Stage {
                 .getPosition();
     }
 
-    private static Position getDeadEndUnvisitedMapNode(GameMap map, GameMap haystackMap) {
+    private static Position getDeadEndUnvisitedMapNode(GameMap haystackMap) {
         List<GameMapNode> mapNodes = haystackMap.getUnvisitedNodes().stream()
-                .sorted(new NeighborCountComparator(map))
+                .sorted(new NeighborCountComparator(haystackMap))
                 .toList();
 
         return mapNodes.stream()
@@ -67,7 +67,7 @@ public class FindTreasure implements Stage {
     private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
                                                                  GameMap haystackMap) {
         Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
-                .orElseGet(() -> getDeadEndUnvisitedMapNode(map, haystackMap));
+                .orElseGet(() -> getDeadEndUnvisitedMapNode(haystackMap));
         PathFinder pathFinder = new AStarPathFinder(map);
 
         return pathFinder.findPath(source, unvisitedPosition).intoMapDirections(map);
