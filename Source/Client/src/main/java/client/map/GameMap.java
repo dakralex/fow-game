@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
 
 import client.map.comparator.LootabilityComparator;
 import client.map.comparator.NeighborCountComparator;
+import client.map.comparator.TaxicabDistanceComparator;
 import client.util.ANSIColor;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
@@ -169,6 +171,38 @@ public class GameMap {
                 .findFirst()
                 .map(GameMapNode::getPosition)
                 .or(this::getRandomUnvisitedPosition);
+    }
+
+    public Optional<Position> getRandomNearbyLootablePosition(Position source) {
+        Comparator<Position> distanceComparator = new TaxicabDistanceComparator(source);
+        List<Position> lootableNodes = new ArrayList<>();
+        Collection<Position> nearbyLootableNodes = new ArrayList<>();
+
+        do {
+            nearbyLootableNodes.clear();
+            nearbyLootableNodes.addAll(
+                    getReachableNeighbors(source)
+                            .stream()
+                            .filter(GameMapNode::isUnvisited)
+                            .filter(GameMapNode::isLootable)
+                            .map(GameMapNode::getPosition)
+                            .filter(position -> !lootableNodes.contains(position))
+                            .sorted(distanceComparator)
+                            .toList());
+            lootableNodes.addAll(nearbyLootableNodes);
+        } while (!nearbyLootableNodes.isEmpty());
+
+        Collections.shuffle(lootableNodes);
+
+        return lootableNodes.stream().findFirst();
+    }
+
+    private Optional<GameMapNode> getPlayerTreasureMapNode() {
+        return getMapNodes(GameMapNode::hasTreasure).stream().findFirst();
+    }
+
+    public Optional<Position> getPlayerTreasurePosition() {
+        return getPlayerTreasureMapNode().map(GameMapNode::getPosition);
     }
 
     private Optional<GameMapNode> getPlayerFortMapNode() {

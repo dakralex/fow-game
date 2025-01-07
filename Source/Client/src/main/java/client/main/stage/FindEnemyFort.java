@@ -1,9 +1,6 @@
 package client.main.stage;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,40 +10,15 @@ import client.map.GameMap;
 import client.map.GameMapNode;
 import client.map.MapDirection;
 import client.map.Position;
-import client.map.comparator.TaxicabDistanceComparator;
 import client.search.AStarPathFinder;
 import client.search.PathFinder;
 
 public class FindEnemyFort implements Stage {
 
-    private static Optional<Position> getRandomNearbyLootableFields(Position source, GameMap map) {
-        Comparator<Position> distanceComparator = new TaxicabDistanceComparator(source);
-        List<Position> lootableNodes = new ArrayList<>();
-        Collection<Position> nearbyLootableNodes = new ArrayList<>();
-
-        do {
-            nearbyLootableNodes.clear();
-            nearbyLootableNodes.addAll(
-                    map.getReachableNeighbors(source)
-                            .stream()
-                            .filter(GameMapNode::isUnvisited)
-                            .filter(GameMapNode::isLootable)
-                            .map(GameMapNode::getPosition)
-                            .filter(position -> !lootableNodes.contains(position))
-                            .sorted(distanceComparator)
-                            .toList());
-            lootableNodes.addAll(nearbyLootableNodes);
-        } while (!nearbyLootableNodes.isEmpty());
-
-        Collections.shuffle(lootableNodes);
-
-        return lootableNodes.stream().findFirst();
-    }
-
     private static List<MapDirection> getNextWalkToUnvisitedNode(Position source, GameMap map,
                                                                  GameMap haystackMap) {
         // TODO: Improve error handling here
-        Position unvisitedPosition = getRandomNearbyLootableFields(source, map)
+        Position unvisitedPosition = map.getRandomNearbyLootablePosition(source)
                 .or(haystackMap::getRandomUnvisitedDeadEndPosition)
                 .orElseThrow();
         PathFinder pathFinder = new AStarPathFinder(map);
