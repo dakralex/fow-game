@@ -42,6 +42,10 @@ public class GameClientState {
         this.enemy = enemy;
     }
 
+    public GameClientState(String gameId, String stateId, GameMap map, Player player, Player enemy) {
+        this(gameId, stateId, map, player, Optional.of(enemy));
+    }
+
     private static PlayerState pickOwnPlayer(Collection<PlayerState> players, String playerId) {
         return players.stream()
                 .filter(playerState -> playerState.getUniquePlayerID().equals(playerId))
