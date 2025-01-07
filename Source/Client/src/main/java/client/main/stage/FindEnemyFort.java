@@ -13,9 +13,8 @@ import client.search.AStarPathFinder;
 
 public class FindEnemyFort implements Stage {
 
-    private static Optional<Position> getWaterProtectedFortPosition(GameMap map,
-                                                                    GameMap haystackMap) {
-        return haystackMap.getMapNodes().stream()
+    private static Optional<Position> getWaterProtectedFortPosition(GameMap map) {
+        return map.getMapNodes().stream()
                 .filter(GameMapNode::isLootable)
                 .filter(GameMapNode::isUnvisited)
                 .map(GameMapNode::getPosition)
@@ -34,7 +33,7 @@ public class FindEnemyFort implements Stage {
         GameMap currentMap = state.getMap();
         GameMap enemyHalfMap = currentMap.getEnemyHalfMap();
 
-        return getWaterProtectedFortPosition(currentMap, enemyHalfMap)
+        return getWaterProtectedFortPosition(enemyHalfMap)
                 .map(possiblePosition -> AStarPathFinder.getDirectWalkTo(state, possiblePosition))
                 .orElseGet(() -> AStarPathFinder.getWalkToUnvisitedMapNode(state, enemyHalfMap));
     }
