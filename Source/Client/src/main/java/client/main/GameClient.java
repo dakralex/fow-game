@@ -75,6 +75,10 @@ public class GameClient implements Runnable {
                     ANSIColor.format(stageCompletionMessage.toUpperCase(), ANSIColor.GREEN));
     }
 
+    public GameClientState getCurrentState() {
+        return clientState;
+    }
+
     @Override
     public void run() {
         sequentialStages.forEach(this::runStage);
