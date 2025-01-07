@@ -27,7 +27,7 @@ public class GameServerClient {
 
     public GameServerClient(String serverBaseUrl) {
         webClient = WebClient.builder()
-                .baseUrl(serverBaseUrl + "/games")
+                .baseUrl(String.format("%s/games", serverBaseUrl))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE)
                 .build();
