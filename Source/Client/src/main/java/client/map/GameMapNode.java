@@ -10,26 +10,23 @@ public class GameMapNode implements Comparable<GameMapNode> {
 
     private final Position position;
     private TerrainType terrainType;
-    private FortState fortState = FortState.UNKNOWN;
-    private TreasureState treasureState = TreasureState.UNKNOWN;
-
-    public GameMapNode(Position position, TerrainType terrainType) {
-        this.position = position;
-        this.terrainType = terrainType;
-    }
-
-    public GameMapNode(Position position, TerrainType terrainType, FortState fortState) {
-        this.position = position;
-        this.terrainType = terrainType;
-        this.fortState = fortState;
-    }
+    private FortState fortState;
+    private TreasureState treasureState;
 
     public GameMapNode(Position position, TerrainType terrainType, FortState fortState,
-                        TreasureState treasureState) {
+                       TreasureState treasureState) {
         this.position = position;
         this.terrainType = terrainType;
         this.fortState = fortState;
         this.treasureState = treasureState;
+    }
+
+    public GameMapNode(Position position, TerrainType terrainType, FortState fortState) {
+        this(position, terrainType, fortState, TreasureState.UNKNOWN);
+    }
+
+    public GameMapNode(Position position, TerrainType terrainType) {
+        this(position, terrainType, FortState.UNKNOWN);
     }
 
     public static GameMapNode fromFullMapNode(FullMapNode fullMapNode) {
