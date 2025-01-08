@@ -163,4 +163,8 @@ public class GameClientState {
     public boolean hasClientLost() {
         return player.hasLost();
     }
+
+    public Optional<Player> getEnemy() {
+        return enemy;
+    }
 }

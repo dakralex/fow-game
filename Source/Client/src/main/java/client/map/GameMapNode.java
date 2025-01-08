@@ -29,6 +29,10 @@ public class GameMapNode implements Comparable<GameMapNode> {
         this(position, terrainType, FortState.UNKNOWN);
     }
 
+    public GameMapNode(GameMapNode mapNode) {
+        this(mapNode.position, mapNode.terrainType, mapNode.fortState, mapNode.treasureState);
+    }
+
     public static GameMapNode fromFullMapNode(FullMapNode fullMapNode) {
         Position position = new Position(fullMapNode.getX(), fullMapNode.getY());
         TerrainType terrainType = TerrainType.fromETerrain(fullMapNode.getTerrain());

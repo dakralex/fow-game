@@ -3,6 +3,10 @@ package client.player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import client.map.Position;
 import client.util.ANSIColor;
 import messagesbase.messagesfromserver.PlayerState;
@@ -18,15 +22,17 @@ public class Player {
     private final PlayerDetails details;
     private PlayerGameState state;
     private Position position;
+    private final List<Position> positionHistory;
     private boolean hasTreasure;
 
     public Player(String playerId, PlayerDetails details, PlayerGameState state,
-                   Position position, boolean hasTreasure) {
+                  Position position, boolean hasTreasure) {
         this.playerId = playerId;
         this.details = details;
         this.state = state;
         this.position = position;
         this.hasTreasure = hasTreasure;
+        this.positionHistory = new ArrayList<>(List.of(position));
     }
 
     public static Player fromPlayerState(PlayerState playerState, Position position) {
@@ -58,15 +64,33 @@ public class Player {
         }
     }
 
+    public void appendPosition(Position newPosition) {
+        positionHistory.add(newPosition);
+    }
+
+    private void updatePosition(Position newPosition) {
+        if (position.equals(newPosition)) {
+            return;
+        }
+
+        if (position.taxicabDistanceTo(newPosition) > 1) {
+            positionHistory.clear();
+        }
+
+        appendPosition(newPosition);
+
+        position = newPosition;
+    }
+
     public void update(Player newPlayer) {
         if (!playerId.equals(newPlayer.playerId)) {
             throwOnInvalidUpdateId(newPlayer);
         }
 
         logUpdateChanges(newPlayer);
+        updatePosition(newPlayer.position);
 
         state = newPlayer.state;
-        position = newPlayer.position;
         hasTreasure = newPlayer.hasTreasure;
     }
 
@@ -78,6 +102,10 @@ public class Player {
 
     public Position getPosition() {
         return position;
+    }
+
+    public List<Position> getPositionHistory() {
+        return Collections.unmodifiableList(positionHistory);
     }
 
     public boolean shouldPlayerAct() {
