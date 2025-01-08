@@ -261,11 +261,10 @@ public class GameMap {
         for (int y = 0; y < area.height(); ++y) {
             stringBuilder.append(String.format("%2d | ", y));
             for (int x = 0; x < area.width(); ++x) {
-                Position currentPosition = new Position(x, y);
+                Optional<GameMapNode> mapNode = getNodeAt(new Position(x, y));
 
-                if (nodes.containsKey(currentPosition)) {
-                    GameMapNode currentMapNode = nodes.get(currentPosition);
-                    stringBuilder.append(String.format("%s", currentMapNode));
+                if (mapNode.isPresent()) {
+                    stringBuilder.append(String.format("%s", mapNode.get()));
                 } else {
                     stringBuilder.append(ANSIColor.format("a",
                                                           ANSIColor.BRIGHT_BLACK,
