@@ -17,8 +17,6 @@ public class GameMapSender {
         String gameId = token.gameId();
         String apiUri = String.format("/%s/halfmaps", gameId);
 
-        // TODO: Implement polling the game state and check if player can send their map
-
         PlayerHalfMap playerHalfMap = map.intoPlayerHalfMap(token.playerId());
         serverClient.post(apiUri, playerHalfMap);
     }
