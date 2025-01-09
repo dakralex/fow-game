@@ -56,17 +56,21 @@ public class GameClientState {
                 .findFirst();
     }
 
+    private static Position getFullMapPosition(FullMap fullMap, Predicate<FullMapNode> predicate) {
+        return fullMap.getMapNodes().stream()
+                .filter(predicate)
+                .findFirst()
+                .map(Position::fromFullMapNode)
+                .orElse(Position.originPosition);
+    }
+
     private static boolean isPlayerOnFullMapNode(FullMapNode fullMapNode) {
         return fullMapNode.getPlayerPositionState() == EPlayerPositionState.BothPlayerPosition ||
                 fullMapNode.getPlayerPositionState() == EPlayerPositionState.MyPlayerPosition;
     }
 
     private static Position getPlayerPosition(FullMap fullMap) {
-        return fullMap.getMapNodes().stream()
-                .filter(GameClientState::isPlayerOnFullMapNode)
-                .findFirst()
-                .map(Position::fromFullMapNode)
-                .orElse(Position.originPosition);
+        return getFullMapPosition(fullMap, GameClientState::isPlayerOnFullMapNode);
     }
 
     private static boolean isEnemyOnFullMapNode(FullMapNode fullMapNode) {
@@ -75,11 +79,7 @@ public class GameClientState {
     }
 
     private static Position getEnemyPosition(FullMap fullMap) {
-        return fullMap.getMapNodes().stream()
-                .filter(GameClientState::isEnemyOnFullMapNode)
-                .findFirst()
-                .map(Position::fromFullMapNode)
-                .orElse(Position.originPosition);
+        return getFullMapPosition(fullMap, GameClientState::isEnemyOnFullMapNode);
     }
 
     public static GameClientState fromGameState(GameState gameState, String gameId,
