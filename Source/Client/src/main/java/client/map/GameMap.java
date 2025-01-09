@@ -205,16 +205,18 @@ public class GameMap {
                 .map(GameMapNode::getPosition);
     }
 
+    private static GameMapNodeException providePlayerFortNotFoundException() {
+        return new GameMapNodeException("Player fort could not be found.");
+    }
+
     public GameMap getPlayerHalfMap() {
-        // TODO: Improve error handling here
-        Position playerFortPosition = getPlayerFortPosition().orElseThrow();
+        Position playerFortPosition = getPlayerFortPosition().orElseThrow(GameMap::providePlayerFortNotFoundException);
 
         return new GameMap(getMapNodes(getArea().intoCurrentHalfStream(playerFortPosition)));
     }
 
     public GameMap getEnemyHalfMap() {
-        // TODO: Improve error handling here
-        Position playerFortPosition = getPlayerFortPosition().orElseThrow();
+        Position playerFortPosition = getPlayerFortPosition().orElseThrow(GameMap::providePlayerFortNotFoundException);
 
         // Retrieve the enemy's half map nodes with respect to the player's fort position,
         // since the enemy's fort position is most likely not known yet
