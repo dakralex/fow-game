@@ -39,6 +39,10 @@ public class GameClientView implements Runnable, Observer<GameClientEvent> {
         Thread.currentThread().interrupt();
     }
 
+    private void handleMapDraw(GameClient gameClient) {
+        System.out.println(gameClient.getCurrentState());
+    }
+
     private void handleMoveSend(GameClient gameClient) {
         MapDirection direction = gameClient.getNextMove();
 
@@ -72,6 +76,7 @@ public class GameClientView implements Runnable, Observer<GameClientEvent> {
         switch (event) {
             case HAS_LOST -> handleLost();
             case HAS_WON -> handleWin();
+            case SHOULD_DRAW_MAP -> handleMapDraw(gameClient);
             case SHOULD_SEND_MOVE -> handleMoveSend(gameClient);
             case SHOULD_SUSPEND -> handleSuspend();
             case SHOULD_UPDATE_STATE -> handleStateUpdate();

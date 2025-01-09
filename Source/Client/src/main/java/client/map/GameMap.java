@@ -250,8 +250,16 @@ public class GameMap {
         return getSize() == FULL_MAP_SIZE;
     }
 
-    @Override
-    public String toString() {
+    private String renderPlayerMapNode() {
+        return ANSIColor.format("P", ANSIColor.BRIGHT_BLACK, ANSIColor.MAGENTA);
+    }
+
+    private String renderEnemyMapNode() {
+        return ANSIColor.format("E", ANSIColor.BRIGHT_BLACK, ANSIColor.BRIGHT_CYAN);
+    }
+
+    public String renderToString(Optional<Position> playerPosition,
+                                  Optional<Position> enemyPosition) {
         StringBuilder stringBuilder = new StringBuilder("   | ");
 
         PositionArea area = getArea();
@@ -263,19 +271,33 @@ public class GameMap {
         for (int y = 0; y < area.height(); ++y) {
             stringBuilder.append(String.format("%2d | ", y));
             for (int x = 0; x < area.width(); ++x) {
-                Optional<GameMapNode> mapNode = getNodeAt(new Position(x, y));
+                Position currentPosition = new Position(x, y);
+                Optional<GameMapNode> mapNode = getNodeAt(currentPosition);
 
-                if (mapNode.isPresent()) {
-                    stringBuilder.append(String.format("%s", mapNode.get()));
-                } else {
+                if (!mapNode.isPresent()) {
                     stringBuilder.append(ANSIColor.format("a",
                                                           ANSIColor.BRIGHT_BLACK,
                                                           ANSIColor.BRIGHT_BLACK));
+                    continue;
+                }
+
+                if (playerPosition.isPresent() && playerPosition.get().equals(currentPosition)) {
+                    stringBuilder.append(renderPlayerMapNode());
+                } else if (enemyPosition.isPresent() && enemyPosition.get().equals(currentPosition)) {
+                    stringBuilder.append(renderEnemyMapNode());
+                } else {
+                    stringBuilder.append(String.format("%s", mapNode.get()));
                 }
             }
             stringBuilder.append("\n");
         }
 
         return stringBuilder.toString();
+
+    }
+
+    @Override
+    public String toString() {
+        return renderToString(Optional.empty(), Optional.empty());
     }
 }

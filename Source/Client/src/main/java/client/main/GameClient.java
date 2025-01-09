@@ -74,7 +74,11 @@ public class GameClient extends Observable<GameClientEvent> {
     }
 
     public void updateState(GameClientState newState) {
-        currentState.update(newState);
+        boolean hasUpdated = currentState.update(newState);
+
+        if (hasUpdated) {
+            notifyObservers(GameClientEvent.SHOULD_DRAW_MAP);
+        }
     }
 
     public GameClientState getCurrentState() {

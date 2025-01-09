@@ -109,15 +109,23 @@ public class GameClientState {
         }
     }
 
-    public void update(GameClientState newState) {
-        // Return early, if the new state has not nothing changed
+    /**
+     * Update the game client's game state with the new server-source game state.
+     *
+     * @param newState server-sourced game state
+     * @return whether there were any changes in the game's state
+     */
+    public boolean update(GameClientState newState) {
+        // Return early, if the new state has not changed
         if (stateId.equals(newState.stateId)) {
-            return;
+            return false;
         }
 
         player.update(newState.player);
         newState.enemy.ifPresent(this::updateEnemy);
         map.update(newState.map, player.getPosition());
+
+        return true;
     }
 
     public GameMap getMap() {
@@ -130,6 +138,10 @@ public class GameClientState {
 
     public Position getPlayerPosition() {
         return player.getPosition();
+    }
+
+    private Position getEnemyPosition() {
+        return enemy.orElseThrow().getPosition();
     }
 
     public boolean hasFullMap() {
@@ -166,5 +178,12 @@ public class GameClientState {
 
     public Optional<Player> getEnemy() {
         return enemy;
+    }
+
+    public String toString() {
+        Position playerPosition = getPlayerPosition();
+        Position enemyPosition = getEnemyPosition();
+
+        return map.renderToString(Optional.of(playerPosition), Optional.of(enemyPosition));
     }
 }
