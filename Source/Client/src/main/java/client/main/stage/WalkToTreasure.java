@@ -10,10 +10,14 @@ import client.search.AStarPathFinder;
 
 public class WalkToTreasure implements Stage {
 
+    private static UnexpectedStageException provideInvalidStateException() {
+        return new UnexpectedStageException("Cannot walk to player's treasure, if it isn't known yet.");
+    }
+
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
-        // TODO Improve error handling here (by transitioning back to searching the treasure?)
-        Position treasurePosition = state.getMapNodePosition(GameMapNode::hasTreasure).orElseThrow();
+        Position treasurePosition = state.getMapNodePosition(GameMapNode::hasTreasure)
+                .orElseThrow(WalkToTreasure::provideInvalidStateException);
 
         return AStarPathFinder.getDirectWalkTo(state, treasurePosition);
     }

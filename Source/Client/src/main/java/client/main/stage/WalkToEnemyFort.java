@@ -10,10 +10,14 @@ import client.search.AStarPathFinder;
 
 public class WalkToEnemyFort implements Stage {
 
+    private static UnexpectedStageException provideInvalidStateException() {
+        return new UnexpectedStageException("Cannot walk to enemy fortress, if it isn't known yet.");
+    }
+
     @Override
     public Collection<MapDirection> retrieveNextDirections(GameClientState state) {
-        // TODO: Improve error handling here (by transitioning back to searching enemy fort?)
-        Position fortPosition = state.getMapNodePosition(GameMapNode::hasEnemyFort).orElseThrow();
+        Position fortPosition = state.getMapNodePosition(GameMapNode::hasEnemyFort)
+                .orElseThrow(WalkToEnemyFort::provideInvalidStateException);
 
         return AStarPathFinder.getDirectWalkTo(state, fortPosition);
     }
